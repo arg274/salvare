@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salvare/view/navbar.dart';
 
 void main() {
   runApp(const Salvare());
@@ -12,9 +13,11 @@ class Salvare extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Salvare',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme:
+          ThemeData(primarySwatch: Colors.teal, brightness: Brightness.light),
+      darkTheme:
+          ThemeData(primarySwatch: Colors.teal, brightness: Brightness.dark),
+      themeMode: ThemeMode.dark,
       home: const Dashboard(title: 'Dashboard'),
     );
   }
@@ -33,13 +36,12 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: Column(),
+        body: Center(),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            child: SalvareNavbar(),
+          ),
         ));
   }
 }
