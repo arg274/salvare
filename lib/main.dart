@@ -26,6 +26,7 @@ class Salvare extends StatelessWidget {
   }
 }
 
+// Dummy page
 class DummyPage extends StatefulWidget {
   const DummyPage({Key? key}) : super(key: key);
 
