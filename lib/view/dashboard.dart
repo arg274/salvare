@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:salvare/component/resource_card.dart';
+import 'package:salvare/model/resource.dart';
 import 'package:salvare/theme/constants.dart';
 
 class Dashboard extends StatelessWidget {
@@ -16,7 +18,16 @@ class Dashboard extends StatelessWidget {
                   Text(
                     "Home",
                     style: Theme.of(context).textTheme.headline1,
-                  )
+                  ),
+                  const SizedBox(height: 40.0),
+                  ResourceCard(
+                      resource: Resource(
+                          'TEST',
+                          'An Interesting Title',
+                          'https://www.google.com',
+                          'Extremely Interesting Website',
+                          DateTime.now(),
+                          DateTime.now()))
                 ]),
           ),
         ),

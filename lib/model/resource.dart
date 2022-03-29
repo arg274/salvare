@@ -2,7 +2,10 @@ class Resource {
   String id;
   String title;
   String url;
-  String? domain;
+  String get domain {
+    return Uri.parse(url).host;
+  }
+
   String description;
   DateTime dateCreated;
   DateTime dateUpdated;
