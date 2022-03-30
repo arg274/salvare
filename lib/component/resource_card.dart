@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:salvare/controller/resource_controller.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:salvare/theme/constants.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+
+ResourceController resourceController = ResourceController();
 
 class ResourceCard extends StatelessWidget {
-  Resource resource;
+  final Resource resource;
 
-  ResourceCard({required this.resource, Key? key}) : super(key: key);
+  const ResourceCard({required this.resource, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +46,16 @@ class ResourceCard extends StatelessWidget {
                   ],
                 ),
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () {
+                    ResourceController.copyResourceURL(resource);
+                    showToast(
+                      'Link copied to the clipboard!',
+                      context: context,
+                      animation: StyledToastAnimation.slideFromBottom,
+                      curve: Curves.decelerate,
+                      reverseAnimation: StyledToastAnimation.fade,
+                    );
+                  },
                   icon: const Icon(FeatherIcons.copy),
                   color: Theme.of(context).textTheme.bodyText1?.color,
                 ),
