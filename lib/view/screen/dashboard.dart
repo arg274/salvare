@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:salvare/component/resource_card.dart';
+import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/theme/constants.dart';
 

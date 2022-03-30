@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:salvare/view/dashboard.dart';
-import 'package:salvare/view/search.dart';
-import 'package:salvare/view/settings.dart';
+import 'package:salvare/view/screen/dashboard.dart';
+import 'package:salvare/view/screen/search.dart';
+import 'package:salvare/view/screen/settings.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
 
