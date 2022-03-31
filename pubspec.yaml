@@ -39,6 +39,8 @@ dependencies:
   shared_preferences: ^2.0.13
   transparent_image: ^2.0.0
   flutter_styled_toast: ^2.0.0
+  metadata_fetch: ^0.4.1
+  crypto: ^3.0.1
 
 dev_dependencies:
   flutter_test:

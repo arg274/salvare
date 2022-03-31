@@ -6,7 +6,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
-ResourceController resourceController = ResourceController();
+final ResourceController resourceController = ResourceController();
 
 class ResourceCard extends StatelessWidget {
   final Resource resource;
@@ -23,7 +23,7 @@ class ResourceCard extends StatelessWidget {
         children: <Widget>[
           FadeInImage.memoryNetwork(
             placeholder: kTransparentImage,
-            image: 'https://picsum.photos/250?image=9',
+            image: resource.imageUrl ?? 'https://picsum.photos/250?image=9',
             fit: BoxFit.cover,
           ),
           Padding(
@@ -47,7 +47,7 @@ class ResourceCard extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    ResourceController.copyResourceURL(resource);
+                    resourceController.copyResourceURL(resource);
                     showToast(
                       'Link copied to the clipboard!',
                       context: context,
