@@ -31,19 +31,26 @@ class ResourceCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(resource.title,
-                        style: Theme.of(context).textTheme.headline6),
-                    Text(resource.description,
-                        style: Theme.of(context).textTheme.bodyText1),
-                    Text(resource.domain,
-                        style: Theme.of(context)
-                            .textTheme
-                            .domaintext
-                            .apply(color: Theme.of(context).disabledColor)),
-                  ],
+                Container(
+                  height: 90.0,
+                  width: 280.0,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(resource.title,
+                          style: Theme.of(context).textTheme.headline6),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(resource.description,
+                            style: Theme.of(context).textTheme.bodyText1),
+                      ),
+                      Text(resource.domain,
+                          style: Theme.of(context)
+                              .textTheme
+                              .domaintext
+                              .apply(color: Theme.of(context).disabledColor)),
+                    ],
+                  ),
                 ),
                 IconButton(
                   onPressed: () {
