@@ -31,9 +31,7 @@ class ResourceCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 90.0,
-                  width: 280.0,
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -52,19 +50,23 @@ class ResourceCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    resourceController.copyResourceURL(resource);
-                    showToast(
-                      'Link copied to the clipboard!',
-                      context: context,
-                      animation: StyledToastAnimation.slideFromBottom,
-                      curve: Curves.decelerate,
-                      reverseAnimation: StyledToastAnimation.fade,
-                    );
-                  },
-                  icon: const Icon(FeatherIcons.copy),
-                  color: Theme.of(context).textTheme.bodyText1?.color,
+                Container(
+                  padding: const EdgeInsets.all(4.0),
+                  margin: const EdgeInsets.all(1.0),
+                  child: IconButton(
+                    onPressed: () {
+                      resourceController.copyResourceURL(resource);
+                      showToast(
+                        'Link copied to the clipboard!',
+                        context: context,
+                        animation: StyledToastAnimation.slideFromBottom,
+                        curve: Curves.decelerate,
+                        reverseAnimation: StyledToastAnimation.fade,
+                      );
+                    },
+                    icon: const Icon(FeatherIcons.copy),
+                    color: Theme.of(context).textTheme.bodyText1?.color,
+                  ),
                 ),
               ],
             ),

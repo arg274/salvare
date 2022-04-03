@@ -26,6 +26,14 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  Future<void> showAddLinkDialogue(BuildContext context) async {
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog();
+        });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: FloatingActionButton(
