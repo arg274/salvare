@@ -41,6 +41,7 @@ dependencies:
   flutter_styled_toast: ^2.0.0
   metadata_fetch: ^0.4.1
   crypto: ^3.0.1
+  validators: ^3.0.0
 
 dev_dependencies:
   flutter_test:

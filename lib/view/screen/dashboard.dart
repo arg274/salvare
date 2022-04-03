@@ -30,7 +30,39 @@ class _DashboardState extends State<Dashboard> {
     return await showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog();
+          final TextEditingController _teController = TextEditingController();
+          return AlertDialog(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () => {
+                          resourceController
+                              .addResource(_teController.text)
+                              .then((resource) => {_addResource(resource!)}),
+                          Navigator.of(context).pop()
+                        },
+                    child: Text(
+                      'ADD',
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ))
+              ],
+              content: Form(
+                  child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'URL',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  TextFormField(
+                    controller: _teController,
+                    validator: (url) {
+                      return resourceController.validateURL(url);
+                    },
+                  )
+                ],
+              )));
         });
   }
 
@@ -41,11 +73,7 @@ class _DashboardState extends State<Dashboard> {
             FeatherIcons.plus,
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
-          onPressed: () => {
-            resourceController
-                .addResource('https://www.prothomalo.com/')
-                .then((resource) => {_addResource(resource!)})
-          },
+          onPressed: () => {showAddLinkDialogue(context)},
         ),
         body: SafeArea(
           child: Padding(

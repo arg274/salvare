@@ -21,10 +21,15 @@ class ResourceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          FadeInImage.memoryNetwork(
-            placeholder: kTransparentImage,
-            image: resource.imageUrl ?? 'https://picsum.photos/250?image=9',
+          FadeInImage(
+            placeholder: MemoryImage(kTransparentImage),
+            image: (resource.imageUrl != null)
+                ? NetworkImage(resource.imageUrl!)
+                : const AssetImage('assets/no_img.jpg') as ImageProvider,
             fit: BoxFit.cover,
+            imageErrorBuilder: (context, error, stackTrace) {
+              return Image.asset('assets/no_img.jpg', fit: BoxFit.cover);
+            },
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),

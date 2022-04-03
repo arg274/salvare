@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
+import 'package:validators/validators.dart';
 
 class Resource {
   String id;
@@ -19,18 +20,17 @@ class Resource {
   Resource(this.id, this.title, this.url, this.description, this.dateCreated,
       this.dateUpdated, this.imageUrl);
 
-  factory Resource.fromMetadata(Metadata metadata) {
+  factory Resource.fromMetadata(String url, Metadata metadata) {
     DateTime dateCreated = DateTime.now();
     DateTime dateUpdated = dateCreated;
+    String? imageURL = isURL(metadata.image) ? metadata.image : null;
     return Resource(
-        md5
-            .convert(utf8.encode(metadata.url! + dateCreated.toString()))
-            .toString(),
+        md5.convert(utf8.encode(url + dateCreated.toString())).toString(),
         metadata.title ?? 'Untitled',
-        metadata.url!,
+        url,
         metadata.description ?? 'No description.',
         dateCreated,
         dateUpdated,
-        metadata.image);
+        imageURL);
   }
 }
