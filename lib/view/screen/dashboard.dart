@@ -16,7 +16,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final ResourceController resourceController = ResourceController();
   List<Resource> resources = List<Resource>.generate(
-      10,
+      0,
       (i) => Resource('$i', 'Resource Name $i', 'https://www.google.com',
           'Resource Description $i', DateTime.now(), DateTime.now(), null));
 

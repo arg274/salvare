@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/controller/resource_controller.dart';
@@ -19,12 +20,13 @@ class ResourceCard extends StatelessWidget {
       shadowColor: Theme.of(context).shadowColor,
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           FadeInImage(
             placeholder: MemoryImage(kTransparentImage),
             image: (resource.imageUrl != null)
-                ? NetworkImage(resource.imageUrl!)
+                ? CachedNetworkImageProvider(resource.imageUrl!)
                 : const AssetImage('assets/no_img.jpg') as ImageProvider,
             fit: BoxFit.cover,
             imageErrorBuilder: (context, error, stackTrace) {
@@ -38,6 +40,7 @@ class ResourceCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(resource.title,
