@@ -77,6 +77,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: FloatingActionButton(
+          heroTag: "btn2",
           child: Icon(
             FeatherIcons.plus,
             color: Theme.of(context).scaffoldBackgroundColor,

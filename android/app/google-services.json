@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "597546170223",
+    "project_id": "salvare-da230",
+    "storage_bucket": "salvare-da230.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597546170223:android:b69c8f43439583aaacda9a",
+        "android_client_info": {
+          "package_name": "com.example.salvare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "597546170223-mfqht63kbqvu2cv4n3lh4kjt3duk4egq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.salvare",
+            "certificate_hash": "8749eed4f07679fc99be4412f6f401edd8d1a918"
+          }
+        },
+        {
+          "client_id": "597546170223-mql40n8ibths2k903iree7kfrqpu9jl5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKWvmtYMWIs0JNpXBQyWzw6QmEvk9AUhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "597546170223-mql40n8ibths2k903iree7kfrqpu9jl5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
