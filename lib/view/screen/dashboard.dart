@@ -17,8 +17,16 @@ class _DashboardState extends State<Dashboard> {
   final ResourceController resourceController = ResourceController();
   List<Resource> resources = List<Resource>.generate(
       0,
-      (i) => Resource('$i', 'Resource Name $i', 'https://www.google.com',
-          'Resource Description $i', DateTime.now(), DateTime.now(), null));
+      (i) => Resource(
+          '$i',
+          'Resource Name $i',
+          'https://www.google.com',
+          'default',
+          null,
+          'Resource Description $i',
+          DateTime.now(),
+          DateTime.now(),
+          null));
 
   _addResource(Resource resource) {
     setState(() {
