@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:salvare/controller/authentication.dart';
@@ -11,12 +12,13 @@ import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/screen/sign_in_screen.dart';
 
 void main() {
-  runApp(const Salvare());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(Salvare());
 }
 
 class Salvare extends StatelessWidget {
-  const Salvare({Key? key}) : super(key: key);
-
+  Salvare({Key? key}) : super(key: key);
+  final Future<FirebaseApp> _firebaseApp = Firebase.initializeApp();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,20 @@ class Salvare extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
-      home: SignInScreen(),
+      home: FutureBuilder(
+        future: _firebaseApp,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print("Error! ${snapshot.error.toString()}");
+            return const Text("Something Went Wrong");
+          } else if (snapshot.hasData) {
+            print("Firebase Initialization successfull");
+            return SignInScreen();
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }

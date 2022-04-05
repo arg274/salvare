@@ -46,6 +46,9 @@ dependencies:
   # Google Sign In Related
   firebase_auth: ^3.3.12
   google_sign_in: ^5.2.4
+  # Firebase Database
+  firebase_core: ^1.14.0
+  firebase_database: ^9.0.9
 
 dev_dependencies:
   flutter_test:

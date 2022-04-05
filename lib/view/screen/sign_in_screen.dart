@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/database/firebase_utility.dart';
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/component/google_sign_in_button.dart';
 
@@ -11,6 +12,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
+    FirebaseUtility().addDummyData('dummy', 'test/');
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
