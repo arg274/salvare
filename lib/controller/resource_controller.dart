@@ -29,6 +29,9 @@ class ResourceController {
       if (metadataFuture != null) {
         Resource resource = Resource.fromMetadata(url, metadataFuture);
         FirebaseUtility(user: user!).addResourceDB(resource);
+        Resource? res = await FirebaseUtility(user: user!)
+            .searchResourceDB("75a014740ed7f122f6a51f956ed99d6f");
+        print("Search Value Back: ${res ?? 'null'}");
         return resource;
       }
       return null;
