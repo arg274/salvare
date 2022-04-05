@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:salvare/database/firebase_utility.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/url_metadata.dart';
 import 'package:salvare/utils.dart';
@@ -8,6 +10,7 @@ import 'package:validators/validators.dart';
 
 class ResourceController {
   static final ResourceController _singleton = ResourceController._internal();
+  final User? user = FirebaseAuth.instance.currentUser;
 
   factory ResourceController() {
     return _singleton;
@@ -22,8 +25,11 @@ class ResourceController {
       }
       var metadataFuture = await URLMetadata.fetch(url);
       print(metadataFuture);
+      // TODO: Resource should still be allowed if metadata is non-existent
       if (metadataFuture != null) {
-        return Resource.fromMetadata(url, metadataFuture);
+        Resource resource = Resource.fromMetadata(url, metadataFuture);
+        FirebaseUtility(user: user!).addResourceDB(resource);
+        return resource;
       }
       return null;
     } on TimeoutException {
