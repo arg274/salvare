@@ -27,7 +27,9 @@ Map<String, dynamic> _$ResourceToJson(Resource instance) => <String, dynamic>{
       'imageUrl': instance.imageUrl,
       'description': instance.description,
       'categoryID': instance.categoryID,
-      'tags': instance.tags,
+      'tags': instance.tags != null
+          ? instance.tags!.map((e) => e.toJson()).toList()
+          : instance.tags,
       'dateCreated': instance.dateCreated.toIso8601String(),
       'dateUpdated': instance.dateUpdated.toIso8601String(),
     };

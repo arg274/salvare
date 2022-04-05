@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
+import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/url_metadata.dart';
 import 'package:salvare/utils.dart';
 import 'package:validators/validators.dart';
@@ -26,10 +28,18 @@ class ResourceController {
       print(metadataFuture);
       if (metadataFuture != null) {
         Resource resource = Resource.fromMetadata(url, metadataFuture);
+        resource.addTag(
+            Tag.unlaunched('testTag', 'study', Colors.amber[100]?.value ?? 1));
+        resource.addTag(Tag.unlaunched(
+            'anotherTestTag', 'ghumLagse', Colors.red[100]?.value ?? 2));
+        debugPrint(
+            "-------------------Resource to be added: ${resource.toJson()}");
+        debugPrint(
+            "-----------------Another test : ${Resource.fromJson(resource.toJson())}");
         FireStoreDB().addResource(resource);
         List<Resource>? lst =
             await FireStoreDB().searchResourceUsingURL('pasa');
-        print("resourceController got back search result: ${lst?.length}");
+        debugPrint("resourceController got back search result: ${lst?.length}");
         return resource;
       }
       return null;

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:salvare/model/resource.dart';
 
 part 'tag.g.dart';
 
@@ -7,7 +8,7 @@ class Tag {
   String id;
   String name;
   int color;
-  List<String>? resources;
+  List<Resource>? resources;
   DateTime dateCreated;
   DateTime dateUpdated;
 
@@ -28,8 +29,8 @@ class Tag {
             dateCreated: DateTime.now(),
             dateUpdated: DateTime.now());
 
-  void addResource(String resourceID) =>
-      resources != null ? resources!.add(resourceID) : resources = [resourceID];
+  void addResource(Resource resource) =>
+      resources != null ? resources!.add(resource) : resources = [resource];
 
   factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 
