@@ -38,6 +38,9 @@ class Resource {
 
   Map<String, dynamic> toJson() => _$ResourceToJson(this);
 
+  @override
+  String toString() => toJson().toString();
+
   factory Resource.fromMetadata(String url, Metadata metadata) {
     DateTime dateCreated = DateTime.now();
     DateTime dateUpdated = dateCreated;

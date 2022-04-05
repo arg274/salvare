@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/url_metadata.dart';
 import 'package:salvare/utils.dart';
@@ -23,7 +25,12 @@ class ResourceController {
       var metadataFuture = await URLMetadata.fetch(url);
       print(metadataFuture);
       if (metadataFuture != null) {
-        return Resource.fromMetadata(url, metadataFuture);
+        Resource resource = Resource.fromMetadata(url, metadataFuture);
+        FireStoreDB().addResource(resource);
+        List<Resource>? lst =
+            await FireStoreDB().searchResourceUsingURL('pasa');
+        print("resourceController got back search result: ${lst?.length}");
+        return resource;
       }
       return null;
     } on TimeoutException {

@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/database/firestore_db.dart';
+import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
 import 'package:salvare/view/screen/search.dart';
@@ -9,14 +11,16 @@ import 'package:salvare/view/screen/settings.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/screen/sign_in_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
-  runApp(const Salvare());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(Salvare());
 }
 
 class Salvare extends StatelessWidget {
-  const Salvare({Key? key}) : super(key: key);
-
+  final Future<FirebaseApp> _firebaseApp = Firebase.initializeApp();
+  Salvare({Key? key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,20 @@ class Salvare extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
-      home: SignInScreen(),
+      home: FutureBuilder(
+        future: _firebaseApp,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print("Error! ${snapshot.error.toString()}");
+            return Text("Something Went Wrong");
+          } else if (snapshot.hasData) {
+            print("Firebase Initialization successfull");
+            return SignInScreen();
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
@@ -75,8 +92,11 @@ class _DummyPageState extends State<DummyPage> {
   @override
   void initState() {
     _user = widget._user;
-
     super.initState();
+    // firebase_code:
+    model_user.User userToAdd =
+        model_user.User.unlaunched(_user.uid, _user.displayName ?? "naam nai");
+    FireStoreDB().addUser(userToAdd);
   }
 
   @override
