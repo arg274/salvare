@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salvare/database/database_paths.dart';
 import 'package:salvare/model/resource.dart';
@@ -91,7 +90,7 @@ class FireStoreDB {
           });
         });
       } catch (err) {
-        print("searchResourceUsingTagDB Bhitrer error. $err");
+        debugPrint("searchResourceUsingTagDB Bhitrer error. $err");
       }
       //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
       return ret;
@@ -116,30 +115,20 @@ class FireStoreDB {
       try {
         res = await resourceRef.where('tags', isNull: false).get();
         res = res.docs.map((e) => e.data()).toList();
-        (res as List).forEach((element) {
+        for (var element in (res as List)) {
           List<Tag>? taglist = (element as Resource).tags;
-          // taglist?.forEach((tagElem) {
-          //   _tags.forEach((_tag) {
-          //     if (tagElem.name == _tag.name) {
-          //       _tags.remove(_tag);
-          //     }
-          //   });
-          // });
-          // if (_tags.isEmpty) {
-          //   ret.add(element);
-          // }
           bool _match = true;
-          _tags.forEach((_tagElement) {
+          for (var _tagElement in _tags) {
             _match &= (taglist == null)
                 ? false
                 : taglist.any((tagElem) => _tagElement.name == tagElem.name);
-          });
+          }
           if (_match == true) {
             ret.add(element);
           }
-        });
+        }
       } catch (err) {
-        print("searchResourceUsingTagDB Bhitrer error. $err");
+        debugPrint("searchResourceUsingTagDB Bhitrer error. $err");
       }
       //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
       return ret;
