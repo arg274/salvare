@@ -100,4 +100,52 @@ class FireStoreDB {
     }
     return null;
   }
+
+  Future<List<Resource>?> searchResourceUsingTagListDB(List<Tag> _tags) async {
+    try {
+      final resourceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userResourceList)
+          .collection(DatabasePaths.userResourceListResource)
+          .withConverter<Resource>(
+            fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+            toFirestore: (_resource, _) => _resource.toJson(),
+          );
+      var res;
+      List<Resource> ret = [];
+      try {
+        res = await resourceRef.where('tags', isNull: false).get();
+        res = res.docs.map((e) => e.data()).toList();
+        (res as List).forEach((element) {
+          List<Tag>? taglist = (element as Resource).tags;
+          // taglist?.forEach((tagElem) {
+          //   _tags.forEach((_tag) {
+          //     if (tagElem.name == _tag.name) {
+          //       _tags.remove(_tag);
+          //     }
+          //   });
+          // });
+          // if (_tags.isEmpty) {
+          //   ret.add(element);
+          // }
+          bool _match = true;
+          _tags.forEach((_tagElement) {
+            _match &= (taglist == null)
+                ? false
+                : taglist.any((tagElem) => _tagElement.name == tagElem.name);
+          });
+          if (_match == true) {
+            ret.add(element);
+          }
+        });
+      } catch (err) {
+        print("searchResourceUsingTagDB Bhitrer error. $err");
+      }
+      //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
+      return ret;
+    } catch (e) {
+      debugPrint("Error in searchResourceUsingTagsDB {$e}");
+    }
+    return null;
+  }
 }

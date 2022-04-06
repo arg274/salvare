@@ -28,16 +28,23 @@ class ResourceController {
       print(metadataFuture);
       if (metadataFuture != null) {
         Resource resource = Resource.fromMetadata(url, metadataFuture);
+        resource.addTag(
+            Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1));
         resource.addTag(Tag.unlaunched(
-            'testTag', 'studyMoreeee', Colors.amber[100]?.value ?? 1));
-        resource.addTag(Tag.unlaunched(
-            'anotherTestTag', 'ghumLagse', Colors.red[100]?.value ?? 2));
+            'anotherTestTag', 'moiragelam', Colors.red[100]?.value ?? 2));
         FireStoreDB().addResourceDB(resource);
-        List<dynamic>? lst_tags = await FireStoreDB().searchResourceUsingTagDB(
-            Tag.unlaunched(
-                'testTag', 'studyMoreeee', Colors.amber[100]?.value ?? 1));
-        debugPrint(
-            "resourceController got back search result: ${lst_tags?.length}");
+        List<dynamic>? lst_tags =
+            await FireStoreDB().searchResourceUsingTagListDB([
+          Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1),
+          Tag.unlaunched(
+              'anotherTestTag', 'moiragelam', Colors.red[100]?.value ?? 2)
+        ]);
+        debugPrint("resourceController got back search result: $lst_tags");
+        List<dynamic>? lst_tags2 =
+            await FireStoreDB().searchResourceUsingTagListDB([
+          Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1),
+        ]);
+        debugPrint("resourceController got back search result: $lst_tags2");
         return resource;
       }
       return null;
