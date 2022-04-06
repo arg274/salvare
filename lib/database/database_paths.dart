@@ -4,4 +4,5 @@ class DatabasePaths {
   static const String userList = "userList";
   static const String categoryID = "categoryID";
   static const String userResourceListResource = "resource";
+  static const String userResourceListResourceTags = "tags";
 }

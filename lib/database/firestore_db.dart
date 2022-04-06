@@ -4,10 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salvare/database/database_paths.dart';
 import 'package:salvare/model/resource.dart';
+import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/user.dart' as model;
 
 class FireStoreDB {
-  void addUser(model.User user) {
+  void addUserDB(model.User user) {
     try {
       final userRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -26,7 +27,7 @@ class FireStoreDB {
     }
   }
 
-  Future<dynamic>? searchResourceUsingURL(String categoryID) async {
+  Future<List<Resource>?>? searchResourceUsingURLDB(String categoryID) async {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -42,12 +43,12 @@ class FireStoreDB {
       //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
       return res.docs.map((e) => e.data()).toList();
     } catch (e) {
-      debugPrint("Error in addUser {$e}");
+      debugPrint("Error in searchResourceUsingURLDB {$e}");
     }
     return null;
   }
 
-  void addResource(Resource resource) {
+  void addResourceDB(Resource resource) {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -64,5 +65,39 @@ class FireStoreDB {
     } catch (e) {
       debugPrint("Error in add resource {$e}");
     }
+  }
+
+  Future<List<Resource>?> searchResourceUsingTagDB(Tag _tag) async {
+    try {
+      final resourceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userResourceList)
+          .collection(DatabasePaths.userResourceListResource)
+          .withConverter<Resource>(
+            fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+            toFirestore: (_resource, _) => _resource.toJson(),
+          );
+      var res;
+      List<Resource> ret = [];
+      try {
+        res = await resourceRef.where('tags', isNull: false).get();
+        res = res.docs.map((e) => e.data()).toList();
+        (res as List).forEach((element) {
+          List<Tag>? taglist = (element as Resource).tags;
+          taglist?.forEach((tagElem) {
+            if (tagElem.name == _tag.name) {
+              ret.add(element);
+            }
+          });
+        });
+      } catch (err) {
+        print("searchResourceUsingTagDB Bhitrer error. $err");
+      }
+      //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
+      return ret;
+    } catch (e) {
+      debugPrint("Error in searchResourceUsingTagsDB {$e}");
+    }
+    return null;
   }
 }

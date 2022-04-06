@@ -94,9 +94,8 @@ class _DummyPageState extends State<DummyPage> {
     _user = widget._user;
     super.initState();
     // firebase_code:
-    model_user.User userToAdd =
-        model_user.User.unlaunched(_user.uid, _user.displayName ?? "naam nai");
-    FireStoreDB().addUser(userToAdd);
+    model_user.User userToAdd = model_user.User.unlaunched(
+        _user.uid, _user.displayName ?? "Unknown Name");
   }
 
   @override

@@ -28,18 +28,16 @@ class ResourceController {
       print(metadataFuture);
       if (metadataFuture != null) {
         Resource resource = Resource.fromMetadata(url, metadataFuture);
-        resource.addTag(
-            Tag.unlaunched('testTag', 'study', Colors.amber[100]?.value ?? 1));
+        resource.addTag(Tag.unlaunched(
+            'testTag', 'studyMoreeee', Colors.amber[100]?.value ?? 1));
         resource.addTag(Tag.unlaunched(
             'anotherTestTag', 'ghumLagse', Colors.red[100]?.value ?? 2));
+        FireStoreDB().addResourceDB(resource);
+        List<dynamic>? lst_tags = await FireStoreDB().searchResourceUsingTagDB(
+            Tag.unlaunched(
+                'testTag', 'studyMoreeee', Colors.amber[100]?.value ?? 1));
         debugPrint(
-            "-------------------Resource to be added: ${resource.toJson()}");
-        debugPrint(
-            "-----------------Another test : ${Resource.fromJson(resource.toJson())}");
-        FireStoreDB().addResource(resource);
-        List<Resource>? lst =
-            await FireStoreDB().searchResourceUsingURL('pasa');
-        debugPrint("resourceController got back search result: ${lst?.length}");
+            "resourceController got back search result: ${lst_tags?.length}");
         return resource;
       }
       return null;
