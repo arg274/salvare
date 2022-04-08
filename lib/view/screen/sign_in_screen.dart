@@ -4,6 +4,8 @@ import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/component/google_sign_in_button.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({Key? key}) : super(key: key);
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
@@ -36,15 +38,15 @@ class _SignInScreenState extends State<SignInScreen> {
                         height: 160,
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Text(
+                    const SizedBox(height: 20),
+                    const Text(
                       'Salvare',
                       style: TextStyle(
                         color: CustomColors.salvareGreen,
                         fontSize: 40,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Authentication',
                       style: TextStyle(
                         color: CustomColors.firebaseOrange,
@@ -58,11 +60,11 @@ class _SignInScreenState extends State<SignInScreen> {
                 future: Authentication.initializeFirebase(context: context),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Error initializing Firebase');
+                    return const Text('Error initializing Firebase');
                   } else if (snapshot.connectionState == ConnectionState.done) {
-                    return GoogleSignInButton();
+                    return const GoogleSignInButton();
                   }
-                  return CircularProgressIndicator(
+                  return const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
                       CustomColors.firebaseOrange,
                     ),

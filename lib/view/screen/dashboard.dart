@@ -27,12 +27,6 @@ class _DashboardState extends State<Dashboard> {
           DateTime.now(),
           null));
 
-  _addResource(Resource resource) {
-    setState(() {
-      resources.add(resource);
-    });
-  }
-
   Future<void> showAddLinkDialogue(BuildContext context) async {
     return await showDialog(
         context: context,
@@ -43,9 +37,7 @@ class _DashboardState extends State<Dashboard> {
               actions: <Widget>[
                 TextButton(
                     onPressed: () => {
-                          resourceController
-                              .addResource(_teController.text)
-                              .then((resource) => {_addResource(resource!)}),
+                          resourceController.addResource(_teController.text),
                           Navigator.of(context).pop()
                         },
                     child: Text(

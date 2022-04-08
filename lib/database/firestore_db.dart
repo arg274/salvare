@@ -8,6 +8,7 @@ import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/user.dart' as model;
 
 class FireStoreDB {
+  // TODO: Find place to call addUser from
   void addUserDB(model.User user) {
     try {
       final userRef = FirebaseFirestore.instance
@@ -148,19 +149,20 @@ class FireStoreDB {
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),
           );
+      // ignore: prefer_typing_uninitialized_variables
       var res;
       List<Resource> ret = [];
       try {
         res = await resourceRef.where('tags', isNull: false).get();
         res = res.docs.map((e) => e.data()).toList();
-        (res as List).forEach((element) {
+        for (var element in (res as List)) {
           List<Tag>? taglist = (element as Resource).tags;
           taglist?.forEach((tagElem) {
             if (tagElem.name == _tag.name) {
               ret.add(element);
             }
           });
-        });
+        }
       } catch (err) {
         debugPrint("searchResourceUsingTagDB Bhitrer error. $err");
       }

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:salvare/controller/tag_category_controller.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
@@ -18,44 +17,25 @@ class ResourceController {
 
   ResourceController._internal();
 
-  Future<Resource?> addResource(String url) async {
+  void addResource(String url) async {
     try {
       if (!url.startsWith('http')) {
         url = 'http://' + url;
       }
       var metadataFuture = await URLMetadata.fetch(url);
-      print(metadataFuture);
+      debugPrint("MetadataFuture: $metadataFuture");
       if (metadataFuture != null) {
         Resource resource = Resource.fromMetadata(url, metadataFuture);
-        resource.addTag(
-            Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1));
         resource.addTag(Tag.unlaunched(
-            'anotherTestTag', 'moiragelam', Colors.red[100]?.value ?? 2));
+            'testTag2', 'morbo2', Colors.amber[100]?.value ?? 1));
+        resource.addTag(Tag.unlaunched(
+            'anotherTestTag2', 'moiragelam2', Colors.red[100]?.value ?? 2));
         FireStoreDB().addResourceDB(resource);
-        List<dynamic>? lst_tags =
-            await FireStoreDB().searchResourceUsingTagListDB([
-          Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1),
-          Tag.unlaunched(
-              'anotherTestTag', 'moiragelam', Colors.red[100]?.value ?? 2)
-        ]);
-        debugPrint("resourceController got back search result: $lst_tags");
-        List<dynamic>? lst_tags2 =
-            await FireStoreDB().searchResourceUsingTagListDB([
-          Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1),
-        ]);
-        debugPrint("resourceController got back search result: $lst_tags2");
-        TagCategoryController.addCategory("study2");
-        TagCategoryController.addTag(Tag.unlaunched(
-            'anotherTestTag', 'moiragelam', Colors.red[100]?.value ?? 2));
-        TagCategoryController.addTag(
-            Tag.unlaunched('tag', 'molam2', Colors.blue[100]?.value ?? 2));
-        return resource;
       }
-      return null;
     } on TimeoutException {
       // TODO: SHOW TOAST
     } on Error catch (e) {
-      print(e);
+      debugPrint("Error: $e");
       // TODO: SHOW TOAST
     }
   }

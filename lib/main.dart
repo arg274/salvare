@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:salvare/controller/authentication.dart';
-import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
@@ -33,13 +32,13 @@ class Salvare extends StatelessWidget {
         future: _firebaseApp,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            print("Error! ${snapshot.error.toString()}");
-            return Text("Something Went Wrong");
+            debugPrint("Error! ${snapshot.error.toString()}");
+            return const Text("Something Went Wrong");
           } else if (snapshot.hasData) {
-            print("Firebase Initialization successfull");
-            return SignInScreen();
+            debugPrint("Firebase Initialization successfull");
+            return const SignInScreen();
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -61,11 +60,12 @@ class DummyPage extends StatefulWidget {
 
 class _DummyPageState extends State<DummyPage> {
   late User _user;
-  bool _isSigningOut = false;
+  bool _isSigningOut = false; // for later
 
   Route _routeToSignInScreen() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => SignInScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const SignInScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(-1.0, 0.0);
         var end = Offset.zero;

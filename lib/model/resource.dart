@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:salvare/model/tag.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
 import 'package:validators/validators.dart';
@@ -64,18 +62,5 @@ class Resource {
         dateCreated,
         dateUpdated,
         imageURL);
-  }
-
-  void main(List<String> args) {
-    Resource resource = Resource.unlaunched('id', 'title', 'url', 'categoryID');
-    resource.addTag(
-        Tag.unlaunched('testTag', 'study', Colors.amber[100]?.value ?? 1));
-    resource.addTag(Tag.unlaunched(
-        'anotherTestTag', 'ghumLagse', Colors.red[100]?.value ?? 2));
-    try {
-      print(resource.toJson());
-    } catch (e) {
-      print("object");
-    }
   }
 }

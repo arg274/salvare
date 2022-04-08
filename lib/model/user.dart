@@ -40,26 +40,3 @@ class User {
     return toJson().toString();
   }
 }
-
-void main() {
-  try {
-    User user1 = User.unlaunched('1', 'nono');
-    print(user1);
-    User user3 = User.fromJson(user1.toJson());
-    print(DateTime.parse(user3.dateCreated.toString()).year);
-    Map<String, dynamic> userMap2 = user1.toJson();
-    print('Howdy1, ${userMap2['buckets']}');
-    user1.addBucket('addedBucket1');
-    user1.addBucket('addedBucket2');
-    print('Hello $user1');
-    Map<String, dynamic> json = user1.toJson();
-    print('json = $json');
-    User user2 = User.fromJson(json);
-    print('user2: $user2');
-    //print(DateTime.parse(user2.dateCreated.toString()).year);
-    Map<String, dynamic> userMap = user1.toJson();
-    print('Howdy2, ${userMap['buckets']}');
-  } catch (e) {
-    print(e);
-  }
-}

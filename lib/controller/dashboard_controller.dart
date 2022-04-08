@@ -1,13 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:salvare/controller/resource_controller.dart';
-import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/model/resource.dart';
-import 'package:salvare/theme/constants.dart';
-import 'package:salvare/utils.dart';
 import 'package:salvare/database/database_paths.dart';
 
 class DashboardController {
@@ -25,11 +20,11 @@ class DashboardController {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          print("Error! ${snapshot.error.toString()}");
+          debugPrint("Error! ${snapshot.error.toString()}");
           return const Text("Something Went Wrong");
         } else if (snapshot.hasData) {
           try {
-            print("Firebase resource stream successfull");
+            debugPrint("Firebase resource stream successfull");
             var resources2 = snapshot.data!.docs.map((e) => e.data()).toList();
             return ListView.builder(
                 itemCount: resources2.length + 1,

@@ -3,7 +3,7 @@ import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/tag.dart';
 
 class TagCategoryController {
-  static void addTag(Tag tag) async {
+  void addTag(Tag tag) async {
     try {
       List<Tag>? currentTags = await FireStoreDB().fetchTagsDB();
       bool doesExist = false;
@@ -14,7 +14,7 @@ class TagCategoryController {
       });
       if (doesExist == true) {
         debugPrint("Tag already exists in the database");
-        // TODO: ADD tag already exists action
+        // TODO: ADD tag already exists TOAST
       } else {
         FireStoreDB().addTagDB(tag);
       }
@@ -23,7 +23,7 @@ class TagCategoryController {
     }
   }
 
-  static void addCategory(String category) async {
+  void addCategory(String category) async {
     try {
       List<String>? currentTags = await FireStoreDB().fetchCategoriesDB();
       bool doesExist = false;
@@ -34,7 +34,7 @@ class TagCategoryController {
       });
       if (doesExist == true) {
         debugPrint("Category already exists in the database");
-        // TODO: ADD tag already exists action
+        // TODO: ADD category already exists TOAST
       } else {
         FireStoreDB().addCategoryDB(category);
       }
