@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/url_metadata.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,9 +23,13 @@ class ResourceController {
     var metadataFuture = await URLMetadata.fetch(url);
     print(metadataFuture);
     if (metadataFuture != null) {
-      return Resource.fromMetadata(url, metadataFuture);
+      Resource resource = Resource.fromMetadata(url, metadataFuture);
+      FireStoreDB().addResourceDB(resource);
+      return resource;
     }
-    return Resource.fromUnreachableURL(url);
+    Resource unreachableResource = Resource.fromUnreachableURL(url);
+    FireStoreDB().addResourceDB(unreachableResource);
+    return unreachableResource;
   }
 
   void copyResourceURL(Resource resource) {

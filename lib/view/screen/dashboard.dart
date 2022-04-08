@@ -4,8 +4,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:salvare/controller/dashboard_controller.dart';
 import 'package:salvare/controller/resource_controller.dart';
-import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/theme/constants.dart';
 
@@ -307,26 +307,8 @@ class _DashboardState extends State<Dashboard> {
         ),
         body: SafeArea(
           child: Padding(
-            padding: globalEdgeInsets,
-            child: ListView.builder(
-                itemCount: resources.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(height: 100.0),
-                          Text(
-                            "Home",
-                            style: Theme.of(context).textTheme.headline1,
-                          ),
-                          const SizedBox(height: 40.0),
-                        ]);
-                  }
-
-                  return ResourceCard(resource: resources[index - 1]);
-                }),
-          ),
+              padding: globalEdgeInsets,
+              child: DashboardController().getResourceStreamBuilder()),
         ),
       );
 }

@@ -1,18 +1,25 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/model/user.dart' as model_user;
+import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
 import 'package:salvare/view/screen/search.dart';
 import 'package:salvare/view/screen/settings.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
+import 'package:salvare/view/screen/sign_in_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
-  runApp(const Salvare());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(Salvare());
 }
 
 class Salvare extends StatelessWidget {
-  const Salvare({Key? key}) : super(key: key);
-
+  final Future<FirebaseApp> _firebaseApp = Firebase.initializeApp();
+  Salvare({Key? key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -21,20 +28,60 @@ class Salvare extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
-      home: const DummyPage(),
+      home: FutureBuilder(
+        future: _firebaseApp,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            debugPrint("Error! ${snapshot.error.toString()}");
+            return const Text("Something Went Wrong");
+          } else if (snapshot.hasData) {
+            debugPrint("Firebase Initialization successfull");
+            return const SignInScreen();
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
 
 // Dummy page
 class DummyPage extends StatefulWidget {
-  const DummyPage({Key? key}) : super(key: key);
+  const DummyPage({Key? key, required User user})
+      : _user = user,
+        super(key: key);
+
+  final User _user;
 
   @override
   State<DummyPage> createState() => _DummyPageState();
 }
 
 class _DummyPageState extends State<DummyPage> {
+  late User _user;
+  bool _isSigningOut = false; // for later
+
+  Route _routeToSignInScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const SignInScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   int screenIndex = 0;
   final screens = [
     const Dashboard(),
@@ -43,8 +90,33 @@ class _DummyPageState extends State<DummyPage> {
   ];
 
   @override
+  void initState() {
+    _user = widget._user;
+    super.initState();
+    // firebase_code:
+    model_user.User userToAdd = model_user.User.unlaunched(
+        _user.uid, _user.displayName ?? "Unknown Name");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+        floatingActionButton: FloatingActionButton(
+          heroTag: "btn1",
+          child: const Icon(FeatherIcons.logOut),
+          backgroundColor: CustomColors.salvareDarkGreen,
+          onPressed: () async {
+            setState(() {
+              _isSigningOut = true;
+            });
+            await Authentication.signOut(context: context);
+            setState(() {
+              _isSigningOut = false;
+            });
+            Navigator.of(context).pushReplacement(_routeToSignInScreen());
+          },
+        ),
         body: IndexedStack(
           index: screenIndex,
           children: screens,
