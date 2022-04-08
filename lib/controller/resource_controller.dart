@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:salvare/controller/tag_category_controller.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/url_metadata.dart';
-import 'package:salvare/utils.dart';
 import 'package:validators/validators.dart';
 
 class ResourceController {
@@ -45,6 +44,11 @@ class ResourceController {
           Tag.unlaunched('testTag', 'morbo', Colors.amber[100]?.value ?? 1),
         ]);
         debugPrint("resourceController got back search result: $lst_tags2");
+        TagCategoryController.addCategory("study2");
+        TagCategoryController.addTag(Tag.unlaunched(
+            'anotherTestTag', 'moiragelam', Colors.red[100]?.value ?? 2));
+        TagCategoryController.addTag(
+            Tag.unlaunched('tag', 'molam2', Colors.blue[100]?.value ?? 2));
         return resource;
       }
       return null;

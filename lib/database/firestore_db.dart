@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salvare/database/database_paths.dart';
@@ -64,6 +65,77 @@ class FireStoreDB {
     } catch (e) {
       debugPrint("Error in add resource {$e}");
     }
+  }
+
+  void addCategoryDB(String category) {
+    try {
+      final categoryRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userCategoryList);
+      categoryRef
+          .update({
+            DatabasePaths.userCategoryListCategory:
+                FieldValue.arrayUnion([category])
+          })
+          .then((value) => debugPrint("Updated category! {$category}"))
+          .catchError((err) => debugPrint("Error in add category {$err}"));
+    } catch (e) {
+      debugPrint("Error in add category {$e}");
+    }
+  }
+
+  Future<List<String>?> fetchCategoriesDB() async {
+    try {
+      final categoryRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userCategoryList);
+
+      var res = await categoryRef.get();
+      if (res.exists) {
+        var ret = res.data()![DatabasePaths.userCategoryListCategory] as List;
+        debugPrint("Category list size: ${ret.length}");
+        ret = ret.map((e) => e.toString()).toList();
+        return ret as List<String>;
+      }
+    } catch (e) {
+      debugPrint("Error in fetch category db {$e}");
+    }
+    return null;
+  }
+
+  void addTagDB(Tag tag) async {
+    try {
+      final tagRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc("tagArray");
+      tagRef
+          .update({
+            "tags": FieldValue.arrayUnion([tag.toJson()])
+          })
+          .then((value) => debugPrint("Updated tag! {$tag}"))
+          .catchError((err) => debugPrint("Error in add tag {$err}"));
+    } catch (e) {
+      debugPrint("Error in add tag {$e}");
+    }
+  }
+
+  Future<List<Tag>?> fetchTagsDB() async {
+    try {
+      final tagRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userTagList);
+
+      var res = await tagRef.get();
+      if (res.exists) {
+        var ret = res.data()![DatabasePaths.userTagListTag] as List;
+        debugPrint("Tag list size: ${ret.length}");
+        ret = ret.map((e) => Tag.fromJson(e)).toList();
+        return ret as List<Tag>;
+      }
+    } catch (e) {
+      debugPrint("Error in add tag db {$e}");
+    }
+    return null;
   }
 
   Future<List<Resource>?> searchResourceUsingTagDB(Tag _tag) async {
