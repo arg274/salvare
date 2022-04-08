@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/url_metadata.dart';
-import 'package:salvare/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
 
 class ResourceController {
@@ -16,22 +16,15 @@ class ResourceController {
   ResourceController._internal();
 
   Future<Resource?> addResource(String url) async {
-    try {
-      if (!url.startsWith('http')) {
-        url = 'http://' + url;
-      }
-      var metadataFuture = await URLMetadata.fetch(url);
-      print(metadataFuture);
-      if (metadataFuture != null) {
-        return Resource.fromMetadata(url, metadataFuture);
-      }
-      return null;
-    } on TimeoutException {
-      // TODO: SHOW TOAST
-    } on Error catch (e) {
-      print(e);
-      // TODO: SHOW TOAST
+    if (!url.startsWith('http')) {
+      url = 'http://' + url;
     }
+    var metadataFuture = await URLMetadata.fetch(url);
+    print(metadataFuture);
+    if (metadataFuture != null) {
+      return Resource.fromMetadata(url, metadataFuture);
+    }
+    return Resource.fromUnreachableURL(url);
   }
 
   void copyResourceURL(Resource resource) {
@@ -42,9 +35,29 @@ class ResourceController {
     if (url == null || url.isEmpty) {
       return 'Please enter a URL';
     } else if (!isURL(url)) {
-      return 'Please enter a valid URL.';
+      return 'Please enter a valid URL';
     } else {
       return null;
     }
+  }
+
+  String? validateCategory(String? category) {
+    if (category == null || category.isEmpty) {
+      return 'Please enter a category';
+    } else {
+      return null;
+    }
+  }
+
+  String? validateTag(String? tags) {
+    if (tags == null || tags.isEmpty) {
+      return 'Please enter a tag';
+    } else {
+      return null;
+    }
+  }
+
+  void launchURL(url) async {
+    if (!await launch(url)) throw 'Could not launch $url';
   }
 }

@@ -43,6 +43,10 @@ dependencies:
   crypto: ^3.0.1
   validators: ^3.0.0
   cached_network_image: ^3.2.0
+  url_launcher: ^6.0.20
+  flutter_svg: ^1.0.3
+  dropdown_search: ^2.0.1
+  flutter_speed_dial: ^5.1.0
 
 dev_dependencies:
   flutter_test:

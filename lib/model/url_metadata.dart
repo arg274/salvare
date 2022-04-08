@@ -10,6 +10,10 @@ class URLMetadata {
   URLMetadata._internal();
 
   static Future<Metadata?> fetch(url) async {
-    return await MetadataFetch.extract(url);
+    try {
+      return await MetadataFetch.extract(url);
+    } catch (e) {
+      return null;
+    }
   }
 }

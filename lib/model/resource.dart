@@ -20,6 +20,19 @@ class Resource {
   Resource(this.id, this.title, this.url, this.description, this.dateCreated,
       this.dateUpdated, this.imageUrl);
 
+  factory Resource.fromUnreachableURL(String url) {
+    DateTime dateCreated = DateTime.now();
+    DateTime dateUpdated = dateCreated;
+    return Resource(
+        md5.convert(utf8.encode(url + dateCreated.toString())).toString(),
+        'Untitled',
+        url,
+        'No Description',
+        dateCreated,
+        dateUpdated,
+        null);
+  }
+
   factory Resource.fromMetadata(String url, Metadata metadata) {
     DateTime dateCreated = DateTime.now();
     DateTime dateUpdated = dateCreated;

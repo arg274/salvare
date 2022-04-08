@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
+var primarySwatch = Colors.teal;
+var primaryColor = Colors.teal[200]!;
+var primaryColorLight = Colors.teal[100]!;
 
 TextTheme textTheme = const TextTheme(
   headline1: TextStyle(fontSize: 48.0, fontWeight: FontWeight.w900),
@@ -9,7 +12,7 @@ TextTheme textTheme = const TextTheme(
 ).fixFontFamily();
 
 extension CustomStyles on TextTheme {
-  TextStyle get navlabel {
+  TextStyle get navLabel {
     return TextStyle(
       fontSize: 14.0,
       color: lightTheme.primaryColor,
@@ -17,11 +20,19 @@ extension CustomStyles on TextTheme {
     );
   }
 
-  TextStyle get domaintext {
+  TextStyle get domainText {
     return const TextStyle(
       fontSize: 12.0,
       fontWeight: FontWeight.w200,
     );
+  }
+
+  TextStyle get formLabel {
+    return navLabel;
+  }
+
+  TextStyle get buttonText {
+    return navLabel;
   }
 
   TextTheme fixFontFamily() {
@@ -36,9 +47,9 @@ extension FontFix on TextStyle {
 }
 
 ThemeData lightTheme = ThemeData(
-    primarySwatch: Colors.teal,
-    primaryColor: Colors.teal[200]!,
-    primaryColorLight: Colors.teal[100]!,
+    primarySwatch: primarySwatch,
+    primaryColor: primaryColor,
+    primaryColorLight: primaryColorLight,
     scaffoldBackgroundColor: Colors.white,
     brightness: Brightness.light,
     disabledColor: Colors.grey[600],
@@ -49,10 +60,19 @@ ThemeData lightTheme = ThemeData(
     ));
 
 ThemeData darkTheme = lightTheme.copyWith(
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey[200]!)),
+      errorBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
+      focusedErrorBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
+    ),
     scaffoldBackgroundColor: Colors.black,
     brightness: Brightness.dark,
     disabledColor: Colors.grey[200],
     shadowColor: Colors.grey[600],
+    canvasColor: Colors.black,
     textTheme: textTheme.apply(
       bodyColor: Colors.white,
       displayColor: Colors.white,

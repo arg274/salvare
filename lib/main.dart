@@ -54,6 +54,7 @@ class _DummyPageState extends State<DummyPage> {
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
             child: GNav(
               rippleColor: Theme.of(context).primaryColorLight,
+              haptic: true,
               gap: 8,
               activeColor: Theme.of(context).primaryColor,
               iconSize: 24,
@@ -62,7 +63,7 @@ class _DummyPageState extends State<DummyPage> {
               tabActiveBorder:
                   Border.all(color: Theme.of(context).primaryColor, width: 1),
               color: Theme.of(context).primaryColor,
-              textStyle: Theme.of(context).textTheme.navlabel.fixFontFamily(),
+              textStyle: Theme.of(context).textTheme.navLabel.fixFontFamily(),
               // ignore: prefer_const_literals_to_create_immutables
               tabs: [
                 const GButton(
