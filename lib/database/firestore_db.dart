@@ -74,10 +74,10 @@ class FireStoreDB {
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc(DatabasePaths.userCategoryList);
       categoryRef
-          .update({
+          .set({
             DatabasePaths.userCategoryListCategory:
                 FieldValue.arrayUnion([category])
-          })
+          }, SetOptions(merge: true))
           .then((value) => debugPrint("Updated category! {$category}"))
           .catchError((err) => debugPrint("Error in add category {$err}"));
     } catch (e) {
@@ -110,9 +110,9 @@ class FireStoreDB {
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc("tagArray");
       tagRef
-          .update({
+          .set({
             "tags": FieldValue.arrayUnion([tag.toJson()])
-          })
+          }, SetOptions(merge: true))
           .then((value) => debugPrint("Updated tag! {$tag}"))
           .catchError((err) => debugPrint("Error in add tag {$err}"));
     } catch (e) {
