@@ -28,7 +28,7 @@ class FireStoreDB {
     }
   }
 
-  Future<List<Resource>?>? searchResourceUsingURLDB(String category) async {
+  Future<List<Resource>?>? searchResourceUsingTitleDB(String title) async {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -38,9 +38,7 @@ class FireStoreDB {
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),
           );
-      var res = await resourceRef
-          .where(DatabasePaths.category, isEqualTo: category)
-          .get();
+      var res = await resourceRef.where("title", isEqualTo: title).get();
       //debugPrint("Search disi $category.... paisi:${lst.first}");
       return res.docs.map((e) => e.data()).toList();
     } catch (e) {
