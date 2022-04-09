@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
+import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/url_metadata.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:validators/validators.dart';
@@ -16,7 +18,8 @@ class ResourceController {
 
   ResourceController._internal();
 
-  Future<Resource?> addResource(String url) async {
+  Future<Resource?> addResource(
+      String url, String category, List<Tag>? tags) async {
     if (!url.startsWith('http')) {
       url = 'http://' + url;
     }
@@ -27,7 +30,8 @@ class ResourceController {
       FireStoreDB().addResourceDB(resource);
       return resource;
     }
-    Resource unreachableResource = Resource.fromUnreachableURL(url);
+    Resource unreachableResource =
+        Resource.fromUnreachableURL(url, category, tags);
     FireStoreDB().addResourceDB(unreachableResource);
     return unreachableResource;
   }

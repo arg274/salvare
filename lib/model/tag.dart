@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:salvare/model/resource.dart';
 
@@ -21,13 +24,16 @@ class Tag {
       required this.dateUpdated});
 
   // Named constructor that forwards to the default one.
-  Tag.unlaunched(String id, String name, int color)
-      : this(
-            id: id,
-            name: name,
-            color: color,
-            dateCreated: DateTime.now(),
-            dateUpdated: DateTime.now());
+  factory Tag.unlaunched(String name, int color) {
+    DateTime dateCreated = DateTime.now();
+    DateTime dateUpdated = dateCreated;
+    return Tag(
+        id: md5.convert(utf8.encode(name + dateCreated.toString())).toString(),
+        name: name,
+        color: color,
+        dateCreated: dateCreated,
+        dateUpdated: dateUpdated);
+  }
 
   void addResource(Resource resource) =>
       resources != null ? resources!.add(resource) : resources = [resource];

@@ -6,7 +6,9 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:salvare/controller/dashboard_controller.dart';
 import 'package:salvare/controller/resource_controller.dart';
+import 'package:salvare/controller/tag_category_controller.dart';
 import 'package:salvare/model/resource.dart';
+import 'package:salvare/model/tag.dart';
 import 'package:salvare/theme/constants.dart';
 
 class Dashboard extends StatefulWidget {
@@ -18,6 +20,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final ResourceController resourceController = ResourceController();
+  final TagCategoryController tagCategoryController = TagCategoryController();
   List<Resource> resources = <Resource>[];
 
   _addResource(Resource resource) {
@@ -36,38 +39,43 @@ class _DashboardState extends State<Dashboard> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             actions: <Widget>[
               TextButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                        if (_formkey.currentState!.validate())
+                          {
+                            tagCategoryController.addCategory(_catTEC.text),
+                            Navigator.of(context).pop()
+                          }
+                      },
                   child: Text(
                     'ADD',
                     style:
                         Theme.of(context).textTheme.buttonText.fixFontFamily(),
                   ))
             ],
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Category',
-                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                ),
-                TextFormField(
-                  controller: _catTEC,
-                  onChanged: (url) => {
-                    if (_formkey.currentState!.validate())
-                      {
-                        // TODO: Implement category addition
-                      }
-                  },
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+            content: Form(
+              key: _formkey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Category',
+                    style:
+                        Theme.of(context).textTheme.formLabel.fixFontFamily(),
                   ),
-                  validator: (category) {
-                    return resourceController.validateCategory(category);
-                  },
-                ),
-              ],
+                  TextFormField(
+                    controller: _catTEC,
+                    onChanged: (category) => {},
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                    ),
+                    validator: (category) {
+                      return resourceController.validateCategory(category);
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         });
@@ -83,38 +91,44 @@ class _DashboardState extends State<Dashboard> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             actions: <Widget>[
               TextButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                        if (_formkey.currentState!.validate())
+                          {
+                            tagCategoryController.addTag(
+                                Tag.unlaunched(_tagTEC.text, 0xFFFFC107)),
+                            Navigator.of(context).pop()
+                          }
+                      },
                   child: Text(
                     'ADD',
                     style:
                         Theme.of(context).textTheme.buttonText.fixFontFamily(),
                   ))
             ],
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Tag',
-                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                ),
-                TextFormField(
-                  controller: _tagTEC,
-                  onChanged: (url) => {
-                    if (_formkey.currentState!.validate())
-                      {
-                        // TODO: Implement tag addition
-                      }
-                  },
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+            content: Form(
+              key: _formkey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Tag',
+                    style:
+                        Theme.of(context).textTheme.formLabel.fixFontFamily(),
                   ),
-                  validator: (tag) {
-                    return resourceController.validateTag(tag);
-                  },
-                ),
-              ],
+                  TextFormField(
+                    controller: _tagTEC,
+                    onChanged: (tag) => {},
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                    ),
+                    validator: (tag) {
+                      return resourceController.validateTag(tag);
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         });
@@ -179,12 +193,13 @@ class _DashboardState extends State<Dashboard> {
                               {
                                 // TODO: Fix race condition
                                 resourceController
-                                    .addResource(_urlTEC.text)
-                                    .then((resource) => {
-                                          _resource = resource,
-                                          _titleTEC.text = resource!.title,
-                                          _descTEC.text = resource.description,
-                                        }),
+                                    .addResource(_urlTEC.text, 'Default', []).then(
+                                        (resource) => {
+                                              _resource = resource,
+                                              _titleTEC.text = resource!.title,
+                                              _descTEC.text =
+                                                  resource.description,
+                                            }),
                               }
                           },
                           decoration: const InputDecoration(
@@ -233,21 +248,29 @@ class _DashboardState extends State<Dashboard> {
                               .formLabel
                               .fixFontFamily(),
                         ),
-                        DropdownSearch(
-                          mode: Mode.DIALOG,
-                          showSearchBox: true,
-                          showClearButton: true,
-                          popupBackgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          showSelectedItems: true,
-                          items: const [
-                            "Default",
-                            "Study",
-                            'Gamign',
-                          ],
-                          onChanged: print,
-                          selectedItem: "Default",
-                        ),
+                        FutureBuilder<List<String>?>(
+                            future: tagCategoryController.getCategories(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return DropdownSearch<String>(
+                                  mode: Mode.DIALOG,
+                                  showSearchBox: true,
+                                  showClearButton: true,
+                                  popupBackgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  showSelectedItems: true,
+                                  items: snapshot.data,
+                                  onChanged: print,
+                                  selectedItem: "Default",
+                                );
+                              } else if (snapshot.hasError) {
+                                // TODO: Error handling
+                                return Text('${snapshot.error}');
+                              } else {
+                                // TODO: Progress indicator
+                                return Text('Loading...');
+                              }
+                            }),
                         const SizedBox(height: 15.0),
                         Text(
                           'Tags',
@@ -256,20 +279,30 @@ class _DashboardState extends State<Dashboard> {
                               .formLabel
                               .fixFontFamily(),
                         ),
-                        DropdownSearch.multiSelection(
-                          mode: Mode.DIALOG,
-                          showSearchBox: true,
-                          showClearButton: true,
-                          popupBackgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          showSelectedItems: true,
-                          items: const [
-                            "among us",
-                            "hololive",
-                            'fortnite',
-                          ],
-                          onChanged: print,
-                        ),
+                        FutureBuilder<List<Tag>?>(
+                            future: tagCategoryController.getTags(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return DropdownSearch.multiSelection(
+                                  mode: Mode.DIALOG,
+                                  showSearchBox: true,
+                                  showClearButton: true,
+                                  popupBackgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  showSelectedItems: true,
+                                  items: [
+                                    for (var tag in snapshot.data!) tag.name
+                                  ],
+                                  onChanged: print,
+                                );
+                              } else if (snapshot.hasError) {
+                                // TODO: Error handling
+                                return Text('${snapshot.error}');
+                              } else {
+                                // TODO: Progress indicator
+                                return Text('Loading...');
+                              }
+                            }),
                       ],
                     )),
               ));

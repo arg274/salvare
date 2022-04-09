@@ -20,24 +20,24 @@ class Resource {
   }
 
   String description;
-  String categoryID;
+  String category;
   List<Tag>? tags;
   DateTime dateCreated;
   DateTime dateUpdated;
 
-  Resource(this.id, this.title, this.url, this.categoryID, this.tags,
+  Resource(this.id, this.title, this.url, this.category, this.tags,
       this.description, this.dateCreated, this.dateUpdated, this.imageUrl);
 
-  Resource.unlaunched(String id, String title, String url, String categoryID)
-      : this(id, title, url, categoryID, null, 'No description.',
-            DateTime.now(), DateTime.now(), null);
+  Resource.unlaunched(String id, String title, String url, String category)
+      : this(id, title, url, category, null, 'No description.', DateTime.now(),
+            DateTime.now(), null);
 
   void addTag(Tag _tag) {
     tags != null ? tags!.add(_tag) : tags = List<Tag>.from([_tag]);
   }
 
   void changeCategory(String _to) {
-    categoryID = _to;
+    category = _to;
   }
 
   factory Resource.fromJson(Map<String, dynamic> json) =>
@@ -48,13 +48,16 @@ class Resource {
   @override
   String toString() => toJson().toString();
 
-  factory Resource.fromUnreachableURL(String url) {
+  factory Resource.fromUnreachableURL(
+      String url, String category, List<Tag>? tags) {
     DateTime dateCreated = DateTime.now();
     DateTime dateUpdated = dateCreated;
     return Resource(
         md5.convert(utf8.encode(url + dateCreated.toString())).toString(),
         'Untitled',
         url,
+        category,
+        tags,
         'No Description',
         dateCreated,
         dateUpdated,

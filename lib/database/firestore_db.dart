@@ -28,7 +28,7 @@ class FireStoreDB {
     }
   }
 
-  Future<List<Resource>?>? searchResourceUsingURLDB(String categoryID) async {
+  Future<List<Resource>?>? searchResourceUsingURLDB(String category) async {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -39,9 +39,9 @@ class FireStoreDB {
             toFirestore: (_resource, _) => _resource.toJson(),
           );
       var res = await resourceRef
-          .where(DatabasePaths.categoryID, isEqualTo: categoryID)
+          .where(DatabasePaths.category, isEqualTo: category)
           .get();
-      //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
+      //debugPrint("Search disi $category.... paisi:${lst.first}");
       return res.docs.map((e) => e.data()).toList();
     } catch (e) {
       debugPrint("Error in searchResourceUsingURLDB {$e}");
@@ -166,7 +166,7 @@ class FireStoreDB {
       } catch (err) {
         debugPrint("searchResourceUsingTagDB Bhitrer error. $err");
       }
-      //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
+      //debugPrint("Search disi $category.... paisi:${lst.first}");
       return ret;
     } catch (e) {
       debugPrint("Error in searchResourceUsingTagsDB {$e}");
@@ -204,7 +204,7 @@ class FireStoreDB {
       } catch (err) {
         debugPrint("searchResourceUsingTagDB Bhitrer error. $err");
       }
-      //debugPrint("Search disi $categoryID.... paisi:${lst.first}");
+      //debugPrint("Search disi $category.... paisi:${lst.first}");
       return ret;
     } catch (e) {
       debugPrint("Error in searchResourceUsingTagsDB {$e}");
