@@ -38,7 +38,10 @@ class FireStoreDB {
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),
           );
-      var res = await resourceRef.where("title", isEqualTo: title).get();
+      var res = await resourceRef
+          .where('title', isGreaterThanOrEqualTo: title)
+          .where('title', isLessThan: title + 'z')
+          .get();
       //debugPrint("Search disi $category.... paisi:${lst.first}");
       return res.docs.map((e) => e.data()).toList();
     } catch (e) {
