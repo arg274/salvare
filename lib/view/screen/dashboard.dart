@@ -136,6 +136,9 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> showAddLinkDialogue(BuildContext context) async {
     final _formkey = GlobalKey<FormState>();
+    Map<String, Tag> tagMap;
+    List<Tag> selectedTags = <Tag>[];
+    String selectedCategory = 'Default';
     int timePassedMs = 1000;
     Timer inputChangeFreqTimer =
         Timer.periodic(const Duration(milliseconds: 100), (_) {
@@ -159,7 +162,10 @@ class _DashboardState extends State<Dashboard> {
                                 {
                                   _resource!.title = _titleTEC.text,
                                   _resource!.description = _descTEC.text,
+                                  _resource!.category = selectedCategory,
+                                  _resource!.tags = selectedTags,
                                   _addResource(_resource!),
+                                  resourceController.addResource(_resource!),
                                 },
                               Navigator.of(context).pop()
                             }
@@ -193,13 +199,13 @@ class _DashboardState extends State<Dashboard> {
                               {
                                 // TODO: Fix race condition
                                 resourceController
-                                    .addResource(_urlTEC.text, 'Default', []).then(
-                                        (resource) => {
-                                              _resource = resource,
-                                              _titleTEC.text = resource!.title,
-                                              _descTEC.text =
-                                                  resource.description,
-                                            }),
+                                    .refreshResource(_urlTEC.text,
+                                        selectedCategory, selectedTags)
+                                    .then((resource) => {
+                                          _resource = resource,
+                                          _titleTEC.text = resource!.title,
+                                          _descTEC.text = resource.description,
+                                        }),
                               }
                           },
                           decoration: const InputDecoration(
@@ -260,8 +266,9 @@ class _DashboardState extends State<Dashboard> {
                                       Theme.of(context).scaffoldBackgroundColor,
                                   showSelectedItems: true,
                                   items: snapshot.data,
-                                  onChanged: print,
-                                  selectedItem: "Default",
+                                  onChanged: (_selectedCategory) =>
+                                      {selectedCategory = _selectedCategory!},
+                                  selectedItem: 'Default',
                                 );
                               } else if (snapshot.hasError) {
                                 // TODO: Error handling
@@ -283,7 +290,7 @@ class _DashboardState extends State<Dashboard> {
                             future: tagCategoryController.getTags(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return DropdownSearch.multiSelection(
+                                return DropdownSearch<String>.multiSelection(
                                   mode: Mode.DIALOG,
                                   showSearchBox: true,
                                   showClearButton: true,
@@ -293,7 +300,16 @@ class _DashboardState extends State<Dashboard> {
                                   items: [
                                     for (var tag in snapshot.data!) tag.name
                                   ],
-                                  onChanged: print,
+                                  onChanged: (_selectedTags) => {
+                                    tagMap = {
+                                      for (var tag in snapshot.data!)
+                                        tag.name: tag
+                                    },
+                                    selectedTags = [
+                                      for (var tag in _selectedTags)
+                                        tagMap[tag]!
+                                    ]
+                                  },
                                 );
                               } else if (snapshot.hasError) {
                                 // TODO: Error handling

@@ -18,7 +18,7 @@ class ResourceController {
 
   ResourceController._internal();
 
-  Future<Resource?> addResource(
+  Future<Resource?> refreshResource(
       String url, String category, List<Tag>? tags) async {
     if (!url.startsWith('http')) {
       url = 'http://' + url;
@@ -27,13 +27,15 @@ class ResourceController {
     print(metadataFuture);
     if (metadataFuture != null) {
       Resource resource = Resource.fromMetadata(url, metadataFuture);
-      FireStoreDB().addResourceDB(resource);
       return resource;
     }
     Resource unreachableResource =
         Resource.fromUnreachableURL(url, category, tags);
-    FireStoreDB().addResourceDB(unreachableResource);
     return unreachableResource;
+  }
+
+  Future<void> addResource(Resource resource) async {
+    FireStoreDB().addResourceDB(resource);
   }
 
   void copyResourceURL(Resource resource) {
