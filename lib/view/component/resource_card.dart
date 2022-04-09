@@ -75,14 +75,29 @@ class ResourceCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            FadeInImage(
-              placeholder: MemoryImage(kTransparentImage),
-              image: fetchImage(resource.imageUrl),
-              fit: BoxFit.cover,
-              imageErrorBuilder: (context, error, stackTrace) {
-                return Image.asset('assets/no_img.jpg', fit: BoxFit.cover);
-              },
-            ),
+            Stack(children: [
+              FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                image: fetchImage(resource.imageUrl),
+                fit: BoxFit.cover,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Image.asset('assets/no_img.jpg', fit: BoxFit.cover);
+                },
+              ),
+              Positioned(
+                left: 10,
+                top: 10,
+                child: Container(
+                  padding: const EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  child: Text(resource.category,
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
+              ),
+            ]),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
