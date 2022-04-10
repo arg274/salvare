@@ -1,5 +1,9 @@
 class DatabasePaths {
   static const String userResourceList = "resourceList";
+  static const String userBucketList = "bucketList";
+  static const String userBucketListBucket = "bucket";
+  static const int userMaxBucket = 10;
+  static const int bucketMaxUser = 10;
   static const String categoryList = "categoryList";
   static const String userList = "userList";
   static const String category = "category";

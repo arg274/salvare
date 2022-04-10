@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salvare/database/database_paths.dart';
+import 'package:salvare/model/bucket.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/user.dart' as model;
@@ -66,6 +67,66 @@ class FireStoreDB {
           .catchError((err) => debugPrint("Error in User resource {$err}"));
     } catch (e) {
       debugPrint("Error in add resource {$e}");
+    }
+  }
+
+  void addBucketDB(Bucket bucket, String uid) {
+    // TODO: check if total buckets is less than 10 in controller then call this func
+    try {
+      final bucketRef = FirebaseFirestore.instance
+          .collection(uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucket.id)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      bucketRef
+          .set(bucket, SetOptions(merge: true))
+          .then(
+              (value) => debugPrint("Added bucket! {$bucket} to user: ${uid}"))
+          .catchError((err) => debugPrint("Error in User resource {$err}"));
+    } catch (e) {
+      debugPrint("Error in add bucket {$e}");
+    }
+  }
+
+  void addUserToBucketDB(Bucket bucket, String uid) async {
+    // TODO: check if total buckets is less than 10 in controller then call this func
+    try {
+      final bucketRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      // update users list in bucket
+      var res = await bucketRef.where("id", isEqualTo: bucket.id).get();
+      var ret = res.docs.first.data();
+      if (ret.users.contains(uid) == false) {
+        ret.users.add(uid);
+      }
+      addBucketDB(ret, FirebaseAuth.instance.currentUser!.uid);
+    } catch (e) {
+      debugPrint("Error in add user to bucket {$e}");
+    }
+  }
+
+  Future<List<Bucket>?> fetchUserBucketList() async {
+    try {
+      final bucketRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket);
+      var res = await bucketRef.get();
+      var ret = res.docs.map((e) => Bucket.fromJson(e.data())).toList();
+      return ret;
+    } catch (e) {
+      debugPrint("Error in fetch bucket {$e}");
+      return null;
     }
   }
 
