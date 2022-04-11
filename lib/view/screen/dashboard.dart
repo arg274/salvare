@@ -354,10 +354,6 @@ class _DashboardState extends State<Dashboard> {
             ),
           ],
         ),
-        body: SafeArea(
-          child: Padding(
-              padding: globalEdgeInsets,
-              child: DashboardController().getResourceStreamBuilder()),
-        ),
+        body: DashboardController().getResourceStreamBuilder(),
       );
 }

@@ -12,7 +12,7 @@ class DashboardController {
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc(DatabasePaths.userResourceList)
           .collection(DatabasePaths.userResourceListResource)
-          .orderBy('dateCreated')
+          .orderBy('dateCreated', descending: true)
           .withConverter<Resource>(
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),

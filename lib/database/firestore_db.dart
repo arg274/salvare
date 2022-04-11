@@ -282,6 +282,28 @@ class FireStoreDB {
     return null;
   }
 
+  Future<List<Resource>> searchResourceUsingCategoryDB(String category) async {
+    try {
+      final resourceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userResourceList)
+          .collection(DatabasePaths.userResourceListResource)
+          .withConverter<Resource>(
+            fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+            toFirestore: (_resource, _) => _resource.toJson(),
+          );
+      var res = await resourceRef
+          .where('category', isGreaterThanOrEqualTo: category)
+          .where('category', isLessThan: category + 'z')
+          .get();
+      //debugPrint("Search disi $category.... paisi:${lst.first}");
+      return res.docs.map((e) => e.data()).toList();
+    } catch (e) {
+      debugPrint("Error in searchResourceUsingCategoryDB {$e}");
+    }
+    return [];
+  }
+
   void addTagDB(Tag tag) async {
     try {
       final tagRef = FirebaseFirestore.instance
@@ -352,7 +374,7 @@ class FireStoreDB {
     return null;
   }
 
-  Future<List<Resource>?> searchResourceUsingTagListDB(List<Tag> _tags) async {
+  Future<List<Resource>> searchResourceUsingTagListDB(List<Tag> _tags) async {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -387,6 +409,6 @@ class FireStoreDB {
     } catch (e) {
       debugPrint("Error in searchResourceUsingTagsDB {$e}");
     }
-    return null;
+    return [];
   }
 }

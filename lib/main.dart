@@ -117,9 +117,14 @@ class _DummyPageState extends State<DummyPage> {
             Navigator.of(context).pushReplacement(_routeToSignInScreen());
           },
         ),
-        body: IndexedStack(
-          index: screenIndex,
-          children: screens,
+        body: SafeArea(
+          child: Padding(
+            padding: globalEdgeInsets,
+            child: IndexedStack(
+              index: screenIndex,
+              children: screens,
+            ),
+          ),
         ),
         bottomNavigationBar: SafeArea(
           child: Padding(
