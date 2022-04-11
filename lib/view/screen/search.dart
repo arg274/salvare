@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:salvare/database/firestore_db.dart';
+import 'package:salvare/model/bucket.dart';
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/controller/bucket_controller.dart';
 
@@ -15,8 +17,10 @@ class Search extends StatelessWidget {
           child: const Icon(FeatherIcons.award),
           backgroundColor: CustomColors.salvareDarkGreen,
           onPressed: () {
-            BucketController().addBucketDummy();
-            BucketController().addUserToBucketDummy();
+            //BucketController().addBucketDummy();
+            //BucketController().addUserToBucketDummy();
+            //BucketController().addResourceToBucketDummy();
+            BucketController().fetchBucketResourcesDummy();
           },
         ),
       );

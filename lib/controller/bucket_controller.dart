@@ -5,12 +5,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:salvare/database/database_paths.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/bucket.dart';
+import 'package:salvare/model/resource.dart';
 import 'package:flutter/foundation.dart';
 import 'package:crypto/crypto.dart';
 
 class BucketController {
   int totalBuckets = 0;
   void addBucket(Bucket bucket) {}
+
+  void addResourceToBucket(Bucket bucket, Resource resource) {}
+
+  void addResourceToBucketDummy() {
+    try {
+      Resource resource = Resource.unlaunched('dummyResourceID2',
+          'dummyResourceName2', 'www.goal.com', 'dummyResourceCategory2');
+      String bucketId = "1dc29fd7e97e4e8cdd1117f7b8e28f22";
+      FireStoreDB().addResourceToBucketDB(bucketId, resource);
+    } catch (err) {
+      debugPrint("error in add resource to bucket dummy {$err}");
+    }
+  }
 
   void addBucketDummy() async {
     try {
@@ -64,6 +78,21 @@ class BucketController {
       });
     } catch (err) {
       debugPrint("error in add user to bucket dummy {$err}");
+    }
+  }
+
+  // TODO: finish fetchBucketResources
+  // Future<List<Resource>?> fetchBucketResources() {
+  //   return null;
+  // }
+
+  void fetchBucketResourcesDummy() async {
+    String dummyBucketID = "1dc29fd7e97e4e8cdd1117f7b8e28f22";
+    List<Resource>? lst =
+        await FireStoreDB().fetchBucketResources(dummyBucketID);
+    debugPrint("Bucket($dummyBucketID) has resources: ${lst?.length}");
+    try {} catch (e) {
+      debugPrint("Error in fetchBucketResourcesDummy: $e");
     }
   }
 }

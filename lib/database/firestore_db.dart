@@ -130,6 +130,69 @@ class FireStoreDB {
     }
   }
 
+  void addResourceToBucketDB(String bucketId, Resource resource) async {
+    try {
+      final bucketInstanceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucketId)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      DocumentSnapshot<Bucket> _bucketSnapshot = await bucketInstanceRef.get();
+      Bucket? _bucket = _bucketSnapshot.exists ? _bucketSnapshot.data() : null;
+      if (_bucket != null) {
+        _bucket.users.forEach((element) {
+          FirebaseFirestore.instance
+              .collection(element)
+              .doc(DatabasePaths.userBucketList)
+              .collection(DatabasePaths.userBucketListBucket)
+              .doc(bucketId)
+              .collection("resources")
+              .doc(resource.id)
+              .withConverter<Resource>(
+                fromFirestore: (snapshot, _) =>
+                    Resource.fromJson(snapshot.data()!),
+                toFirestore: (_resource, _) => _resource.toJson(),
+              )
+              .set(resource, SetOptions(merge: true))
+              .then((value) => debugPrint(
+                  "Resource(${resource.id}) has been added to user($element)"))
+              .catchError((onError) => debugPrint(
+                  "Resource(${resource.id}) CANNOT be added to user($element)"));
+        });
+      } else {
+        debugPrint("No bucket exists with bucketID: $bucketId");
+      }
+    } catch (e) {
+      debugPrint("Error in add resource to bucket DB {$e}");
+    }
+  }
+
+  Future<List<Resource>?> fetchBucketResources(String bucketID) async {
+    try {
+      final resourcesRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucketID)
+          .collection("resources")
+          .withConverter<Resource>(
+            fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+            toFirestore: (_resource, _) => _resource.toJson(),
+          );
+
+      QuerySnapshot<Resource> _resources = await resourcesRef.get();
+      var ret = _resources.docs.map((element) => element.data()).toList();
+      return ret;
+    } catch (e) {
+      debugPrint("Error fetching bucket resources: $e");
+    }
+    return null;
+  }
+
   void addCategoryDB(String category) {
     try {
       final categoryRef = FirebaseFirestore.instance

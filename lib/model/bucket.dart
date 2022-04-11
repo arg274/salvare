@@ -8,7 +8,6 @@ class Bucket {
   String name;
   String? description;
   List<String> users;
-  List<String>? resources;
   DateTime dateCreated;
   DateTime dateUpdated;
 
@@ -17,7 +16,6 @@ class Bucket {
       required this.name,
       required this.users,
       this.description,
-      this.resources,
       required this.dateCreated,
       required this.dateUpdated});
 
