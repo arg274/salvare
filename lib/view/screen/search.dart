@@ -20,7 +20,8 @@ class Search extends StatelessWidget {
             //BucketController().addBucketDummy();
             //BucketController().addUserToBucketDummy();
             //BucketController().addResourceToBucketDummy();
-            BucketController().fetchBucketResourcesDummy();
+            //BucketController().fetchBucketResourcesDummy();
+            FireStoreDB().deleteBucketDB("098b4cc0d9072345f5ab02050da52469");
           },
         ),
       );

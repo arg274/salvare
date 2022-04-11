@@ -11,18 +11,25 @@ import 'package:crypto/crypto.dart';
 
 class BucketController {
   int totalBuckets = 0;
-  void addBucket(Bucket bucket) {}
 
-  void addResourceToBucket(Bucket bucket, Resource resource) {}
-
-  void addResourceToBucketDummy() {
+  void addBucket(Bucket bucket) async {
     try {
-      Resource resource = Resource.unlaunched('dummyResourceID2',
-          'dummyResourceName2', 'www.goal.com', 'dummyResourceCategory2');
-      String bucketId = "1dc29fd7e97e4e8cdd1117f7b8e28f22";
-      FireStoreDB().addResourceToBucketDB(bucketId, resource);
+      // fetch total number of buckets and update totalBuckets
+      List<Bucket>? userBucketList = await FireStoreDB().fetchUserBucketList();
+      totalBuckets = userBucketList == null ? 0 : userBucketList.length;
+      debugPrint(
+          "${FirebaseAuth.instance.currentUser!.email} has total $totalBuckets buckets");
+      if (totalBuckets < DatabasePaths.userMaxBucket) {
+        // TODO: Decide how Bucket ID will be generated
+        FireStoreDB().addBucketDB(
+            bucket, FirebaseAuth.instance.currentUser!.uid.toString());
+        totalBuckets++;
+      } else {
+        debugPrint("Max number of buckets exceeded");
+        // TODO show toast
+      }
     } catch (err) {
-      debugPrint("error in add resource to bucket dummy {$err}");
+      debugPrint("error in add bucket dummy {$err}");
     }
   }
 
@@ -47,10 +54,28 @@ class BucketController {
         totalBuckets++;
       } else {
         debugPrint("Max number of buckets exceeded");
-        // TODO show toast
       }
     } catch (err) {
       debugPrint("error in add bucket dummy {$err}");
+    }
+  }
+
+  void addResourceToBucket(Bucket bucket, Resource resource) {
+    try {
+      FireStoreDB().addResourceToBucketDB(bucket.id, resource);
+    } catch (err) {
+      debugPrint("error in add resource to bucket dummy {$err}");
+    }
+  }
+
+  void addResourceToBucketDummy() {
+    try {
+      Resource resource = Resource.unlaunched('dummyResourceID2',
+          'dummyResourceName2', 'www.goal.com', 'dummyResourceCategory2');
+      String bucketId = "1dc29fd7e97e4e8cdd1117f7b8e28f22";
+      FireStoreDB().addResourceToBucketDB(bucketId, resource);
+    } catch (err) {
+      debugPrint("error in add resource to bucket dummy {$err}");
     }
   }
 
@@ -69,11 +94,14 @@ class BucketController {
         } else {
           FireStoreDB().addUserToBucketDB(
               userBucketList!.first, "68oiCcs9aDQOaZvd6mtHResXBfj2");
-          // also add bucket for added user
-          debugPrint(
-              "Adding uid: 68oiCcs9aDQOaZvd6mtHResXBfj2 to bucket with id: ${userBucketList.first.id}");
-          List<Bucket>? ust = await FireStoreDB().fetchUserBucketList();
-          FireStoreDB().addBucketDB(ust!.first, "68oiCcs9aDQOaZvd6mtHResXBfj2");
+          Timer(Duration(seconds: 5), () async {
+            // also add bucket for added user
+            debugPrint(
+                "Adding uid: 68oiCcs9aDQOaZvd6mtHResXBfj2 to bucket with id: ${userBucketList.first.id}");
+            List<Bucket>? ust = await FireStoreDB().fetchUserBucketList();
+            FireStoreDB()
+                .addBucketDB(ust!.first, "68oiCcs9aDQOaZvd6mtHResXBfj2");
+          });
         }
       });
     } catch (err) {

@@ -71,7 +71,6 @@ class FireStoreDB {
   }
 
   void addBucketDB(Bucket bucket, String uid) {
-    // TODO: check if total buckets is less than 10 in controller then call this func
     try {
       final bucketRef = FirebaseFirestore.instance
           .collection(uid)
@@ -86,9 +85,64 @@ class FireStoreDB {
           .set(bucket, SetOptions(merge: true))
           .then(
               (value) => debugPrint("Added bucket! {$bucket} to user: ${uid}"))
-          .catchError((err) => debugPrint("Error in User resource {$err}"));
+          .catchError((err) => debugPrint("Error in add bucket set {$err}"));
     } catch (e) {
       debugPrint("Error in add bucket {$e}");
+    }
+  }
+
+// Only deletes current users bucket
+  void deleteBucketDB(String bucketID) async {
+    try {
+      var bucketRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucketID)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      DocumentSnapshot<Bucket> _bucket = await bucketRef.get();
+      if (_bucket.exists) {
+        List<String> _bucketUsers = _bucket.data()!.users;
+        _bucketUsers.forEach((element) async {
+          // delete user from userlist of all user's buckets except current users
+          if (element != FirebaseAuth.instance.currentUser!.uid) {
+            debugPrint("-----------$element------------------");
+            var _userBucketRef = FirebaseFirestore.instance
+                .collection(element)
+                .doc(DatabasePaths.userBucketList)
+                .collection(DatabasePaths.userBucketListBucket)
+                .doc(bucketID)
+                .withConverter<Bucket>(
+                  fromFirestore: (snapshot, _) =>
+                      Bucket.fromJson(snapshot.data()!),
+                  toFirestore: (_bucket, _) => _bucket.toJson(),
+                );
+            var _userBucket = await _userBucketRef.get();
+            if (_userBucket.exists) {
+              debugPrint(_userBucket.data()!.id);
+              var _userBucketInstance = _userBucket.data();
+              _userBucketInstance!.users
+                  .remove(FirebaseAuth.instance.currentUser!.uid);
+              _userBucketRef.set(_userBucketInstance, SetOptions(merge: true));
+            }
+          }
+        });
+        var usersBucketRef = FirebaseFirestore.instance
+            .collection(FirebaseAuth.instance.currentUser!.uid)
+            .doc(DatabasePaths.userBucketList)
+            .collection(DatabasePaths.userBucketListBucket)
+            .doc(bucketID);
+        usersBucketRef.delete();
+        debugPrint("Successfully deleted the bucket");
+      } else {
+        debugPrint(
+            "Bucket with ID: $bucketID doesn't exist for user(${FirebaseAuth.instance.currentUser!.uid})");
+      }
+    } catch (e) {
+      debugPrint("Error in delete bucket {$e}");
     }
   }
 
