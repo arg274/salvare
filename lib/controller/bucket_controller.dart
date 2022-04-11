@@ -109,17 +109,25 @@ class BucketController {
     }
   }
 
-  // TODO: finish fetchBucketResources
-  // Future<List<Resource>?> fetchBucketResources() {
-  //   return null;
-  // }
+  Future<List<Resource>?> fetchBucketResources(Bucket bucket) async {
+    try {
+      List<Resource>? lst =
+          await FireStoreDB().fetchBucketResourcesDB(bucket.id);
+      debugPrint("Bucket(${bucket.id}) has no of resources =  ${lst?.length}");
+      return lst;
+    } catch (e) {
+      debugPrint("Error in fetchBucketResourcesDummy: $e");
+    }
+    return null;
+  }
 
   void fetchBucketResourcesDummy() async {
     String dummyBucketID = "1dc29fd7e97e4e8cdd1117f7b8e28f22";
-    List<Resource>? lst =
-        await FireStoreDB().fetchBucketResources(dummyBucketID);
-    debugPrint("Bucket($dummyBucketID) has resources: ${lst?.length}");
-    try {} catch (e) {
+    try {
+      List<Resource>? lst =
+          await FireStoreDB().fetchBucketResourcesDB(dummyBucketID);
+      debugPrint("Bucket($dummyBucketID) has resources: ${lst?.length}");
+    } catch (e) {
       debugPrint("Error in fetchBucketResourcesDummy: $e");
     }
   }

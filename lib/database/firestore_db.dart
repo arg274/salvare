@@ -147,7 +147,6 @@ class FireStoreDB {
   }
 
   void addUserToBucketDB(Bucket bucket, String uid) async {
-    // TODO: check if total buckets is less than 10 in controller then call this func
     try {
       final bucketRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -204,7 +203,7 @@ class FireStoreDB {
               .doc(DatabasePaths.userBucketList)
               .collection(DatabasePaths.userBucketListBucket)
               .doc(bucketId)
-              .collection("resources")
+              .collection(DatabasePaths.userBucketListBucketResource)
               .doc(resource.id)
               .withConverter<Resource>(
                 fromFirestore: (snapshot, _) =>
@@ -225,14 +224,14 @@ class FireStoreDB {
     }
   }
 
-  Future<List<Resource>?> fetchBucketResources(String bucketID) async {
+  Future<List<Resource>?> fetchBucketResourcesDB(String bucketID) async {
     try {
       final resourcesRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc(DatabasePaths.userBucketList)
           .collection(DatabasePaths.userBucketListBucket)
           .doc(bucketID)
-          .collection("resources")
+          .collection(DatabasePaths.userBucketListBucketResource)
           .withConverter<Resource>(
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),

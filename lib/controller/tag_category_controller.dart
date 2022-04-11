@@ -35,7 +35,6 @@ class TagCategoryController {
   void addCategory(String category) async {
     try {
       List<String>? currentCategories = await FireStoreDB().fetchCategoriesDB();
-      bool doesExist = false;
       if (currentCategories?.contains(category) == true) {
         debugPrint("Category already exists in the database");
       } else {
