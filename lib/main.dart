@@ -49,40 +49,13 @@ class Salvare extends StatelessWidget {
 
 // Dummy page
 class DummyPage extends StatefulWidget {
-  const DummyPage({Key? key, required User user})
-      : _user = user,
-        super(key: key);
-
-  final User _user;
+  const DummyPage({Key? key}) : super(key: key);
 
   @override
   State<DummyPage> createState() => _DummyPageState();
 }
 
 class _DummyPageState extends State<DummyPage> {
-  late User _user;
-  bool _isSigningOut = false; // for later
-
-  Route _routeToSignInScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const SignInScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
   Route _routeToUserProfileScreen() {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
@@ -112,11 +85,7 @@ class _DummyPageState extends State<DummyPage> {
 
   @override
   void initState() {
-    _user = widget._user;
     super.initState();
-    // firebase_code:
-    model_user.User userToAdd = model_user.User.unlaunched(
-        _user.uid, _user.displayName ?? "Unknown Name");
   }
 
   @override
@@ -128,13 +97,6 @@ class _DummyPageState extends State<DummyPage> {
           child: const Icon(FeatherIcons.user),
           backgroundColor: CustomColors.salvareDarkGreen,
           onPressed: () async {
-            // setState(() {
-            //   _isSigningOut = true;
-            // });
-            //await Authentication.signOut(context: context);
-            // setState(() {
-            //   _isSigningOut = false;
-            // });
             Navigator.of(context).push(_routeToUserProfileScreen());
           },
         ),

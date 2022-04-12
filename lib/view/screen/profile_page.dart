@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/button_widget.dart';
-import 'package:salvare/view/component/numbers_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,9 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 24),
           buildName(user),
           const SizedBox(height: 24),
-          Center(child: buildUpgradeButton()),
-          const SizedBox(height: 24),
-          NumbersWidget(),
+          Center(child: buildEditButton()),
           const SizedBox(height: 48),
           buildAbout(user),
         ],
@@ -53,9 +50,11 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       );
 
-  Widget buildUpgradeButton() => ButtonWidget(
+  Widget buildEditButton() => ButtonWidget(
         text: 'Edit Profile',
-        onClicked: () {},
+        onClicked: () {
+          // TODO: Edit profile functionalities
+        },
       );
 
   Widget buildAbout(User user) => Container(
