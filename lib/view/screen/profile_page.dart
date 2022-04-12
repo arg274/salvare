@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:salvare/database/firestore_db.dart';
-import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/button_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
@@ -64,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         } else {
-          return CircularProgressIndicator(
+          return const CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           );
         }
@@ -133,13 +132,13 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
 
-  Widget buildBucketInfo(int total_buckets) => Container(
+  Widget buildBucketInfo(int totalBuckets) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 48),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Total Buckets:  $total_buckets',
+              'Total Buckets:  $totalBuckets',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],

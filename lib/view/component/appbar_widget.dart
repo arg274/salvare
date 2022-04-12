@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/controller/authentication.dart';
@@ -24,8 +23,6 @@ Route _routeToSignInScreen() {
 }
 
 AppBar buildAppBar(BuildContext context) {
-  final icon = CupertinoIcons.moon_stars;
-
   return AppBar(
     leading: const BackButton(
       color: Colors.blue,
@@ -48,8 +45,6 @@ AppBar buildAppBar(BuildContext context) {
 }
 
 AppBar buildAppBarEdit(BuildContext context, Function() onPressedSaveButton) {
-  final icon = CupertinoIcons.moon_stars;
-
   return AppBar(
     leading: const BackButton(
       color: Colors.blue,

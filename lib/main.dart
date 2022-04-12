@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:salvare/controller/authentication.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
@@ -29,6 +28,7 @@ class Salvare extends StatelessWidget {
       title: 'Salvare',
       theme: lightTheme,
       darkTheme: darkTheme,
+      // TODO: Change theme in setting?
       themeMode: ThemeMode.light,
       home: FutureBuilder(
         future: _firebaseApp,

@@ -128,7 +128,7 @@ class FireStoreDB {
       if (_retUser != null) {
         _retUser.buckets = lst2;
       }
-      debugPrint("Ret User Buckets ${_retUser}");
+      debugPrint("Ret User Buckets $_retUser");
       return _retUser;
     } catch (e) {
       debugPrint("Error in addUser {$e}");
@@ -190,8 +190,7 @@ class FireStoreDB {
           );
       bucketRef
           .set(bucket, SetOptions(merge: true))
-          .then(
-              (value) => debugPrint("Added bucket! {$bucket} to user: ${uid}"))
+          .then((value) => debugPrint("Added bucket! {$bucket} to user: $uid"))
           .catchError((err) => debugPrint("Error in add bucket set {$err}"));
     } catch (e) {
       debugPrint("Error in add bucket {$e}");
@@ -304,7 +303,7 @@ class FireStoreDB {
       DocumentSnapshot<Bucket> _bucketSnapshot = await bucketInstanceRef.get();
       Bucket? _bucket = _bucketSnapshot.exists ? _bucketSnapshot.data() : null;
       if (_bucket != null) {
-        _bucket.users.forEach((element) {
+        for (var element in _bucket.users) {
           FirebaseFirestore.instance
               .collection(element)
               .doc(DatabasePaths.userBucketList)
@@ -322,7 +321,7 @@ class FireStoreDB {
                   "Resource(${resource.id}) has been added to user($element)"))
               .catchError((onError) => debugPrint(
                   "Resource(${resource.id}) CANNOT be added to user($element)"));
-        });
+        }
       } else {
         debugPrint("No bucket exists with bucketID: $bucketId");
       }

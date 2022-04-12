@@ -1,13 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:salvare/database/firestore_db.dart';
-import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
-import 'package:salvare/view/component/button_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
-import 'package:salvare/view/component/textfield_widget.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -18,8 +15,8 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   DateTime selectedDate = DateTime.now();
-  String? selected_name;
-  String? selected_description;
+  String? selectedName;
+  String? selectedDescription;
   bool changedDOB = false;
   @override
   Widget build(BuildContext context) {
@@ -31,8 +28,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         if (snapshot.hasError) {
           return const Text('Error fetching user info from Firebase');
         } else if (snapshot.hasData) {
-          selected_name = (snapshot.data as model.User).userName;
-          selected_description = (snapshot.data as model.User).description;
+          selectedName = (snapshot.data as model.User).userName;
+          selectedDescription = (snapshot.data as model.User).description;
           debugPrint("Snapshot data: ${snapshot.data}");
 
           return Scaffold(
@@ -59,12 +56,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
-                      FlatButton.icon(
-                          onPressed: () {
-                            _selectDate(context);
-                          },
-                          icon: const Icon(Icons.date_range),
-                          label: const Text("Click to select")),
+                      IconButton(
+                        onPressed: () {
+                          _selectDate(context);
+                        },
+                        icon: const Icon(Icons.date_range),
+                      ),
                     ],
                   ),
                 ),
@@ -102,33 +99,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void onPressedSaveButton() async {
     model.User? _user = await FireStoreDB().fetchUserInfoDB();
     if (_user == null) {
-      if (selected_name != null) {
-        FireStoreDB().updateUserUsername(selected_name!);
+      if (selectedName != null) {
+        FireStoreDB().updateUserUsername(selectedName!);
       }
-      if (selected_description != null) {
-        FireStoreDB().updateUserUsername(selected_name!);
+      if (selectedDescription != null) {
+        FireStoreDB().updateUserUsername(selectedName!);
       }
     } else {
-      if (selected_name != _user.userName) {
-        if (selected_name != null) {
-          FireStoreDB().updateUserUsername(selected_name!);
+      if (selectedName != _user.userName) {
+        if (selectedName != null) {
+          FireStoreDB().updateUserUsername(selectedName!);
         }
       }
-      if (selected_description != _user.description) {
-        if (selected_description != null) {
-          FireStoreDB().updateUserDescription(selected_description!);
+      if (selectedDescription != _user.description) {
+        if (selectedDescription != null) {
+          FireStoreDB().updateUserDescription(selectedDescription!);
         }
       }
     }
     if (changedDOB) {
       FireStoreDB().updateUserDOB(selectedDate);
     }
-    Fluttertoast.showToast(
-        msg: "Saving Profile Info", //message to show toast
-        toastLength: Toast.LENGTH_LONG, //duration for message to show
-        gravity: ToastGravity.CENTER, //where you want to show, top, bottom
-        fontSize: 16.0 //message font size
-        );
+
+    showToast(
+      'Saving Changes',
+      context: context,
+      animation: StyledToastAnimation.slideFromBottom,
+      curve: Curves.decelerate,
+      reverseAnimation: StyledToastAnimation.fade,
+    );
 
     Navigator.of(context).pop();
   }
@@ -146,7 +145,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: TextEditingController(text: selected_name),
+                  controller: TextEditingController(text: selectedName),
                   showCursor: true,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -155,7 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   maxLines: 1,
                   onChanged: (name) {
-                    selected_name = name;
+                    selectedName = name;
                   },
                 ),
               ],
@@ -177,7 +176,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 const SizedBox(height: 8),
                 TextField(
-                  controller: TextEditingController(text: selected_description),
+                  controller: TextEditingController(text: selectedDescription),
                   showCursor: true,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -186,7 +185,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   maxLines: 10,
                   onChanged: (description) {
-                    selected_description = description;
+                    selectedDescription = description;
                   },
                 ),
               ],

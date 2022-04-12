@@ -73,7 +73,7 @@ class _SearchState extends State<Search> {
                   return Text('${snapshot.error}');
                 } else {
                   // TODO: Progress indicator
-                  return Text('Loading...');
+                  return const Text('Loading...');
                 }
               }),
           const SizedBox(height: 15.0),
@@ -105,7 +105,7 @@ class _SearchState extends State<Search> {
                   return Text('${snapshot.error}');
                 } else {
                   // TODO: Progress indicator
-                  return Text('Loading...');
+                  return const Text('Loading...');
                 }
               }),
           Expanded(
