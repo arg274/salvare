@@ -5,6 +5,7 @@ import 'package:salvare/controller/authentication.dart';
 import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
+import 'package:salvare/view/screen/profile_page.dart';
 import 'package:salvare/view/screen/search.dart';
 import 'package:salvare/view/screen/settings.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -82,6 +83,26 @@ class _DummyPageState extends State<DummyPage> {
     );
   }
 
+  Route _routeToUserProfileScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const ProfilePage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   int screenIndex = 0;
   final screens = [
     const Dashboard(),
@@ -104,17 +125,17 @@ class _DummyPageState extends State<DummyPage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
         floatingActionButton: FloatingActionButton(
           heroTag: "btn1",
-          child: const Icon(FeatherIcons.logOut),
+          child: const Icon(FeatherIcons.user),
           backgroundColor: CustomColors.salvareDarkGreen,
           onPressed: () async {
-            setState(() {
-              _isSigningOut = true;
-            });
-            await Authentication.signOut(context: context);
-            setState(() {
-              _isSigningOut = false;
-            });
-            Navigator.of(context).pushReplacement(_routeToSignInScreen());
+            // setState(() {
+            //   _isSigningOut = true;
+            // });
+            //await Authentication.signOut(context: context);
+            // setState(() {
+            //   _isSigningOut = false;
+            // });
+            Navigator.of(context).push(_routeToUserProfileScreen());
           },
         ),
         body: SafeArea(
