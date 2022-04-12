@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
@@ -97,6 +98,11 @@ class _DummyPageState extends State<DummyPage> {
           child: const Icon(FeatherIcons.user),
           backgroundColor: CustomColors.salvareDarkGreen,
           onPressed: () async {
+            FireStoreDB().addUserDB(model_user.User(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              userName: FirebaseAuth.instance.currentUser!.displayName!,
+              dateCreated: DateTime.now(),
+            ));
             Navigator.of(context).push(_routeToUserProfileScreen());
           },
         ),

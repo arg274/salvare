@@ -10,7 +10,7 @@ import 'package:salvare/model/user.dart' as model;
 
 class FireStoreDB {
   // TODO: Find place to call addUser from
-  void addUserDB(model.User user) {
+  void addUserDB(model.User user) async {
     try {
       final userRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -20,13 +20,37 @@ class FireStoreDB {
                 model.User.fromJson(snapshot.data()!),
             toFirestore: (_user, _) => _user.toJson(),
           );
-      userRef
-          .set(user)
-          .then((value) => debugPrint("Added User! {$user}"))
-          .catchError((err) => debugPrint("Error in User Addition {$err}"));
+      model.User? _user = await fetchUserInfoDB();
+      if (_user == null) {
+        debugPrint("Adding new user: $user");
+        userRef
+            .set(user)
+            .then((value) => debugPrint("Added User! {$user}"))
+            .catchError((err) => debugPrint("Error in User Addition {$err}"));
+      } else {
+        debugPrint("User already exists: $user");
+      }
     } catch (e) {
       debugPrint("Error in addUser {$e}");
     }
+  }
+
+  Future<model.User?> fetchUserInfoDB() async {
+    try {
+      final userRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc("user")
+          .withConverter<model.User>(
+            fromFirestore: (snapshot, _) =>
+                model.User.fromJson(snapshot.data()!),
+            toFirestore: (_user, _) => _user.toJson(),
+          );
+      DocumentSnapshot<model.User> _user = await userRef.get();
+      return _user.data();
+    } catch (e) {
+      debugPrint("Error in addUser {$e}");
+    }
+    return null;
   }
 
   Future<List<Resource>> searchResourceUsingTitleDB(String title) async {
