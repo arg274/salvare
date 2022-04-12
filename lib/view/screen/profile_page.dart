@@ -6,6 +6,7 @@ import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/button_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
+import 'package:intl/intl.dart';
 import 'package:salvare/view/screen/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -37,18 +38,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       user.photoURL ?? "https://picsum.photos/250?image=10",
                   onClicked: () async {},
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 snapshot.data == null
                     ? buildName(model.User.unlaunched("unknown", "unknown"))
                     : buildName(snapshot.data as model.User),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 Center(child: buildEditButton()),
-                const SizedBox(height: 24),
+                const SizedBox(height: 48),
+                snapshot.data == null
+                    ? buildDOB("Unknown")
+                    : (snapshot.data as model.User).dob == null
+                        ? buildDOB("Unknown")
+                        : buildDOB(DateFormat('dd/MM/yyyy')
+                            .format((snapshot.data as model.User).dob!)),
+                const SizedBox(height: 16),
                 snapshot.data == null
                     ? buildBucketInfo(0)
                     : buildBucketInfo(
                         (snapshot.data as model.User).buckets?.length ?? 1),
-                const SizedBox(height: 48),
+                const SizedBox(height: 16),
                 snapshot.data == null
                     ? buildAbout(model.User.unlaunched("unknown", "unknown"))
                     : buildAbout(snapshot.data as model.User)
@@ -132,6 +140,19 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(
               'Total Buckets:  $total_buckets',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
+
+  Widget buildDOB(String data) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 48),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Date of Birth:  $data',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],

@@ -17,8 +17,10 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  DateTime selectedDate = DateTime.now();
   String? selected_name;
   String? selected_description;
+  bool changedDOB = false;
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
@@ -47,7 +49,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 snapshot.data == null
                     ? buildNameEdit(model.User.unlaunched("unknown", "unknown"))
                     : buildNameEdit(snapshot.data as model.User),
-                const SizedBox(height: 48),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
+                  child: Row(
+                    children: [
+                      const Text(
+                        "Date Of Birth",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      FlatButton.icon(
+                          onPressed: () {
+                            _selectDate(context);
+                          },
+                          icon: const Icon(Icons.date_range),
+                          label: const Text("Click to select")),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
                 snapshot.data == null
                     ? buildAboutEdit(
                         model.User.unlaunched("unknown", "unknown"))
@@ -62,6 +83,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       },
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1970, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        changedDOB = true;
+      });
+    }
   }
 
   void onPressedSaveButton() async {
@@ -85,7 +120,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       }
     }
-
+    if (changedDOB) {
+      FireStoreDB().updateUserDOB(selectedDate);
+    }
     Fluttertoast.showToast(
         msg: "Saving Profile Info", //message to show toast
         toastLength: Toast.LENGTH_LONG, //duration for message to show

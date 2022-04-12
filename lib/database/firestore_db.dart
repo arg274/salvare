@@ -56,7 +56,7 @@ class FireStoreDB {
                 (err) => debugPrint("Error in User update description {$err}"));
       }
     } catch (e) {
-      debugPrint("Error in addUser {$e}");
+      debugPrint("Error in update user desc {$e}");
     }
   }
 
@@ -82,7 +82,32 @@ class FireStoreDB {
                 (err) => debugPrint("Error in User update name {$err}"));
       }
     } catch (e) {
-      debugPrint("Error in addUser {$e}");
+      debugPrint("Error in update username {$e}");
+    }
+  }
+
+  void updateUserDOB(DateTime dob) async {
+    try {
+      final userRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc("user")
+          .withConverter<model.User>(
+            fromFirestore: (snapshot, _) =>
+                model.User.fromJson(snapshot.data()!),
+            toFirestore: (_user, _) => _user.toJson(),
+          );
+      model.User? _user = await fetchUserInfoDB();
+      if (_user == null) {
+        debugPrint("No user found while updating user DOB");
+      } else {
+        _user.dob = dob;
+        userRef
+            .set(_user)
+            .then((value) => debugPrint("Updated User DOB! {$_user}"))
+            .catchError((err) => debugPrint("Error in User update DOB {$err}"));
+      }
+    } catch (e) {
+      debugPrint("Error in update user dob {$e}");
     }
   }
 
