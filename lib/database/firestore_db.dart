@@ -9,7 +9,6 @@ import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/user.dart' as model;
 
 class FireStoreDB {
-  // TODO: Find place to call addUser from
   void addUserDB(model.User user) async {
     try {
       final userRef = FirebaseFirestore.instance
@@ -35,6 +34,58 @@ class FireStoreDB {
     }
   }
 
+  void updateUserDescription(String description) async {
+    try {
+      final userRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc("user")
+          .withConverter<model.User>(
+            fromFirestore: (snapshot, _) =>
+                model.User.fromJson(snapshot.data()!),
+            toFirestore: (_user, _) => _user.toJson(),
+          );
+      model.User? _user = await fetchUserInfoDB();
+      if (_user == null) {
+        debugPrint("No user found while updating user description");
+      } else {
+        _user.description = description;
+        userRef
+            .set(_user)
+            .then((value) => debugPrint("Updated User description! {$_user}"))
+            .catchError(
+                (err) => debugPrint("Error in User update description {$err}"));
+      }
+    } catch (e) {
+      debugPrint("Error in addUser {$e}");
+    }
+  }
+
+  void updateUserUsername(String username) async {
+    try {
+      final userRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc("user")
+          .withConverter<model.User>(
+            fromFirestore: (snapshot, _) =>
+                model.User.fromJson(snapshot.data()!),
+            toFirestore: (_user, _) => _user.toJson(),
+          );
+      model.User? _user = await fetchUserInfoDB();
+      if (_user == null) {
+        debugPrint("No user found while updating user name");
+      } else {
+        _user.userName = username;
+        userRef
+            .set(_user)
+            .then((value) => debugPrint("Updated User name! {$_user}"))
+            .catchError(
+                (err) => debugPrint("Error in User update name {$err}"));
+      }
+    } catch (e) {
+      debugPrint("Error in addUser {$e}");
+    }
+  }
+
   Future<model.User?> fetchUserInfoDB() async {
     try {
       final userRef = FirebaseFirestore.instance
@@ -46,7 +97,14 @@ class FireStoreDB {
             toFirestore: (_user, _) => _user.toJson(),
           );
       DocumentSnapshot<model.User> _user = await userRef.get();
-      return _user.data();
+      List<Bucket>? lst = await fetchUserBucketList();
+      List<String>? lst2 = lst?.map((e) => e.name).toList();
+      model.User? _retUser = _user.data();
+      if (_retUser != null) {
+        _retUser.buckets = lst2;
+      }
+      debugPrint("Ret User Buckets ${_retUser}");
+      return _retUser;
     } catch (e) {
       debugPrint("Error in addUser {$e}");
     }

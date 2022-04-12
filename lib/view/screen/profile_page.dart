@@ -6,6 +6,7 @@ import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/button_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
+import 'package:salvare/view/screen/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -37,9 +38,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   onClicked: () async {},
                 ),
                 const SizedBox(height: 24),
-                buildName(user),
+                snapshot.data == null
+                    ? buildName(model.User.unlaunched("unknown", "unknown"))
+                    : buildName(snapshot.data as model.User),
                 const SizedBox(height: 24),
                 Center(child: buildEditButton()),
+                const SizedBox(height: 24),
+                snapshot.data == null
+                    ? buildBucketInfo(0)
+                    : buildBucketInfo(
+                        (snapshot.data as model.User).buckets?.length ?? 1),
                 const SizedBox(height: 48),
                 snapshot.data == null
                     ? buildAbout(model.User.unlaunched("unknown", "unknown"))
@@ -56,24 +64,46 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildName(User user) => Column(
+  Widget buildName(model.User modelUser) => Column(
         children: [
           Text(
-            user.displayName ?? "Unknown",
+            modelUser.userName,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
           const SizedBox(height: 4),
           Text(
-            user.email ?? "Unknown",
+            FirebaseAuth.instance.currentUser!.email ?? "Unknown",
             style: const TextStyle(color: Colors.grey),
           )
         ],
       );
 
+  Route _routeToUserEditProfileScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const EditProfilePage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   Widget buildEditButton() => ButtonWidget(
         text: 'Edit Profile',
         onClicked: () {
           // TODO: Edit profile functionalities
+          Navigator.of(context)
+              .pushReplacement(_routeToUserEditProfileScreen());
         },
       );
 
@@ -90,6 +120,19 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(
               modelUser.description ?? "No User Information Available",
               style: const TextStyle(fontSize: 16, height: 1.4),
+            ),
+          ],
+        ),
+      );
+
+  Widget buildBucketInfo(int total_buckets) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 48),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Total Buckets:  $total_buckets',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
         ),

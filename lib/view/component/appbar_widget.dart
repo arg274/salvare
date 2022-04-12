@@ -46,3 +46,27 @@ AppBar buildAppBar(BuildContext context) {
     ],
   );
 }
+
+AppBar buildAppBarEdit(BuildContext context, Function() onPressedSaveButton) {
+  final icon = CupertinoIcons.moon_stars;
+
+  return AppBar(
+    leading: const BackButton(
+      color: Colors.blue,
+    ),
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    actions: [
+      IconButton(
+        icon: const Icon(
+          FeatherIcons.save,
+          color: Colors.blue,
+        ),
+        onPressed: () {
+          debugPrint("Clicked Save button");
+          onPressedSaveButton();
+        },
+      )
+    ],
+  );
+}
