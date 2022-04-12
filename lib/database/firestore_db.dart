@@ -29,7 +29,7 @@ class FireStoreDB {
     }
   }
 
-  Future<List<Resource>?>? searchResourceUsingTitleDB(String title) async {
+  Future<List<Resource>> searchResourceUsingTitleDB(String title) async {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -48,7 +48,7 @@ class FireStoreDB {
     } catch (e) {
       debugPrint("Error in searchResourceUsingURLDB {$e}");
     }
-    return null;
+    return [];
   }
 
   void addResourceDB(Resource resource) {
