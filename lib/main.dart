@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
+import 'package:salvare/view/screen/profile_page.dart';
 import 'package:salvare/view/screen/search.dart';
 import 'package:salvare/view/screen/buckets.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -27,6 +28,7 @@ class Salvare extends StatelessWidget {
       title: 'Salvare',
       theme: lightTheme,
       darkTheme: darkTheme,
+      // TODO: Change theme in setting?
       themeMode: ThemeMode.light,
       home: FutureBuilder(
         future: _firebaseApp,
@@ -48,24 +50,17 @@ class Salvare extends StatelessWidget {
 
 // Dummy page
 class DummyPage extends StatefulWidget {
-  const DummyPage({Key? key, required User user})
-      : _user = user,
-        super(key: key);
-
-  final User _user;
+  const DummyPage({Key? key}) : super(key: key);
 
   @override
   State<DummyPage> createState() => _DummyPageState();
 }
 
 class _DummyPageState extends State<DummyPage> {
-  late User _user;
-  bool _isSigningOut = false; // for later
-
-  Route _routeToSignInScreen() {
+  Route _routeToUserProfileScreen() {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          const SignInScreen(),
+          const ProfilePage(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(-1.0, 0.0);
         var end = Offset.zero;
@@ -91,11 +86,7 @@ class _DummyPageState extends State<DummyPage> {
 
   @override
   void initState() {
-    _user = widget._user;
     super.initState();
-    // firebase_code:
-    model_user.User userToAdd = model_user.User.unlaunched(
-        _user.uid, _user.displayName ?? "Unknown Name");
   }
 
   @override
@@ -104,17 +95,15 @@ class _DummyPageState extends State<DummyPage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
         floatingActionButton: FloatingActionButton(
           heroTag: "btn1",
-          child: const Icon(FeatherIcons.logOut),
+          child: const Icon(FeatherIcons.user),
           backgroundColor: CustomColors.salvareDarkGreen,
           onPressed: () async {
-            setState(() {
-              _isSigningOut = true;
-            });
-            await Authentication.signOut(context: context);
-            setState(() {
-              _isSigningOut = false;
-            });
-            Navigator.of(context).pushReplacement(_routeToSignInScreen());
+            FireStoreDB().addUserDB(model_user.User(
+              id: FirebaseAuth.instance.currentUser!.uid,
+              userName: FirebaseAuth.instance.currentUser!.displayName!,
+              dateCreated: DateTime.now(),
+            ));
+            Navigator.of(context).push(_routeToUserProfileScreen());
           },
         ),
         body: SafeArea(

@@ -54,6 +54,7 @@ class TagCategoryController {
       debugPrint(
           "Error occured in getting categories. tag_category_controller");
     }
+    return null;
   }
 
   Future<List<Tag>?> getTags() async {
@@ -64,5 +65,6 @@ class TagCategoryController {
     } catch (err) {
       debugPrint("Error occured in getting tags. tag_category_controller");
     }
+    return null;
   }
 }

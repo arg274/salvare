@@ -77,8 +77,8 @@ class BucketController {
 
   void addUserToBucketDummy() async {
     try {
-      Timer(Duration(seconds: 5), () async {
-        print("Yeah, this line is printed after 3 seconds");
+      Timer(const Duration(seconds: 5), () async {
+        debugPrint("Yeah, this line is printed after 3 seconds");
         List<Bucket>? userBucketList =
             await FireStoreDB().fetchUserBucketList();
         totalBuckets = userBucketList == null ? 0 : userBucketList.length;
@@ -90,7 +90,7 @@ class BucketController {
         } else {
           FireStoreDB().addUserToBucketDB(
               userBucketList!.first, "68oiCcs9aDQOaZvd6mtHResXBfj2");
-          Timer(Duration(seconds: 5), () async {
+          Timer(const Duration(seconds: 5), () async {
             // also add bucket for added user
             debugPrint(
                 "Adding uid: 68oiCcs9aDQOaZvd6mtHResXBfj2 to bucket with id: ${userBucketList.first.id}");

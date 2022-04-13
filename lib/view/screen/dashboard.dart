@@ -316,7 +316,7 @@ class _DashboardState extends State<Dashboard> {
                                 return Text('${snapshot.error}');
                               } else {
                                 // TODO: Progress indicator
-                                return Text('Loading...');
+                                return const Text('Loading...');
                               }
                             }),
                       ],
