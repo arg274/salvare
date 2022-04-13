@@ -20,113 +20,114 @@ class _BucketResourcesState extends State<BucketResources> {
   BucketController bucketController = BucketController();
   final bgPattern = RandomPatternGenerator();
 
-  Future<void> showAddLinkDialogue(BuildContext context) async {
+  Future<Object?> showAddLinkDialogue(BuildContext context) async {
     final _formkey = GlobalKey<FormState>();
+    final TextEditingController _urlTEC = TextEditingController();
+    final TextEditingController _titleTEC = TextEditingController();
+    final TextEditingController _descTEC = TextEditingController();
     Resource? _resource;
-    return await showDialog(
+    return await showBlurredDialog(
         context: context,
-        builder: (context) {
-          final TextEditingController _urlTEC = TextEditingController();
-          final TextEditingController _titleTEC = TextEditingController();
-          final TextEditingController _descTEC = TextEditingController();
-          return AlertDialog(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () => {
+        dialogBody: AlertDialog(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => {
+                        if (_formkey.currentState!.validate())
+                          {
+                            if (_resource != null)
+                              {
+                                _resource!.title = _titleTEC.text,
+                                _resource!.description = _descTEC.text,
+                                bucketController.addResourceToBucket(
+                                    widget.bucket, _resource!),
+                                resourceController.addResource(_resource!),
+                              },
+                            Navigator.of(context).pop()
+                          }
+                      },
+                  child: Text(
+                    'ADD',
+                    style:
+                        Theme.of(context).textTheme.buttonText.fixFontFamily(),
+                  ))
+            ],
+            content: SingleChildScrollView(
+              child: Form(
+                  key: _formkey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Add Resource',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline4
+                            ?.fixFontFamily(),
+                      ),
+                      const SizedBox(height: 15.0),
+                      TextFormField(
+                        controller: _urlTEC,
+                        onChanged: (url) => {
                           if (_formkey.currentState!.validate())
                             {
-                              if (_resource != null)
-                                {
-                                  _resource!.title = _titleTEC.text,
-                                  _resource!.description = _descTEC.text,
-                                  bucketController.addResourceToBucket(
-                                      widget.bucket, _resource!),
-                                  resourceController.addResource(_resource!),
-                                },
-                              Navigator.of(context).pop()
+                              // TODO: Fix race condition
+                              resourceController
+                                  .refreshResource(
+                                      _urlTEC.text, 'Default', null)
+                                  .then((resource) => {
+                                        _resource = resource,
+                                        _titleTEC.text = resource!.title,
+                                        _descTEC.text = resource.description,
+                                      }),
                             }
                         },
-                    child: Text(
-                      'ADD',
-                      style: Theme.of(context)
-                          .textTheme
-                          .buttonText
-                          .fixFontFamily(),
-                    ))
-              ],
-              content: SingleChildScrollView(
-                child: Form(
-                    key: _formkey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'URL',
-                          style: Theme.of(context)
+                        decoration: InputDecoration(
+                          labelText: 'URL',
+                          labelStyle: Theme.of(context)
                               .textTheme
                               .formLabel
                               .fixFontFamily(),
+                          isDense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 5.0),
                         ),
-                        TextFormField(
-                          controller: _urlTEC,
-                          onChanged: (url) => {
-                            if (_formkey.currentState!.validate())
-                              {
-                                // TODO: Fix race condition
-                                resourceController
-                                    .refreshResource(
-                                        _urlTEC.text, 'Default', null)
-                                    .then((resource) => {
-                                          _resource = resource,
-                                          _titleTEC.text = resource!.title,
-                                          _descTEC.text = resource.description,
-                                        }),
-                              }
-                          },
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 5.0),
-                          ),
-                          validator: (url) {
-                            return resourceController.validateURL(url);
-                          },
-                        ),
-                        const SizedBox(height: 15.0),
-                        Text(
-                          'Title',
-                          style: Theme.of(context)
+                        validator: (url) {
+                          return resourceController.validateURL(url);
+                        },
+                      ),
+                      const SizedBox(height: 15.0),
+                      TextFormField(
+                        controller: _titleTEC,
+                        decoration: InputDecoration(
+                          labelText: 'Title'.toUpperCase(),
+                          labelStyle: Theme.of(context)
                               .textTheme
                               .formLabel
                               .fixFontFamily(),
+                          isDense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 5.0),
                         ),
-                        TextFormField(
-                          controller: _titleTEC,
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 5.0),
-                          ),
-                        ),
-                        const SizedBox(height: 15.0),
-                        Text(
-                          'Description',
-                          style: Theme.of(context)
+                      ),
+                      const SizedBox(height: 15.0),
+                      TextFormField(
+                        controller: _descTEC,
+                        decoration: InputDecoration(
+                          labelText: 'Description'.toUpperCase(),
+                          labelStyle: Theme.of(context)
                               .textTheme
                               .formLabel
                               .fixFontFamily(),
+                          isDense: true,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 5.0),
                         ),
-                        TextFormField(
-                          controller: _descTEC,
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 5.0),
-                          ),
-                        ),
-                      ],
-                    )),
-              ));
-        });
+                      ),
+                    ],
+                  )),
+            )));
   }
 
   @override

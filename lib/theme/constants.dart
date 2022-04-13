@@ -1,12 +1,33 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:patterns_canvas/patterns_canvas.dart';
 
 EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
 var primarySwatch = Colors.teal;
-var primaryColor = Colors.teal[200]!;
-var primaryColorLight = Colors.teal[100]!;
+var primaryColor = primarySwatch[200]!;
+var primaryColorLight = primarySwatch[100]!;
+var primaryColorDark = primarySwatch[400]!;
+
+Future<Object?> showBlurredDialog(
+    {required BuildContext context, required AlertDialog dialogBody}) {
+  return showGeneralDialog(
+      context: context,
+      barrierLabel: '',
+      barrierColor: Colors.black.withOpacity(0.35),
+      barrierDismissible: true,
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, anim1, anim2) => dialogBody,
+      transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+            filter: ImageFilter.blur(
+                sigmaX: 10 * anim1.value, sigmaY: 10 * anim1.value),
+            child: FadeTransition(
+              child: child,
+              opacity: anim1,
+            ),
+          ));
+}
 
 TextTheme textTheme = const TextTheme(
   headline1: TextStyle(fontSize: 48.0, fontWeight: FontWeight.w900),
@@ -59,11 +80,18 @@ extension CustomStyles on TextTheme {
   }
 
   TextStyle get formLabel {
-    return navLabel;
+    return navLabel.copyWith(letterSpacing: 2.0);
   }
 
   TextStyle get buttonText {
     return navLabel;
+  }
+
+  TextStyle get chipText {
+    return const TextStyle(
+      fontSize: 12.0,
+      color: Colors.white,
+    );
   }
 
   TextTheme fixFontFamily() {
@@ -78,6 +106,18 @@ extension FontFix on TextStyle {
 }
 
 ThemeData lightTheme = ThemeData(
+    inputDecorationTheme: InputDecorationTheme(
+      border:
+          UnderlineInputBorder(borderSide: BorderSide(color: primaryColorDark)),
+      enabledBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: primaryColor)),
+      focusedBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: primaryColorDark)),
+      errorBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
+      focusedErrorBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
+    ),
     primarySwatch: primarySwatch,
     primaryColor: primaryColor,
     primaryColorLight: primaryColorLight,
@@ -91,14 +131,6 @@ ThemeData lightTheme = ThemeData(
     ));
 
 ThemeData darkTheme = lightTheme.copyWith(
-    inputDecorationTheme: InputDecorationTheme(
-      enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey[200]!)),
-      errorBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
-      focusedErrorBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
-    ),
     scaffoldBackgroundColor: Colors.black,
     brightness: Brightness.dark,
     disabledColor: Colors.grey[200],

@@ -214,9 +214,11 @@ packages:
   dropdown_search:
     dependency: "direct main"
     description:
-      name: dropdown_search
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "238f97e37f32dc67466de4dbbade6208a7d4339a"
+      url: "https://github.com/arg274/searchable_dropdown.git"
+    source: git
     version: "2.0.1"
   fake_async:
     dependency: transitive
@@ -330,6 +332,13 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_speed_dial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.0"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.1.0"
