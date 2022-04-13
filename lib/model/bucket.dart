@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'bucket.g.dart';
@@ -20,9 +23,11 @@ class Bucket {
       required this.dateUpdated});
 
   // Named constructor that forwards to the default one.
-  Bucket.unlaunched(String id, String name, String user)
+  Bucket.unlaunched(String name, String user)
       : this(
-            id: id,
+            id: md5
+                .convert(utf8.encode(name + DateTime.now().toString()))
+                .toString(),
             name: name,
             users: [user],
             dateCreated: DateTime.now(),

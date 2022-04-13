@@ -12,7 +12,7 @@ import 'package:crypto/crypto.dart';
 class BucketController {
   int totalBuckets = 0;
 
-  void addBucket(Bucket bucket) async {
+  void addBucket(String bucketName) async {
     try {
       // fetch total number of buckets and update totalBuckets
       List<Bucket>? userBucketList = await FireStoreDB().fetchUserBucketList();
@@ -22,7 +22,9 @@ class BucketController {
       if (totalBuckets < DatabasePaths.userMaxBucket) {
         // TODO: Decide how Bucket ID will be generated
         FireStoreDB().addBucketDB(
-            bucket, FirebaseAuth.instance.currentUser!.uid.toString());
+            Bucket.unlaunched(
+                bucketName, FirebaseAuth.instance.currentUser!.uid),
+            FirebaseAuth.instance.currentUser!.uid.toString());
         totalBuckets++;
       } else {
         debugPrint("Max number of buckets exceeded");
@@ -42,13 +44,7 @@ class BucketController {
           "${FirebaseAuth.instance.currentUser!.email} has total $totalBuckets buckets");
       if (totalBuckets < DatabasePaths.userMaxBucket) {
         Bucket _bucket = Bucket.unlaunched(
-            md5
-                .convert(utf8.encode(
-                    FirebaseAuth.instance.currentUser!.uid.toString() +
-                        DateTime.now().toString()))
-                .toString(),
-            'bucket1',
-            FirebaseAuth.instance.currentUser!.uid);
+            'bucket1', FirebaseAuth.instance.currentUser!.uid);
         FireStoreDB().addBucketDB(
             _bucket, FirebaseAuth.instance.currentUser!.uid.toString());
         totalBuckets++;
@@ -129,6 +125,14 @@ class BucketController {
       debugPrint("Bucket($dummyBucketID) has resources: ${lst?.length}");
     } catch (e) {
       debugPrint("Error in fetchBucketResourcesDummy: $e");
+    }
+  }
+
+  String? validateBucket(String? bucketName) {
+    if (bucketName == null || bucketName.isEmpty) {
+      return 'Please enter a name';
+    } else {
+      return null;
     }
   }
 }

@@ -183,6 +183,32 @@ class FireStoreDB {
     }
   }
 
+  Stream<QuerySnapshot<Bucket>> getUserBucketStream() {
+    return FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.uid)
+        .doc(DatabasePaths.userBucketList)
+        .collection(DatabasePaths.userBucketListBucket)
+        .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson())
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Resource>> getBucketStream(Bucket bucket) {
+    return FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.uid)
+        .doc(DatabasePaths.userBucketList)
+        .collection(DatabasePaths.userBucketListBucket)
+        .doc(bucket.id)
+        .collection(DatabasePaths.userBucketListBucketResource)
+        .orderBy('dateCreated', descending: true)
+        .withConverter<Resource>(
+          fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+          toFirestore: (_resource, _) => _resource.toJson(),
+        )
+        .snapshots();
+  }
+
   void addResourceToBucketDB(String bucketId, Resource resource) async {
     try {
       final bucketInstanceRef = FirebaseFirestore.instance

@@ -7,6 +7,7 @@ var primaryColorLight = Colors.teal[100]!;
 
 TextTheme textTheme = const TextTheme(
   headline1: TextStyle(fontSize: 48.0, fontWeight: FontWeight.w900),
+  headline4: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w900),
   bodyText1: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
   headline6: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
 ).fixFontFamily();

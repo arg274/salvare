@@ -6,7 +6,7 @@ import 'package:salvare/model/user.dart' as model_user;
 import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
 import 'package:salvare/view/screen/search.dart';
-import 'package:salvare/view/screen/settings.dart';
+import 'package:salvare/view/screen/buckets.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/screen/sign_in_screen.dart';
@@ -86,7 +86,7 @@ class _DummyPageState extends State<DummyPage> {
   final screens = [
     const Dashboard(),
     const Search(),
-    const Settings(),
+    const Buckets(),
   ];
 
   @override
@@ -152,8 +152,8 @@ class _DummyPageState extends State<DummyPage> {
                   text: 'Search',
                 ),
                 const GButton(
-                  icon: FeatherIcons.settings,
-                  text: 'Settings',
+                  icon: FeatherIcons.shoppingBag,
+                  text: 'Buckets',
                 ),
               ],
               selectedIndex: screenIndex,
