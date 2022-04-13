@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';

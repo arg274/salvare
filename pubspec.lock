@@ -609,6 +609,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  patterns_canvas:
+    dependency: "direct main"
+    description:
+      name: patterns_canvas
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.5"
   pedantic:
     dependency: transitive
     description:

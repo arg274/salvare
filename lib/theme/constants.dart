@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:patterns_canvas/patterns_canvas.dart';
 
 EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
 var primarySwatch = Colors.teal;
@@ -11,6 +14,33 @@ TextTheme textTheme = const TextTheme(
   bodyText1: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
   headline6: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
 ).fixFontFamily();
+
+class RandomPatternGenerator extends CustomPainter {
+  Random random = Random();
+  Color getRandomLightColour() {
+    return Colors.primaries[random.nextInt(Colors.primaries.length)]
+        [(Random().nextInt(3) + 1) * 100]!;
+  }
+
+  Color getRandomDarkColour() {
+    return Colors.primaries[random.nextInt(Colors.primaries.length)]
+        [(Random().nextInt(6) + 4) * 100]!;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Pattern.fromValues(
+      patternType:
+          PatternType.values[random.nextInt(PatternType.values.length)],
+      bgColor: getRandomDarkColour(),
+      fgColor: getRandomLightColour(),
+    ).paintOnWidget(canvas, size);
+  }
+
+  //TODO: Fix constant redraws
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
 
 extension CustomStyles on TextTheme {
   TextStyle get navLabel {
