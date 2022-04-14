@@ -81,18 +81,6 @@ class _DummyPageState extends State<DummyPage> {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-          floatingActionButton: FloatingActionButton(
-            heroTag: "btn1",
-            child: const Icon(FeatherIcons.user),
-            backgroundColor: CustomColors.salvareDarkGreen,
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
-              );
-            },
-          ),
           body: SafeArea(
             child: IndexedStack(
               index: screenIndex,

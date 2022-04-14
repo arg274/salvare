@@ -49,7 +49,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   onPressed: () {
                     _selectDate(context);
                   },
-                  icon: const Icon(Icons.date_range, color: Colors.blue),
+                  icon: Icon(Icons.date_range,
+                      color: Theme.of(context).primaryColor),
                 ),
               ],
             ),

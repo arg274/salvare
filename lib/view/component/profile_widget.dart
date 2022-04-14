@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProfileWidget extends StatelessWidget {
@@ -22,7 +23,7 @@ class ProfileWidget extends StatelessWidget {
   }
 
   Widget buildImage() {
-    final image = NetworkImage(imagePath);
+    final image = CachedNetworkImageProvider(imagePath);
 
     return ClipOval(
       child: Material(

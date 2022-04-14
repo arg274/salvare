@@ -95,6 +95,8 @@ Future<Object?> showResourceForm({
                     ),
                     const SizedBox(height: 15.0),
                     TextFormField(
+                      style:
+                          Theme.of(context).textTheme.formText.fixFontFamily(),
                       controller: _urlTEC,
                       onChanged: (url) => {
                         if (_formkey.currentState!.validate())
@@ -126,6 +128,8 @@ Future<Object?> showResourceForm({
                     ),
                     const SizedBox(height: 15.0),
                     TextFormField(
+                      style:
+                          Theme.of(context).textTheme.formText.fixFontFamily(),
                       controller: _titleTEC,
                       decoration: InputDecoration(
                         labelText: 'Title'.toUpperCase(),
@@ -140,6 +144,8 @@ Future<Object?> showResourceForm({
                     ),
                     const SizedBox(height: 15.0),
                     TextFormField(
+                      style:
+                          Theme.of(context).textTheme.formText.fixFontFamily(),
                       controller: _descTEC,
                       decoration: InputDecoration(
                         labelText: 'Description'.toUpperCase(),

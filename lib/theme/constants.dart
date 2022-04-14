@@ -130,8 +130,23 @@ extension CustomStyles on TextTheme {
     return navLabel.copyWith(letterSpacing: 2.0);
   }
 
+  TextStyle get formText {
+    return textTheme.bodyText1!;
+  }
+
+  TextStyle get statLabel {
+    return textTheme.headline6!.copyWith(letterSpacing: 2.0);
+  }
+
   TextStyle get buttonText {
     return navLabel;
+  }
+
+  TextStyle get fillButtonText {
+    return const TextStyle(
+      fontSize: 14.0,
+      color: Colors.white,
+    );
   }
 
   TextStyle get chipText {

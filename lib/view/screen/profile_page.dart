@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:salvare/controller/bucket_controller.dart';
 import 'package:salvare/database/firestore_db.dart';
+import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
-import 'package:salvare/view/component/button_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
-import 'package:intl/intl.dart';
 import 'package:salvare/view/screen/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -33,37 +32,73 @@ class _ProfilePageState extends State<ProfilePage> {
           debugPrint("Snapshot data: ${snapshot.data}");
           child = Scaffold(
             appBar: buildAppBar(context),
-            body: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                ProfileWidget(
-                  imagePath:
-                      user.photoURL ?? "https://picsum.photos/250?image=10",
-                  onClicked: () async {},
+            body: Padding(
+              padding: globalEdgeInsets,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        ProfileWidget(
+                          imagePath: user.photoURL ??
+                              "https://picsum.photos/250?image=10",
+                          onClicked: () async {},
+                        ),
+                        Positioned.fill(
+                          left: 100.0,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: FloatingActionButton(
+                              mini: true,
+                              heroTag: 'profileEditBtn',
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const EditProfilePage(),
+                                ),
+                              ),
+                              child: const Icon(FeatherIcons.edit2),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    snapshot.data == null
+                        ? buildName(model.User.unlaunched("unknown", "unknown"))
+                        : buildName(snapshot.data as model.User),
+                    const SizedBox(height: 48.0),
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          snapshot.data == null
+                              ? buildDOB(null)
+                              : buildDOB((snapshot.data as model.User).dob),
+                          rowDivider(),
+                          snapshot.data == null
+                              ? buildMemberSince(null)
+                              : buildMemberSince(
+                                  (snapshot.data as model.User).dateCreated),
+                          rowDivider(),
+                          snapshot.data == null
+                              ? buildBucketInfo(0)
+                              : buildBucketInfo((snapshot.data as model.User)
+                                      .buckets
+                                      ?.length ??
+                                  1),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    snapshot.data == null
+                        ? buildAbout(
+                            model.User.unlaunched("unknown", "unknown"))
+                        : buildAbout(snapshot.data as model.User),
+                    const SizedBox(height: 24.0),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                snapshot.data == null
-                    ? buildName(model.User.unlaunched("unknown", "unknown"))
-                    : buildName(snapshot.data as model.User),
-                const SizedBox(height: 16),
-                Center(child: buildEditButton()),
-                const SizedBox(height: 48),
-                snapshot.data == null
-                    ? buildDOB("Unknown")
-                    : (snapshot.data as model.User).dob == null
-                        ? buildDOB("Unknown")
-                        : buildDOB(DateFormat('dd/MM/yyyy')
-                            .format((snapshot.data as model.User).dob!)),
-                const SizedBox(height: 16),
-                snapshot.data == null
-                    ? buildBucketInfo(0)
-                    : buildBucketInfo(
-                        (snapshot.data as model.User).buckets?.length ?? 1),
-                const SizedBox(height: 16),
-                snapshot.data == null
-                    ? buildAbout(model.User.unlaunched("unknown", "unknown"))
-                    : buildAbout(snapshot.data as model.User)
-              ],
+              ),
             ),
           );
         } else {
@@ -87,85 +122,86 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Text(
             modelUser.userName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            style: Theme.of(context).textTheme.headline4,
           ),
           const SizedBox(height: 4),
           Text(
             FirebaseAuth.instance.currentUser!.email ?? "Unknown",
-            style: const TextStyle(color: Colors.grey),
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.apply(color: Colors.grey),
           )
         ],
       );
 
-  Route _routeToUserEditProfileScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const EditProfilePage(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
-  Widget buildEditButton() => ButtonWidget(
-        text: 'Edit Profile',
-        onClicked: () {
-          // TODO: Edit profile functionalities
-          Navigator.of(context).push(_routeToUserEditProfileScreen());
-        },
+  Widget rowDivider() => VerticalDivider(
+        thickness: 2,
+        indent: 5.0,
+        color: Theme.of(context).primaryColor,
       );
 
-  Widget buildAbout(model.User modelUser) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 48),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'About',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              modelUser.description ?? "No User Information Available",
-              style: const TextStyle(fontSize: 16, height: 1.4),
-            ),
-          ],
-        ),
+  Widget buildAbout(model.User modelUser) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'About',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            modelUser.description ?? "No User Information Available",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ],
       );
 
-  Widget buildBucketInfo(int totalBuckets) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 48),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Total Buckets:  $totalBuckets',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+  Widget buildBucketInfo(int totalBuckets) => Column(
+        children: [
+          Text(
+            totalBuckets.toString(),
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          Text(
+            'Bucket${(totalBuckets > 1) ? "s" : ""}'.toUpperCase(),
+            style: Theme.of(context).textTheme.statLabel,
+          ),
+        ],
       );
 
-  Widget buildDOB(String data) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 48),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Date of Birth:  $data',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+  Widget buildDOB(DateTime? dob) => Column(
+        children: [
+          Text(
+            (dob != null)
+                ? (DateTime.now().difference(dob).inDays.toDouble() / 365.0)
+                    .floor()
+                    .toString()
+                : "?",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          Text(
+            'y/o'.toUpperCase(),
+            style: Theme.of(context).textTheme.statLabel,
+          ),
+        ],
+      );
+
+  Widget buildMemberSince(DateTime? memberSince) => Column(
+        children: [
+          Text(
+            (memberSince != null)
+                ? DateTime.now().difference(memberSince).inDays.toString() + 'D'
+                : "?",
+            style: Theme.of(context).textTheme.headline2,
+          ),
+          Text(
+            'Account'.toUpperCase(),
+            style: Theme.of(context).textTheme.statLabel,
+          ),
+          Text(
+            'Age'.toUpperCase(),
+            style: Theme.of(context).textTheme.statLabel,
+          ),
+        ],
       );
 }

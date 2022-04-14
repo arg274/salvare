@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/database/firestore_db.dart';
+import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
@@ -25,14 +27,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return FutureBuilder(
       future: FireStoreDB().fetchUserInfoDB(),
       builder: (context, snapshot) {
+        Widget child;
         if (snapshot.hasError) {
-          return const Text('Error fetching user info from Firebase');
+          child = const Text('Error fetching user info from Firebase');
         } else if (snapshot.hasData) {
           selectedName = (snapshot.data as model.User).userName;
           selectedDescription = (snapshot.data as model.User).description;
           debugPrint("Snapshot data: ${snapshot.data}");
 
-          return Scaffold(
+          child = Scaffold(
             appBar: buildAppBarEdit(context, onPressedSaveButton),
             body: ListView(
               physics: const BouncingScrollPhysics(),
@@ -51,16 +54,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
                   child: Row(
                     children: [
-                      const Text(
-                        "Date Of Birth",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
+                      Text(
+                        "Date Of Birth".toUpperCase(),
+                        style: Theme.of(context)
+                            .textTheme
+                            .formLabel
+                            .fixFontFamily(),
                       ),
                       IconButton(
                         onPressed: () {
                           _selectDate(context);
                         },
-                        icon: const Icon(Icons.date_range, color: Colors.blue),
+                        icon: Icon(Icons.date_range,
+                            color: Theme.of(context).primaryColor),
                       ),
                     ],
                   ),
@@ -74,10 +80,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           );
         } else {
-          return const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          child = Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Center(
+              child: SpinKitCubeGrid(
+                  size: 100.0, color: Theme.of(context).primaryColor),
+            ),
           );
         }
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 400),
+          child: child,
+        );
       },
     );
   }
@@ -139,19 +153,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Display Name",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Text(
+                  "Display Name".toUpperCase(),
+                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
                 ),
                 const SizedBox(height: 8),
-                TextField(
+                TextFormField(
+                  style: Theme.of(context).textTheme.formText.fixFontFamily(),
                   controller: TextEditingController(text: selectedName),
-                  showCursor: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                   maxLines: 1,
                   onChanged: (name) {
                     selectedName = name;
@@ -170,19 +179,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "About",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Text(
+                  "About".toUpperCase(),
+                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
                 ),
                 const SizedBox(height: 8),
-                TextField(
+                TextFormField(
+                  style: Theme.of(context).textTheme.formText.fixFontFamily(),
                   controller: TextEditingController(text: selectedDescription),
-                  showCursor: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                   maxLines: 10,
                   onChanged: (description) {
                     selectedDescription = description;

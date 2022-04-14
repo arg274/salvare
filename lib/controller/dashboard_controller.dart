@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/database/database_paths.dart';
+import 'package:salvare/view/screen/profile_page.dart';
 
 class DashboardController {
   StreamBuilder<QuerySnapshot<Resource>> getResourceStreamBuilder() {
@@ -37,9 +39,28 @@ class DashboardController {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             const SizedBox(height: 100.0),
-                            Text(
-                              "Home",
-                              style: Theme.of(context).textTheme.headline1,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Home",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                                FloatingActionButton(
+                                  heroTag: "profileBtn",
+                                  child: const Icon(FeatherIcons.user),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  onPressed: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ProfilePage()),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 40.0),
                           ]),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salvare/theme/constants.dart';
 
 class ButtonWidget extends StatelessWidget {
   final String text;
@@ -13,11 +14,14 @@ class ButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape: StadiumBorder(),
+          shape: const StadiumBorder(),
           onPrimary: Colors.white,
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
         ),
-        child: Text(text),
+        child: Text(
+          text,
+          style: Theme.of(context).textTheme.fillButtonText.fixFontFamily(),
+        ),
         onPressed: onClicked,
       );
 }
