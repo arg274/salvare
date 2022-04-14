@@ -126,7 +126,7 @@ class _BucketResourcesState extends State<BucketResources> {
                             ]);
                       }
                       return Padding(
-                        padding: globalEdgeInsets,
+                        padding: cardListEdgeInsets,
                         child: ResourceCard(
                           resource: resources[index - 1] as Resource,
                           isBucketResource: true,

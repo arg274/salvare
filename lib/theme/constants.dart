@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:patterns_canvas/patterns_canvas.dart';
 
 EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
+EdgeInsets cardListEdgeInsets =
+    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
 var primarySwatch = Colors.teal;
 var primaryColor = primarySwatch[200]!;
 var primaryColorLight = primarySwatch[100]!;

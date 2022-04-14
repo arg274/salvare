@@ -57,26 +57,6 @@ class DummyPage extends StatefulWidget {
 }
 
 class _DummyPageState extends State<DummyPage> {
-  Route _routeToUserProfileScreen() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const ProfilePage(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
   int screenIndex = 0;
   final screens = [
     const Dashboard(),
@@ -103,16 +83,16 @@ class _DummyPageState extends State<DummyPage> {
               userName: FirebaseAuth.instance.currentUser!.displayName!,
               dateCreated: DateTime.now(),
             ));
-            Navigator.of(context).push(_routeToUserProfileScreen());
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
           },
         ),
         body: SafeArea(
-          child: Padding(
-            padding: globalEdgeInsets,
-            child: IndexedStack(
-              index: screenIndex,
-              children: screens,
-            ),
+          child: IndexedStack(
+            index: screenIndex,
+            children: screens,
           ),
         ),
         bottomNavigationBar: SafeArea(

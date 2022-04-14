@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/database/database_paths.dart';
@@ -30,19 +31,25 @@ class DashboardController {
                 itemCount: resources2.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const SizedBox(height: 100.0),
-                          Text(
-                            "Home",
-                            style: Theme.of(context).textTheme.headline1,
-                          ),
-                          const SizedBox(height: 40.0),
-                        ]);
+                    return Padding(
+                      padding: globalEdgeInsets,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const SizedBox(height: 100.0),
+                            Text(
+                              "Home",
+                              style: Theme.of(context).textTheme.headline1,
+                            ),
+                            const SizedBox(height: 40.0),
+                          ]),
+                    );
                   }
-                  return ResourceCard(
-                      resource: resources2[index - 1] as Resource);
+                  return Padding(
+                    padding: cardListEdgeInsets,
+                    child: ResourceCard(
+                        resource: resources2[index - 1] as Resource),
+                  );
                 });
           } catch (err) {
             return Text("Error Occured while fetching resource $err");
