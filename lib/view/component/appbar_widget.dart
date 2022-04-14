@@ -65,3 +65,25 @@ AppBar buildAppBarEdit(BuildContext context, Function() onPressedSaveButton) {
     ],
   );
 }
+
+AppBar buildAppBarReg(BuildContext context, Function() onPressedRegButton) {
+  return AppBar(
+    leading: const BackButton(
+      color: Colors.blue,
+    ),
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    actions: [
+      IconButton(
+        icon: const Icon(
+          FeatherIcons.arrowRight,
+          color: Colors.blue,
+        ),
+        onPressed: () {
+          debugPrint("Clicked reg button");
+          onPressedRegButton();
+        },
+      )
+    ],
+  );
+}

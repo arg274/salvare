@@ -2,8 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/main.dart';
 import 'package:salvare/theme/constants.dart';
+import 'package:salvare/model/user.dart' as model;
+import 'package:salvare/view/screen/registration_page.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   const GoogleSignInButton({Key? key}) : super(key: key);
@@ -46,11 +49,20 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 });
 
                 if (user != null) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => DummyPage(),
-                    ),
-                  );
+                  model.User? _user = await FireStoreDB().fetchUserInfoDB();
+                  if (_user == null) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => RegistrationPage(),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => DummyPage(),
+                      ),
+                    );
+                  }
                 }
               },
               child: Padding(
