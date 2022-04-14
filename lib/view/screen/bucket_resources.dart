@@ -7,6 +7,7 @@ import 'package:salvare/model/bucket.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/resource_card.dart';
+import 'package:salvare/view/component/resource_form.dart';
 
 class BucketResources extends StatefulWidget {
   const BucketResources({Key? key, required this.bucket}) : super(key: key);
@@ -39,7 +40,7 @@ class _BucketResourcesState extends State<BucketResources> {
                               {
                                 _resource!.title = _titleTEC.text,
                                 _resource!.description = _descTEC.text,
-                                bucketController.addResourceToBucket(
+                                bucketController.addBucketResource(
                                     widget.bucket, _resource!),
                                 resourceController.addResource(_resource!),
                               },
@@ -215,8 +216,11 @@ class _BucketResourcesState extends State<BucketResources> {
                                         ),
                                         const SizedBox(width: 10.0),
                                         ElevatedButton(
-                                          onPressed: () =>
-                                              showAddLinkDialogue(context),
+                                          onPressed: () => showResourceForm(
+                                            context: context,
+                                            isBucketResource: true,
+                                            bucket: widget.bucket,
+                                          ),
                                           child: const Icon(FeatherIcons.plus),
                                           style: ElevatedButton.styleFrom(
                                               shape: const CircleBorder(),
@@ -234,7 +238,10 @@ class _BucketResourcesState extends State<BucketResources> {
                       return Padding(
                         padding: globalEdgeInsets,
                         child: ResourceCard(
-                            resource: resources[index - 1] as Resource),
+                          resource: resources[index - 1] as Resource,
+                          isBucketResource: true,
+                          bucket: widget.bucket,
+                        ),
                       );
                     });
               } catch (err) {

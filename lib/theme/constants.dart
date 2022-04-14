@@ -53,8 +53,8 @@ class RandomPatternGenerator extends CustomPainter {
     Pattern.fromValues(
       patternType:
           PatternType.values[random.nextInt(PatternType.values.length)],
-      bgColor: getRandomDarkColour(),
-      fgColor: getRandomLightColour(),
+      bgColor: primaryColorDark,
+      fgColor: primaryColorLight,
     ).paintOnWidget(canvas, size);
   }
 
@@ -75,7 +75,7 @@ extension CustomStyles on TextTheme {
   TextStyle get domainText {
     return const TextStyle(
       fontSize: 12.0,
-      fontWeight: FontWeight.w200,
+      fontWeight: FontWeight.w300,
     );
   }
 

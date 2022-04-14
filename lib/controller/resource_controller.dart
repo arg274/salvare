@@ -10,6 +10,7 @@ import 'package:validators/validators.dart';
 
 class ResourceController {
   static final ResourceController _singleton = ResourceController._internal();
+  final firestoreDB = FireStoreDB();
 
   factory ResourceController() {
     return _singleton;
@@ -34,7 +35,11 @@ class ResourceController {
   }
 
   Future<void> addResource(Resource resource) async {
-    FireStoreDB().addResourceDB(resource);
+    firestoreDB.addResourceDB(resource);
+  }
+
+  Future<void> editResource(Resource resource) async {
+    firestoreDB.addResourceDB(resource);
   }
 
   void copyResourceURL(Resource resource) {

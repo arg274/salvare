@@ -56,13 +56,15 @@ class BucketController {
     }
   }
 
-  void addResourceToBucket(Bucket bucket, Resource resource) {
+  void addBucketResource(Bucket bucket, Resource resource) {
     try {
       FireStoreDB().addResourceToBucketDB(bucket.id, resource);
     } catch (err) {
       debugPrint("error in add resource to bucket dummy {$err}");
     }
   }
+
+  void editBucketResource(Bucket bucket, Resource resource) => {};
 
   void addResourceToBucketDummy() {
     try {

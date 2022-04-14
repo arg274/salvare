@@ -177,6 +177,8 @@ class FireStoreDB {
     }
   }
 
+  void editResourceDB(Resource resource) => addResourceDB(resource);
+
   void addBucketDB(Bucket bucket, String uid) {
     try {
       final bucketRef = FirebaseFirestore.instance

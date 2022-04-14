@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/button_widget.dart';
@@ -63,8 +64,12 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         } else {
-          return const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          return Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Center(
+              child: SpinKitCubeGrid(
+                  size: 100.0, color: Theme.of(context).primaryColor),
+            ),
           );
         }
       },

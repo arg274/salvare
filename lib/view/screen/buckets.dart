@@ -109,6 +109,10 @@ class _BucketsState extends State<Buckets> {
                               MaterialPageRoute(
                                   builder: (context) => BucketResources(
                                       bucket: buckets[index - 1]))),
+                          leading: const SizedBox(
+                            height: double.infinity,
+                            child: Icon(FeatherIcons.shoppingBag),
+                          ),
                           title: Text(
                             buckets[index - 1].name,
                             style: Theme.of(context).textTheme.headline6,

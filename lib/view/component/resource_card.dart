@@ -4,7 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/controller/resource_controller.dart';
+import 'package:salvare/model/bucket.dart';
 import 'package:salvare/model/resource.dart';
+import 'package:salvare/view/component/resource_form.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
@@ -13,8 +15,18 @@ final ResourceController resourceController = ResourceController();
 
 class ResourceCard extends StatelessWidget {
   final Resource resource;
+  final bool isBucketResource;
+  final Bucket? bucket;
 
-  const ResourceCard({required this.resource, Key? key}) : super(key: key);
+  ResourceCard(
+      {Key? key,
+      required this.resource,
+      this.isBucketResource = false,
+      this.bucket})
+      : super(key: key) {
+    assert(!isBucketResource && bucket == null ||
+        isBucketResource && bucket != null);
+  }
 
   ImageProvider<Object> fetchImage(imageURL) {
     var noImg = const AssetImage('assets/no_img.jpg');
@@ -31,6 +43,7 @@ class ResourceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       shadowColor: Theme.of(context).shadowColor,
       color: Theme.of(context).scaffoldBackgroundColor,
       child: InkWell(
@@ -56,8 +69,13 @@ class ResourceCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyText1,
                       )),
                   ListTile(
-                      // TODO: Refactor the resource form to be accessible globally
-                      onTap: () => {},
+                      onTap: () => showResourceForm(
+                            context: context,
+                            isEdit: true,
+                            resource: resource,
+                            isBucketResource: isBucketResource,
+                            bucket: bucket,
+                          ),
                       leading: Icon(
                         FeatherIcons.edit3,
                         color: Theme.of(context).textTheme.bodyText1?.color,
@@ -76,13 +94,17 @@ class ResourceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Stack(children: [
-              FadeInImage(
-                placeholder: MemoryImage(kTransparentImage),
-                image: fetchImage(resource.imageUrl),
-                fit: BoxFit.cover,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Image.asset('assets/no_img.jpg', fit: BoxFit.cover);
-                },
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(15.0)),
+                child: FadeInImage(
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: fetchImage(resource.imageUrl),
+                  fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.asset('assets/no_img.jpg', fit: BoxFit.cover);
+                  },
+                ),
               ),
               Positioned(
                 left: 10,
