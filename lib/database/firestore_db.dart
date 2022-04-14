@@ -250,6 +250,23 @@ class FireStoreDB {
     }
   }
 
+  void deleteResourceDB(String resourceID) {
+    try {
+      final resourceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userResourceList)
+          .collection(DatabasePaths.userResourceListResource)
+          .doc(resourceID);
+      resourceRef
+          .delete()
+          .then((value) => debugPrint("Deleted resource! {$resourceID}"))
+          .catchError((err) =>
+              debugPrint("Error in User delete resource {$resourceID}"));
+    } catch (e) {
+      debugPrint("Error in delete resource {$e}");
+    }
+  }
+
 // Only deletes current users bucket
   void deleteBucketDB(String bucketID) async {
     try {
