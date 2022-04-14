@@ -605,6 +605,19 @@ class FireStoreDB {
     return null;
   }
 
+  Stream<QuerySnapshot<Resource>> getResourceStreamDB() {
+    return FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.uid)
+        .doc(DatabasePaths.userResourceList)
+        .collection(DatabasePaths.userResourceListResource)
+        .orderBy('dateCreated', descending: true)
+        .withConverter<Resource>(
+          fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+          toFirestore: (_resource, _) => _resource.toJson(),
+        )
+        .snapshots();
+  }
+
   Future<List<Resource>?> searchResourceUsingTagDB(Tag _tag) async {
     try {
       final resourceRef = FirebaseFirestore.instance
