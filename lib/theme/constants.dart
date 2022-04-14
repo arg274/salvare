@@ -37,7 +37,10 @@ TextTheme textTheme = const TextTheme(
 ).fixFontFamily();
 
 class RandomPatternGenerator extends CustomPainter {
-  Random random = Random();
+  final Random random = Random();
+  final PatternType pattern =
+      PatternType.values[Random().nextInt(PatternType.values.length)];
+
   Color getRandomLightColour() {
     return Colors.primaries[random.nextInt(Colors.primaries.length)]
         [(Random().nextInt(3) + 1) * 100]!;
@@ -51,14 +54,12 @@ class RandomPatternGenerator extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Pattern.fromValues(
-      patternType:
-          PatternType.values[random.nextInt(PatternType.values.length)],
+      patternType: pattern,
       bgColor: primaryColorDark,
       fgColor: primaryColorLight,
     ).paintOnWidget(canvas, size);
   }
 
-  //TODO: Fix constant redraws
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
