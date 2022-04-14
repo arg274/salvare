@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/controller/authentication.dart';
 import 'package:salvare/main.dart';
+import 'package:salvare/theme/constants.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   const GoogleSignInButton({Key? key}) : super(key: key);
@@ -18,12 +20,14 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 100.0),
       child: _isSigningIn
-          ? const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            )
+          ? const SpinKitCubeGrid(size: 50.0, color: Colors.white)
           : OutlinedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.white),
+                side: MaterialStateProperty.all(const BorderSide(
+                  color: Colors.white,
+                  width: 2.5,
+                )),
+                backgroundColor: MaterialStateProperty.all(Colors.transparent),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40),
@@ -54,20 +58,22 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    Image(
-                      image: AssetImage("assets/google_logo.png"),
-                      height: 35.0,
+                  children: <Widget>[
+                    const ColorFiltered(
+                      colorFilter:
+                          ColorFilter.mode(Colors.white, BlendMode.srcATop),
+                      child: Image(
+                        image: AssetImage("assets/google_logo.png"),
+                        height: 25.0,
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 10),
                       child: Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        'Enter'.toUpperCase(),
+                        style: Theme.of(context).textTheme.formLabel.apply(
+                              color: Colors.white,
+                            ),
                       ),
                     )
                   ],

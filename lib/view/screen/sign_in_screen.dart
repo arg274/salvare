@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/controller/authentication.dart';
 import 'package:salvare/res/custom_colors.dart';
+import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/google_sign_in_button.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -13,65 +16,68 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 16.0,
-            right: 16.0,
-            bottom: 20.0,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Image.asset(
-                        'assets/salvare.png',
-                        height: 160,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Theme.of(context).primaryColor,
+        body: SafeArea(
+          child: Padding(
+            padding: globalEdgeInsets,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ColorFiltered(
+                        child: Image.asset(
+                          'assets/start.png',
+                        ),
+                        colorFilter: ColorFilter.mode(
+                            Theme.of(context).primaryColor, BlendMode.color),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Salvare',
-                      style: TextStyle(
-                        color: CustomColors.salvareGreen,
-                        fontSize: 40,
+                      const SizedBox(height: 20),
+                      Text(
+                        'Welcome to Salvare!',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline2!
+                            .apply(color: Colors.white),
                       ),
-                    ),
-                    const Text(
-                      'Authentication',
-                      style: TextStyle(
-                        color: CustomColors.firebaseOrange,
-                        fontSize: 40,
+                      const SizedBox(height: 20),
+                      Text(
+                        'Please log in or sign up using your Google account to continue.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .apply(color: Colors.white),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              FutureBuilder(
-                future: Authentication.initializeFirebase(context: context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Error initializing Firebase');
-                  } else if (snapshot.connectionState == ConnectionState.done) {
-                    return const GoogleSignInButton();
-                  }
-                  return const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      CustomColors.firebaseOrange,
-                    ),
-                  );
-                },
-              ),
-            ],
+                FutureBuilder(
+                  future: Authentication.initializeFirebase(context: context),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Error initializing Firebase');
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
+                      return const GoogleSignInButton();
+                    }
+                    return const SpinKitCubeGrid(
+                        size: 100.0, color: Colors.white);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -126,21 +126,21 @@ class _DashboardState extends State<Dashboard> {
           children: [
             SpeedDialChild(
               child: const Icon(FeatherIcons.link),
-              backgroundColor: Colors.red,
+              backgroundColor: primarySwatch[600],
               foregroundColor: Colors.white,
               label: 'Resource',
               onTap: () => showResourceForm(context: context),
             ),
             SpeedDialChild(
               child: const Icon(FeatherIcons.folder),
-              backgroundColor: Colors.deepOrange,
+              backgroundColor: primarySwatch[700],
               foregroundColor: Colors.white,
               label: 'Category',
               onTap: () => showAddCategoryDialogue(context),
             ),
             SpeedDialChild(
               child: const Icon(FeatherIcons.tag),
-              backgroundColor: Colors.indigo,
+              backgroundColor: primarySwatch[800],
               foregroundColor: Colors.white,
               label: 'Tag',
               onTap: () => showAddTagDialogue(context),

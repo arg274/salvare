@@ -12,6 +12,48 @@ var primaryColor = primarySwatch[200]!;
 var primaryColorLight = primarySwatch[100]!;
 var primaryColorDark = primarySwatch[400]!;
 
+ColorFilter tintMatrix({
+  Color tintColor = Colors.grey,
+  double scale = 1,
+}) {
+  final int r = tintColor.red;
+  final int g = tintColor.green;
+  final int b = tintColor.blue;
+
+  final double rTint = r / 255;
+  final double gTint = g / 255;
+  final double bTint = b / 255;
+
+  const double rL = 0.2126;
+  const double gL = 0.7152;
+  const double bL = 0.0722;
+
+  final double translate = 1 - scale * 0.5;
+
+  return ColorFilter.matrix(<double>[
+    (rL * rTint * scale),
+    (gL * rTint * scale),
+    (bL * rTint * scale),
+    (0),
+    (r * translate),
+    (rL * gTint * scale),
+    (gL * gTint * scale),
+    (bL * gTint * scale),
+    (0),
+    (g * translate),
+    (rL * bTint * scale),
+    (gL * bTint * scale),
+    (bL * bTint * scale),
+    (0),
+    (b * translate),
+    (0),
+    (0),
+    (0),
+    (1),
+    (0),
+  ]);
+}
+
 Future<Object?> showBlurredDialog(
     {required BuildContext context, required AlertDialog dialogBody}) {
   return showGeneralDialog(
@@ -33,6 +75,8 @@ Future<Object?> showBlurredDialog(
 
 TextTheme textTheme = const TextTheme(
   headline1: TextStyle(fontSize: 48.0, fontWeight: FontWeight.w900),
+  headline2: TextStyle(fontSize: 40.0, fontWeight: FontWeight.w900),
+  headline3: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w900),
   headline4: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w900),
   bodyText1: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
   headline6: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
