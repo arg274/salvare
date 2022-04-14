@@ -1,12 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:salvare/database/firestore_db.dart';
-import 'package:salvare/model/user.dart' as model_user;
-import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/view/screen/dashboard.dart';
-import 'package:salvare/view/screen/profile_page.dart';
 import 'package:salvare/view/screen/search.dart';
 import 'package:salvare/view/screen/buckets.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';

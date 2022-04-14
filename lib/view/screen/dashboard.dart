@@ -12,6 +12,7 @@ import 'package:salvare/model/tag.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/view/component/resource_form.dart';
+import 'package:salvare/view/screen/profile_page.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -167,18 +168,39 @@ class _DashboardState extends State<Dashboard> {
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return Padding(
-                          padding: globalEdgeInsets,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const SizedBox(height: 100.0),
-                                Text(
-                                  "Home",
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                                const SizedBox(height: 40.0),
-                              ]),
-                        );
+                            padding: globalEdgeInsets,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const SizedBox(height: 100.0),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Home",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
+                                      ),
+                                      FloatingActionButton(
+                                        heroTag: "profileBtn",
+                                        child: const Icon(FeatherIcons.user),
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        onPressed: () async {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ProfilePage()),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 40.0),
+                                ]));
                       }
                       return Padding(
                         padding: cardListEdgeInsets,
