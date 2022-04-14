@@ -91,16 +91,19 @@ class _BucketsState extends State<Buckets> {
                     itemCount: buckets.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
-                        return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(height: 100.0),
-                              Text(
-                                "Buckets",
-                                style: Theme.of(context).textTheme.headline1,
-                              ),
-                              const SizedBox(height: 40.0),
-                            ]);
+                        return Padding(
+                          padding: globalEdgeInsets,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const SizedBox(height: 100.0),
+                                Text(
+                                  "Buckets",
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                                const SizedBox(height: 40.0),
+                              ]),
+                        );
                       }
                       return InkWell(
                         child: ListTile(

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:patterns_canvas/patterns_canvas.dart';
 
 EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
+EdgeInsets cardListEdgeInsets =
+    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
 var primarySwatch = Colors.teal;
 var primaryColor = primarySwatch[200]!;
 var primaryColorLight = primarySwatch[100]!;
@@ -126,6 +128,7 @@ ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     disabledColor: Colors.grey[600],
     shadowColor: Colors.grey[400],
+    cardColor: Colors.white,
     textTheme: textTheme.apply(
       bodyColor: Colors.black,
       displayColor: Colors.black,
@@ -137,6 +140,7 @@ ThemeData darkTheme = lightTheme.copyWith(
     disabledColor: Colors.grey[200],
     shadowColor: Colors.grey[600],
     canvasColor: Colors.black,
+    cardColor: Colors.black87,
     textTheme: textTheme.apply(
       bodyColor: Colors.white,
       displayColor: Colors.white,

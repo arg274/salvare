@@ -42,124 +42,137 @@ class ResourceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-      shadowColor: Theme.of(context).shadowColor,
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: InkWell(
-        onTap: () => resourceController.launchURL(resource.url),
-        onLongPress: () => showModalBottomSheet<void>(
-          context: context,
-          builder: (context) {
-            return Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                      onTap: () => copyLink(context),
-                      leading: Icon(
-                        FeatherIcons.copy,
-                        color: Theme.of(context).textTheme.bodyText1?.color,
-                      ),
-                      title: Text(
-                        'Copy Link',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      )),
-                  ListTile(
-                      onTap: () => showResourceForm(
-                            context: context,
-                            isEdit: true,
-                            resource: resource,
-                            isBucketResource: isBucketResource,
-                            bucket: bucket,
-                          ),
-                      leading: Icon(
-                        FeatherIcons.edit3,
-                        color: Theme.of(context).textTheme.bodyText1?.color,
-                      ),
-                      title: Text(
-                        'Edit Resource',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      )),
-                ],
-              ),
-            );
-          },
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Stack(children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(15.0)),
-                child: FadeInImage(
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: fetchImage(resource.imageUrl),
-                  fit: BoxFit.cover,
-                  imageErrorBuilder: (context, error, stackTrace) {
-                    return Image.asset('assets/no_img.jpg', fit: BoxFit.cover);
-                  },
-                ),
-              ),
-              Positioned(
-                left: 10,
-                top: 10,
-                child: Container(
-                  padding: const EdgeInsets.all(5.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: Text(resource.category,
-                      style: Theme.of(context).textTheme.bodyText1),
-                ),
-              ),
-            ]),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(resource.title,
-                            style: Theme.of(context).textTheme.headline6),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Text(resource.description,
-                              style: Theme.of(context).textTheme.bodyText1),
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Card(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+        shadowColor: Colors.transparent,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: InkWell(
+          onTap: () => resourceController.launchURL(resource.url),
+          onLongPress: () => showModalBottomSheet<void>(
+            context: context,
+            builder: (context) {
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                        onTap: () => copyLink(context),
+                        leading: Icon(
+                          FeatherIcons.copy,
+                          color: Theme.of(context).textTheme.bodyText1?.color,
                         ),
-                        Text(resource.domain,
-                            style: Theme.of(context)
-                                .textTheme
-                                .domainText
-                                .apply(color: Theme.of(context).disabledColor)),
-                      ],
-                    ),
+                        title: Text(
+                          'Copy Link',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )),
+                    ListTile(
+                        onTap: () => showResourceForm(
+                              context: context,
+                              isEdit: true,
+                              resource: resource,
+                              isBucketResource: isBucketResource,
+                              bucket: bucket,
+                            ),
+                        leading: Icon(
+                          FeatherIcons.edit3,
+                          color: Theme.of(context).textTheme.bodyText1?.color,
+                        ),
+                        title: Text(
+                          'Edit Resource',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )),
+                  ],
+                ),
+              );
+            },
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Stack(children: [
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15.0)),
+                  child: FadeInImage(
+                    placeholder: MemoryImage(kTransparentImage),
+                    image: fetchImage(resource.imageUrl),
+                    fit: BoxFit.cover,
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return Image.asset('assets/no_img.jpg',
+                          fit: BoxFit.cover);
+                    },
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(4.0),
-                    margin: const EdgeInsets.all(1.0),
-                    child: IconButton(
-                      onPressed: () {
-                        copyLink(context);
-                      },
-                      icon: const Icon(FeatherIcons.copy),
-                      color: Theme.of(context).textTheme.bodyText1?.color,
+                ),
+                Positioned(
+                  left: 10,
+                  top: 10,
+                  child: Container(
+                    padding: const EdgeInsets.all(5.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Theme.of(context).primaryColor,
                     ),
+                    child: Text(resource.category,
+                        style: Theme.of(context).textTheme.bodyText1),
                   ),
-                ],
+                ),
+              ]),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(resource.title,
+                              style: Theme.of(context).textTheme.headline6),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(resource.description,
+                                style: Theme.of(context).textTheme.bodyText1),
+                          ),
+                          Text(resource.domain,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .domainText
+                                  .apply(
+                                      color: Theme.of(context).disabledColor)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      margin: const EdgeInsets.all(1.0),
+                      child: IconButton(
+                        onPressed: () {
+                          copyLink(context);
+                        },
+                        icon: const Icon(FeatherIcons.copy),
+                        color: Theme.of(context).textTheme.bodyText1?.color,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

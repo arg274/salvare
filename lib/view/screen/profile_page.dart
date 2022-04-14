@@ -25,11 +25,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return FutureBuilder(
       future: FireStoreDB().fetchUserInfoDB(),
       builder: (context, snapshot) {
+        Widget child;
         if (snapshot.hasError) {
-          return const Text('Error fetching user info from Firebase');
+          child = const Text('Error fetching user info from Firebase');
         } else if (snapshot.hasData) {
           debugPrint("Snapshot data: ${snapshot.data}");
-          return Scaffold(
+          child = Scaffold(
             appBar: buildAppBar(context),
             body: ListView(
               physics: const BouncingScrollPhysics(),
@@ -65,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         } else {
-          return Container(
+          child = Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Center(
               child: SpinKitCubeGrid(
@@ -73,6 +74,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         }
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 400),
+          child: child,
+        );
       },
     );
   }
@@ -115,8 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
         text: 'Edit Profile',
         onClicked: () {
           // TODO: Edit profile functionalities
-          Navigator.of(context)
-              .pushReplacement(_routeToUserEditProfileScreen());
+          Navigator.of(context).push(_routeToUserEditProfileScreen());
         },
       );
 
