@@ -44,6 +44,7 @@ class _SearchState extends State<Search> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 80),
           TextFormField(
             style: Theme.of(context).textTheme.bodyText1?.fixFontFamily(),
             textAlignVertical: TextAlignVertical.center,

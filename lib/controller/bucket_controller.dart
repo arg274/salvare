@@ -91,7 +91,7 @@ class BucketController {
           debugPrint("can't add bucket as no bucket exists");
         } else {
           FireStoreDB().addUserToBucketDB(
-              userBucketList!.first, "68oiCcs9aDQOaZvd6mtHResXBfj2");
+              userBucketList!.first.id, "68oiCcs9aDQOaZvd6mtHResXBfj2");
           Timer(const Duration(seconds: 5), () async {
             // also add bucket for added user
             debugPrint(
@@ -102,6 +102,21 @@ class BucketController {
           });
         }
       });
+    } catch (err) {
+      debugPrint("error in add user to bucket dummy {$err}");
+    }
+  }
+
+  void addUserToBucket(String email, String bucketID) async {
+    try {
+      String? _uid = await FireStoreDB().getUserUID(email);
+      if (_uid == null) {
+        debugPrint("User doesn't have an account in salvare!");
+        // TODO: Show TOAST
+      } else {
+        debugPrint("User does have an account in salvare! $_uid");
+        FireStoreDB().addUserToBucketDB(bucketID, _uid);
+      }
     } catch (err) {
       debugPrint("error in add user to bucket dummy {$err}");
     }

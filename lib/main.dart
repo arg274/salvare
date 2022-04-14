@@ -98,7 +98,7 @@ class _DummyPageState extends State<DummyPage> {
           child: const Icon(FeatherIcons.user),
           backgroundColor: CustomColors.salvareDarkGreen,
           onPressed: () async {
-            FireStoreDB().addUserDB(model_user.User(
+            await FireStoreDB().addUserDB(model_user.User(
               id: FirebaseAuth.instance.currentUser!.uid,
               userName: FirebaseAuth.instance.currentUser!.displayName!,
               dateCreated: DateTime.now(),

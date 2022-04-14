@@ -9,7 +9,7 @@ import 'package:salvare/model/tag.dart';
 import 'package:salvare/model/user.dart' as model;
 
 class FireStoreDB {
-  void addUserDB(model.User user) async {
+  Future<void> addUserDB(model.User user) async {
     try {
       final userRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -19,13 +19,28 @@ class FireStoreDB {
                 model.User.fromJson(snapshot.data()!),
             toFirestore: (_user, _) => _user.toJson(),
           );
+      final userMapRef = FirebaseFirestore.instance
+          .collection("userMap")
+          .doc(FirebaseAuth.instance.currentUser!.email);
       model.User? _user = await fetchUserInfoDB();
       if (_user == null) {
         debugPrint("Adding new user: $user");
-        userRef
-            .set(user)
-            .then((value) => debugPrint("Added User! {$user}"))
-            .catchError((err) => debugPrint("Error in User Addition {$err}"));
+        try {
+          await userRef.set(user);
+          debugPrint("Added User! {$user}");
+        } catch (err) {
+          debugPrint("Error in User Addition {$err}");
+        }
+        if (FirebaseAuth.instance.currentUser!.email != null) {
+          userMapRef
+              .set({
+                FirebaseAuth.instance.currentUser!.email!:
+                    FirebaseAuth.instance.currentUser!.uid
+              })
+              .then((value) => debugPrint("Added User Map! {$user}"))
+              .catchError(
+                  (err) => debugPrint("Error in User Map addition {$err}"));
+        }
       } else {
         debugPrint("User already exists: $user");
       }
@@ -150,8 +165,21 @@ class FireStoreDB {
           .where('title', isGreaterThanOrEqualTo: title)
           .where('title', isLessThan: title + 'z')
           .get();
+      var res2 = await resourceRef
+          .where('title', isGreaterThanOrEqualTo: title.toUpperCase())
+          .where('title', isLessThan: title.toUpperCase() + 'Z')
+          .get();
+      var res3 = await resourceRef
+          .where('title', isGreaterThanOrEqualTo: title.toLowerCase())
+          .where('title', isLessThan: title.toLowerCase() + 'z')
+          .get();
       //debugPrint("Search disi $category.... paisi:${lst.first}");
-      return res.docs.map((e) => e.data()).toList();
+      var ret1 = res.docs.map((e) => e.data()).toList();
+      var ret2 = res2.docs.map((e) => e.data()).toList();
+      var ret3 = res3.docs.map((e) => e.data()).toList();
+      ret1.addAll(ret2);
+      ret1.addAll(ret3);
+      return ret1;
     } catch (e) {
       debugPrint("Error in searchResourceUsingURLDB {$e}");
     }
@@ -164,20 +192,43 @@ class FireStoreDB {
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc(DatabasePaths.userResourceList)
           .collection(DatabasePaths.userResourceListResource)
+          .doc(resource.id)
           .withConverter<Resource>(
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),
           );
       resourceRef
-          .add(resource)
+          .set(resource, SetOptions(merge: true))
           .then((value) => debugPrint("Added resource! {$resource}"))
-          .catchError((err) => debugPrint("Error in User resource {$err}"));
+          .catchError((err) => debugPrint("Error in User add resource {$err}"));
     } catch (e) {
       debugPrint("Error in add resource {$e}");
     }
   }
 
-  void editResourceDB(Resource resource) => addResourceDB(resource);
+  void editResourceDB(Resource resource) async {
+    try {
+      final resourceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userResourceList)
+          .collection(DatabasePaths.userResourceListResource)
+          .doc(resource.id)
+          .withConverter<Resource>(
+            fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+            toFirestore: (_resource, _) => _resource.toJson(),
+          );
+      resourceRef
+          .set(resource, SetOptions(merge: true))
+          .then((value) => debugPrint("Edited resource! {$resource}"))
+          .catchError(
+              (err) => debugPrint("Error in User edit resource {$err}"));
+      //var res = await resourceRef.where('id', isEqualTo: resource.id);
+      // debugPrint("Resource with ID: ${resource.id} has elements: ${res.docs.length}");
+      // var ret = res.docs.first.data();
+    } catch (e) {
+      debugPrint("Error in edit resource {$e}");
+    }
+  }
 
   void addBucketDB(Bucket bucket, String uid) {
     try {
@@ -254,7 +305,27 @@ class FireStoreDB {
     }
   }
 
-  void addUserToBucketDB(Bucket bucket, String uid) async {
+  Future<String?> getUserUID(String email) async {
+    try {
+      final userMapRef =
+          FirebaseFirestore.instance.collection("userMap").doc(email);
+      var res = await userMapRef.get();
+      if (res.data() != null) {
+        if (res.data()!.containsKey(email)) {
+          return res.data()![email];
+        }
+        if (res.data()!.containsKey(email) == false) {
+          debugPrint("No user found with email: $email");
+          return null;
+        }
+      }
+    } catch (e) {
+      debugPrint("Error in getUserUID: $e");
+    }
+    return null;
+  }
+
+  void addUserToBucketDB(String bucketID, String uid) async {
     try {
       final bucketRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -264,13 +335,26 @@ class FireStoreDB {
             fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
             toFirestore: (_bucket, _) => _bucket.toJson(),
           );
-      // update users list in bucket
-      var res = await bucketRef.where("id", isEqualTo: bucket.id).get();
+      // update users list in buckets of all users that have this bucket
+      var res = await bucketRef.where("id", isEqualTo: bucketID).get();
       var ret = res.docs.first.data();
-      if (ret.users.contains(uid) == false) {
-        ret.users.add(uid);
-      }
-      addBucketDB(ret, FirebaseAuth.instance.currentUser!.uid);
+      ret.users.forEach((element) async {
+        final userBucketRef = FirebaseFirestore.instance
+            .collection(element)
+            .doc(DatabasePaths.userBucketList)
+            .collection(DatabasePaths.userBucketListBucket)
+            .withConverter<Bucket>(
+              fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+              toFirestore: (_bucket, _) => _bucket.toJson(),
+            );
+        var tempRes = await bucketRef.where("id", isEqualTo: bucketID).get();
+        var tempRet = res.docs.first.data();
+        if (tempRet.users.contains(uid) == false) {
+          tempRet.users.add(uid);
+        }
+        addBucketDB(tempRet, element);
+      });
+      addBucketDB(ret, uid);
     } catch (e) {
       debugPrint("Error in add user to bucket {$e}");
     }

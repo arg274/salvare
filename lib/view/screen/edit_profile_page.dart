@@ -60,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         onPressed: () {
                           _selectDate(context);
                         },
-                        icon: const Icon(Icons.date_range),
+                        icon: const Icon(Icons.date_range, color: Colors.blue),
                       ),
                     ],
                   ),
