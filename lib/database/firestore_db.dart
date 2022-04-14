@@ -377,6 +377,37 @@ class FireStoreDB {
     }
   }
 
+  void deleteResourceFromBucket(String bucketID, String resourceID) async {
+    try {
+      final bucketRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      // update users list in buckets of all users that have this bucket
+      var res = await bucketRef.where("id", isEqualTo: bucketID).get();
+      var ret = res.docs.first.data();
+
+      ret.users.forEach((element) async {
+        final userBucketRef = FirebaseFirestore.instance
+            .collection(element)
+            .doc(DatabasePaths.userBucketList)
+            .collection(DatabasePaths.userBucketListBucket)
+            .doc(bucketID)
+            .collection(DatabasePaths.userBucketListBucketResource)
+            .doc(resourceID);
+        userBucketRef.delete();
+        debugPrint(
+            "Deleted resource $resourceID from user: $element's bucket $bucketID");
+      });
+    } catch (e) {
+      debugPrint("Error in delete resource from bucket {$e}");
+    }
+  }
+
   Future<List<Bucket>?> fetchUserBucketList() async {
     try {
       final bucketRef = FirebaseFirestore.instance
@@ -572,6 +603,19 @@ class FireStoreDB {
       debugPrint("Error in add tag db {$e}");
     }
     return null;
+  }
+
+  Stream<QuerySnapshot<Resource>> getResourceStreamDB() {
+    return FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.uid)
+        .doc(DatabasePaths.userResourceList)
+        .collection(DatabasePaths.userResourceListResource)
+        .orderBy('dateCreated', descending: true)
+        .withConverter<Resource>(
+          fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
+          toFirestore: (_resource, _) => _resource.toJson(),
+        )
+        .snapshots();
   }
 
   Future<List<Resource>?> searchResourceUsingTagDB(Tag _tag) async {

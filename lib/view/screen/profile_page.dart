@@ -28,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
         if (snapshot.hasError) {
           child = const Text('Error fetching user info from Firebase');
         } else if (snapshot.hasData) {
-          FireStoreDB().deleteResourceDB("540d536e28ed4b5781b4eef0e337a76f");
           debugPrint("Snapshot data: ${snapshot.data}");
           child = Scaffold(
             appBar: buildAppBar(context),
