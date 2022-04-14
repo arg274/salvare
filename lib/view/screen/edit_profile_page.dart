@@ -1,12 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/database/firestore_db.dart';
+import 'package:salvare/main.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:switcher_button/switcher_button.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -38,6 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           child = Scaffold(
             appBar: buildAppBarEdit(context, onPressedSaveButton),
             body: ListView(
+              padding: globalEdgeInsets,
               physics: const BouncingScrollPhysics(),
               children: [
                 ProfileWidget(
@@ -50,32 +56,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ? buildNameEdit(model.User.unlaunched("unknown", "unknown"))
                     : buildNameEdit(snapshot.data as model.User),
                 const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Date Of Birth".toUpperCase(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .formLabel
-                            .fixFontFamily(),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _selectDate(context);
-                        },
-                        icon: Icon(Icons.date_range,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Date Of Birth".toUpperCase(),
+                      style:
+                          Theme.of(context).textTheme.formLabel.fixFontFamily(),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _selectDate(context);
+                      },
+                      icon: Icon(FeatherIcons.calendar,
+                          color: Theme.of(context).primaryColor),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 snapshot.data == null
                     ? buildAboutEdit(
                         model.User.unlaunched("unknown", "unknown"))
-                    : buildAboutEdit(snapshot.data as model.User)
+                    : buildAboutEdit(snapshot.data as model.User),
+                const SizedBox(height: 24),
+                buildDarkModeSwitch(),
+                const SizedBox(height: 24),
+                buildColorPicker(),
               ],
             ),
           );
@@ -147,54 +152,120 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget buildNameEdit(model.User modelUser) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Display Name".toUpperCase(),
-                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  style: Theme.of(context).textTheme.formText.fixFontFamily(),
-                  controller: TextEditingController(text: selectedName),
-                  maxLines: 1,
-                  onChanged: (name) {
-                    selectedName = name;
-                  },
-                ),
-              ],
-            ),
+          Text(
+            "Display Name".toUpperCase(),
+            style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            style: Theme.of(context).textTheme.formText.fixFontFamily(),
+            controller: TextEditingController(text: selectedName),
+            maxLines: 1,
+            onChanged: (name) {
+              selectedName = name;
+            },
           ),
         ],
       );
 
   Widget buildAboutEdit(model.User modelUser) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "About".toUpperCase(),
-                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  style: Theme.of(context).textTheme.formText.fixFontFamily(),
-                  controller: TextEditingController(text: selectedDescription),
-                  maxLines: 10,
-                  onChanged: (description) {
-                    selectedDescription = description;
-                  },
-                ),
-              ],
-            ),
+          Text(
+            "About".toUpperCase(),
+            style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            style: Theme.of(context).textTheme.formText.fixFontFamily(),
+            controller: TextEditingController(text: selectedDescription),
+            maxLines: 10,
+            onChanged: (description) {
+              selectedDescription = description;
+            },
           ),
         ],
       );
+
+  Widget buildColorPicker() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Accent".toUpperCase(),
+            style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<SharedPreferences>(
+              future: SharedPreferences.getInstance(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.getString('accent') == null) {
+                    snapshot.data!.setString('accent', 'teal');
+                  }
+                  return MaterialColorPicker(
+                    allowShades: false,
+                    onMainColorChange: (value) async {
+                      debugPrint(value.toString());
+                      snapshot.data!.setString(
+                          'accent', swatchReverseLookupTable[value] ?? 'teal');
+                      var dynamicColorTheme = await DynamicColorTheme.create();
+                      Salvare.notifier.value = dynamicColorTheme.lightTheme();
+                    },
+                    selectedColor: swatchLookupTable[
+                        snapshot.data!.getString('accent') ?? 'teal'],
+                    colors: swatchReverseLookupTable.keys.toList(),
+                  );
+                } else if (snapshot.hasError) {
+                  // TODO: Error handling
+                  return Text('${snapshot.error}');
+                } else {
+                  // TODO: Progress indicator
+                  return const Text('Loading...');
+                }
+              }),
+        ],
+      );
+
+  Widget buildDarkModeSwitch() => FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.getBool('darkMode') == null) {
+            snapshot.data!.setBool('darkMode', false);
+          }
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "Dark Mode".toUpperCase(),
+                style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+              ),
+              const SizedBox(width: 10.0),
+              SwitcherButton(
+                value: snapshot.data!.getBool('darkMode') ?? false,
+                offColor: Theme.of(context).primaryColorLight,
+                onColor: Theme.of(context).primaryColorDark,
+                onChange: (value) {
+                  snapshot.data!.setBool('darkMode', value);
+                  if (value) {
+                    Salvare.notifier.value =
+                        DynamicColorTheme.getInstance().darkTheme();
+                  } else {
+                    Salvare.notifier.value =
+                        DynamicColorTheme.getInstance().lightTheme();
+                  }
+                },
+              ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          // TODO: Error handling
+          return Text('${snapshot.error}');
+        } else {
+          // TODO: Progress indicator
+          return const Text('Loading...');
+        }
+      });
 }

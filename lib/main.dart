@@ -8,39 +8,55 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/screen/sign_in_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(Salvare());
 }
 
 class Salvare extends StatelessWidget {
+  static ValueNotifier<ThemeData> notifier =
+      ValueNotifier(DynamicColorTheme().lightTheme());
   final Future<FirebaseApp> _firebaseApp = Firebase.initializeApp();
   Salvare({Key? key}) : super(key: key);
-  // This widget is the root of your application.
+
+  static void rebuildAllChildren(BuildContext context) {
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+
+    (context as Element).visitChildren(rebuild);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Salvare',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      // TODO: Change theme in setting?
-      themeMode: ThemeMode.light,
-      home: FutureBuilder(
-        future: _firebaseApp,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            debugPrint("Error! ${snapshot.error.toString()}");
-            return const Text("Something Went Wrong");
-          } else if (snapshot.hasData) {
-            debugPrint("Firebase Initialization successfull");
-            return const SignInScreen();
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-    );
+    return ValueListenableBuilder<ThemeData>(
+        valueListenable: notifier,
+        builder: (_, theme, __) {
+          return MaterialApp(
+            title: 'Salvare',
+            theme: theme,
+            darkTheme: DynamicColorTheme().darkTheme(),
+            // TODO: Change theme in setting?
+            themeMode: ThemeMode.light,
+            home: FutureBuilder(
+              future: _firebaseApp,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  debugPrint("Error! ${snapshot.error.toString()}");
+                  return const Text("Something Went Wrong");
+                } else if (snapshot.hasData) {
+                  debugPrint("Firebase Initialization successfull");
+                  return const SignInScreen();
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          );
+        });
   }
 }
 

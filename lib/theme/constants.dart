@@ -3,14 +3,105 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:patterns_canvas/patterns_canvas.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
 EdgeInsets cardListEdgeInsets =
     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
-var primarySwatch = Colors.teal;
-var primaryColor = primarySwatch[200]!;
-var primaryColorLight = primarySwatch[100]!;
-var primaryColorDark = primarySwatch[400]!;
+
+const Map<String, MaterialColor> swatchLookupTable = {
+  'red': Colors.red,
+  'teal': Colors.teal,
+  'blue': Colors.blue,
+  'purple': Colors.purple,
+  'pink': Colors.pink,
+  'orange': Colors.orange,
+  'green': Colors.green,
+  'yellow': Colors.yellow,
+  'brown': Colors.brown,
+  'grey': Colors.grey,
+  'indigo': Colors.indigo,
+  'cyan': Colors.cyan,
+  'lime': Colors.lime,
+  'lightGreen': Colors.lightGreen,
+  'deepOrange': Colors.deepOrange,
+  'deepPurple': Colors.deepPurple,
+  'blueGrey': Colors.blueGrey,
+  'amber': Colors.amber,
+  'lightBlue': Colors.lightBlue,
+};
+
+var swatchReverseLookupTable =
+    swatchLookupTable.map((key, value) => MapEntry(value, key));
+
+class DynamicColorTheme {
+  static DynamicColorTheme _singleton = DynamicColorTheme();
+  MaterialColor primarySwatch;
+  late Color primaryColor;
+  late Color primaryColorLight;
+  late Color primaryColorDark;
+
+  factory DynamicColorTheme.getInstance() {
+    return _singleton;
+  }
+
+  DynamicColorTheme({this.primarySwatch = Colors.teal}) {
+    primaryColor = primarySwatch[200]!;
+    primaryColorLight = primarySwatch[100]!;
+    primaryColorDark = primarySwatch[400]!;
+  }
+
+  static Future<DynamicColorTheme> create() async {
+    var sp = await SharedPreferences.getInstance();
+    var savedAccent = sp.getString('accent') == null
+        ? Colors.teal
+        : swatchLookupTable[sp.getString('accent')] ?? Colors.teal;
+    _singleton = DynamicColorTheme(primarySwatch: savedAccent);
+    return _singleton;
+  }
+
+  ThemeData lightTheme() {
+    return ThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          border: UnderlineInputBorder(
+              borderSide: BorderSide(color: primaryColorDark)),
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: primaryColor)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: primaryColorDark)),
+          errorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red[200]!)),
+          focusedErrorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red[200]!)),
+        ),
+        primarySwatch: primarySwatch,
+        primaryColor: primaryColor,
+        primaryColorLight: primaryColorLight,
+        scaffoldBackgroundColor: Colors.white,
+        brightness: Brightness.light,
+        disabledColor: Colors.grey[600],
+        shadowColor: Colors.grey[400],
+        cardColor: Colors.white,
+        textTheme: textTheme.apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
+        ));
+  }
+
+  ThemeData darkTheme() {
+    return lightTheme().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        brightness: Brightness.dark,
+        disabledColor: Colors.grey[200],
+        shadowColor: Colors.grey[600],
+        canvasColor: Colors.black,
+        cardColor: Colors.black87,
+        textTheme: textTheme.apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ));
+  }
+}
 
 ColorFilter tintMatrix({
   Color tintColor = Colors.grey,
@@ -101,8 +192,8 @@ class RandomPatternGenerator extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Pattern.fromValues(
       patternType: pattern,
-      bgColor: primaryColorDark,
-      fgColor: primaryColorLight,
+      bgColor: DynamicColorTheme.getInstance().primaryColorDark,
+      fgColor: DynamicColorTheme.getInstance().primaryColorLight,
     ).paintOnWidget(canvas, size);
   }
 
@@ -114,7 +205,7 @@ extension CustomStyles on TextTheme {
   TextStyle get navLabel {
     return TextStyle(
       fontSize: 14.0,
-      color: lightTheme.primaryColor,
+      color: DynamicColorTheme.getInstance().primaryColor,
       fontWeight: FontWeight.w400,
     );
   }
@@ -166,41 +257,3 @@ extension FontFix on TextStyle {
     return apply(fontFamily: 'Inter');
   }
 }
-
-ThemeData lightTheme = ThemeData(
-    inputDecorationTheme: InputDecorationTheme(
-      border:
-          UnderlineInputBorder(borderSide: BorderSide(color: primaryColorDark)),
-      enabledBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: primaryColor)),
-      focusedBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: primaryColorDark)),
-      errorBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
-      focusedErrorBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[200]!)),
-    ),
-    primarySwatch: primarySwatch,
-    primaryColor: primaryColor,
-    primaryColorLight: primaryColorLight,
-    scaffoldBackgroundColor: Colors.white,
-    brightness: Brightness.light,
-    disabledColor: Colors.grey[600],
-    shadowColor: Colors.grey[400],
-    cardColor: Colors.white,
-    textTheme: textTheme.apply(
-      bodyColor: Colors.black,
-      displayColor: Colors.black,
-    ));
-
-ThemeData darkTheme = lightTheme.copyWith(
-    scaffoldBackgroundColor: Colors.black,
-    brightness: Brightness.dark,
-    disabledColor: Colors.grey[200],
-    shadowColor: Colors.grey[600],
-    canvasColor: Colors.black,
-    cardColor: Colors.black87,
-    textTheme: textTheme.apply(
-      bodyColor: Colors.white,
-      displayColor: Colors.white,
-    ));

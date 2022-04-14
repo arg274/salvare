@@ -7,12 +7,14 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:salvare/controller/dashboard_controller.dart';
 import 'package:salvare/controller/resource_controller.dart';
 import 'package:salvare/controller/tag_category_controller.dart';
+import 'package:salvare/main.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/view/component/resource_form.dart';
 import 'package:salvare/view/screen/profile_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -130,21 +132,24 @@ class _DashboardState extends State<Dashboard> {
           children: [
             SpeedDialChild(
               child: const Icon(FeatherIcons.link),
-              backgroundColor: primarySwatch[600],
+              backgroundColor:
+                  DynamicColorTheme.getInstance().primarySwatch[600],
               foregroundColor: Colors.white,
               label: 'Resource',
               onTap: () => showResourceForm(context: context),
             ),
             SpeedDialChild(
               child: const Icon(FeatherIcons.folder),
-              backgroundColor: primarySwatch[700],
+              backgroundColor:
+                  DynamicColorTheme.getInstance().primarySwatch[700],
               foregroundColor: Colors.white,
               label: 'Category',
               onTap: () => showAddCategoryDialogue(context),
             ),
             SpeedDialChild(
               child: const Icon(FeatherIcons.tag),
-              backgroundColor: primarySwatch[800],
+              backgroundColor:
+                  DynamicColorTheme.getInstance().primarySwatch[800],
               foregroundColor: Colors.white,
               label: 'Tag',
               onTap: () => showAddTagDialogue(context),
@@ -188,6 +193,13 @@ class _DashboardState extends State<Dashboard> {
                                         child: const Icon(FeatherIcons.user),
                                         backgroundColor:
                                             Theme.of(context).primaryColor,
+                                        // onPressed: () {
+                                        //   Salvare.notifier.value =
+                                        //       Salvare.notifier.value ==
+                                        //               lightTheme
+                                        //           ? darkTheme
+                                        //           : lightTheme;
+                                        // },
                                         onPressed: () async {
                                           Navigator.push(
                                             context,
