@@ -128,6 +128,7 @@ ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     disabledColor: Colors.grey[600],
     shadowColor: Colors.grey[400],
+    cardColor: Colors.white,
     textTheme: textTheme.apply(
       bodyColor: Colors.black,
       displayColor: Colors.black,
@@ -139,6 +140,7 @@ ThemeData darkTheme = lightTheme.copyWith(
     disabledColor: Colors.grey[200],
     shadowColor: Colors.grey[600],
     canvasColor: Colors.black,
+    cardColor: Colors.black87,
     textTheme: textTheme.apply(
       bodyColor: Colors.white,
       displayColor: Colors.white,
