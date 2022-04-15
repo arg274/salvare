@@ -48,7 +48,7 @@ class ResourceCard extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).cardColor.withOpacity(0.2),
             blurRadius: 10,
           ),
         ],
@@ -57,7 +57,7 @@ class ResourceCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(cardRadius)),
         shadowColor: Colors.transparent,
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme.of(context).cardColor,
         child: InkWell(
           onTap: () => resourceController.launchURL(resource.url),
           onLongPress: () => showModalBottomSheet<void>(
@@ -126,24 +126,28 @@ class ResourceCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(cardRadius)),
-                  child: FadeInImage(
-                    placeholder: MemoryImage(kTransparentImage),
-                    image: fetchImage(resource.imageUrl),
-                    fit: BoxFit.cover,
-                    imageErrorBuilder: (context, error, stackTrace) {
-                      return Image.asset('assets/no_img.jpg',
-                          fit: BoxFit.cover);
-                    },
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: FadeInImage(
+                      placeholder: MemoryImage(kTransparentImage),
+                      image: fetchImage(resource.imageUrl),
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset('assets/no_img.jpg',
+                            fit: BoxFit.cover);
+                      },
+                    ),
                   ),
                 ),
                 Positioned(
                   left: 10,
                   top: 10,
                   child: Container(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 7.5, vertical: 5.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).cardColor,
                     ),
                     child: Text(resource.category,
                         style: Theme.of(context).textTheme.bodyText1),
@@ -160,8 +164,11 @@ class ResourceCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(resource.title,
-                              style: Theme.of(context).textTheme.headline6),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(resource.title,
+                                style: Theme.of(context).textTheme.headline6),
+                          ),
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Text(resource.description,

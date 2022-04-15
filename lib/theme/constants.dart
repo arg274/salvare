@@ -85,7 +85,7 @@ class DynamicColorTheme {
         brightness: Brightness.light,
         disabledColor: Colors.grey[600],
         shadowColor: Colors.grey[400],
-        cardColor: Colors.white,
+        cardColor: primarySwatch[50],
         textTheme: textTheme.apply(
           bodyColor: Colors.black,
           displayColor: Colors.black,
@@ -97,9 +97,9 @@ class DynamicColorTheme {
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
         disabledColor: Colors.grey[200],
-        shadowColor: Colors.grey[600],
-        canvasColor: Colors.black,
-        cardColor: Colors.black87,
+        shadowColor: Colors.transparent,
+        canvasColor: Colors.black38,
+        cardColor: primarySwatch[900],
         textTheme: textTheme.apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,
