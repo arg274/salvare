@@ -7,6 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:salvare/controller/dashboard_controller.dart';
 import 'package:salvare/controller/resource_controller.dart';
 import 'package:salvare/controller/tag_category_controller.dart';
+import 'package:salvare/main.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
 import 'package:salvare/theme/constants.dart';
@@ -126,36 +127,42 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        floatingActionButton: SpeedDial(
-          icon: FeatherIcons.plus,
-          activeIcon: FeatherIcons.x,
-          children: [
-            SpeedDialChild(
-              child: const Icon(FeatherIcons.link),
-              backgroundColor:
-                  DynamicColorTheme.getInstance().primarySwatch[600],
-              foregroundColor: Colors.white,
-              label: 'Resource',
-              onTap: () => showResourceForm(context: context),
-            ),
-            SpeedDialChild(
-              child: const Icon(FeatherIcons.folder),
-              backgroundColor:
-                  DynamicColorTheme.getInstance().primarySwatch[700],
-              foregroundColor: Colors.white,
-              label: 'Category',
-              onTap: () => showAddCategoryDialogue(context),
-            ),
-            SpeedDialChild(
-              child: const Icon(FeatherIcons.tag),
-              backgroundColor:
-                  DynamicColorTheme.getInstance().primarySwatch[800],
-              foregroundColor: Colors.white,
-              label: 'Tag',
-              onTap: () => showAddTagDialogue(context),
-            ),
-          ],
-        ),
+        floatingActionButton: ValueListenableBuilder<ThemeData>(
+            valueListenable: Salvare.notifier,
+            builder: (context, theme, _) {
+              return SpeedDial(
+                icon: FeatherIcons.plus,
+                foregroundColor: Colors.white,
+                activeIcon: FeatherIcons.x,
+                spaceBetweenChildren: 10.0,
+                children: [
+                  SpeedDialChild(
+                    child: const Icon(FeatherIcons.link),
+                    backgroundColor:
+                        DynamicColorTheme.getInstance().primarySwatch[600],
+                    foregroundColor: Colors.white,
+                    label: 'Resource',
+                    onTap: () => showResourceForm(context: context),
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(FeatherIcons.folder),
+                    backgroundColor:
+                        DynamicColorTheme.getInstance().primarySwatch[700],
+                    foregroundColor: Colors.white,
+                    label: 'Category',
+                    onTap: () => showAddCategoryDialogue(context),
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(FeatherIcons.tag),
+                    backgroundColor:
+                        DynamicColorTheme.getInstance().primarySwatch[800],
+                    foregroundColor: Colors.white,
+                    label: 'Tag',
+                    onTap: () => showAddTagDialogue(context),
+                  ),
+                ],
+              );
+            }),
         body: StreamBuilder(
           stream: DashboardController().getResourceStream(),
           builder:
@@ -192,6 +199,7 @@ class _DashboardState extends State<Dashboard> {
                                       FloatingActionButton(
                                         heroTag: "profileBtn",
                                         child: const Icon(FeatherIcons.user),
+                                        foregroundColor: Colors.white,
                                         onPressed: () async {
                                           Navigator.push(
                                             context,

@@ -33,6 +33,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) => Scaffold(
       floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.white,
         child: const Icon(FeatherIcons.search),
         onPressed: () async {
           setState(() {

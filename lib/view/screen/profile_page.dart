@@ -50,6 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: FloatingActionButton(
                               mini: true,
                               heroTag: 'profileEditBtn',
+                              foregroundColor: Colors.white,
                               onPressed: () => Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => const EditProfilePage(),

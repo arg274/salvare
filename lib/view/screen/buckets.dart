@@ -74,6 +74,7 @@ class _BucketsState extends State<Buckets> {
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: FloatingActionButton(
+          foregroundColor: Colors.white,
           heroTag: 'bucketBtn',
           child: const Icon(FeatherIcons.plus),
           onPressed: () => showAddBucketDialogue(context),
