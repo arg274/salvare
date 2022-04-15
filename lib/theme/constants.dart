@@ -18,7 +18,6 @@ const Map<String, MaterialColor> swatchLookupTable = {
   'orange': Colors.orange,
   'green': Colors.green,
   'brown': Colors.brown,
-  'grey': Colors.grey,
   'indigo': Colors.indigo,
   'cyan': Colors.cyan,
   'deepOrange': Colors.deepOrange,

@@ -61,7 +61,7 @@ AppBar buildAppBarEdit(BuildContext context, Function() onPressedSaveButton) {
     actions: [
       IconButton(
         icon: Icon(
-          FeatherIcons.save,
+          FeatherIcons.check,
           color: Theme.of(context).primaryColor,
         ),
         onPressed: () {

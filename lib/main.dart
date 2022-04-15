@@ -39,7 +39,6 @@ class Salvare extends StatelessWidget {
             title: 'Salvare',
             theme: theme,
             darkTheme: DynamicColorTheme.getInstance().darkTheme(),
-            // TODO: Change theme in setting?
             themeMode: ThemeMode.light,
             home: FutureBuilder(
               future: _firebaseApp,
