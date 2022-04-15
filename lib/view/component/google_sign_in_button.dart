@@ -20,78 +20,75 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 100.0),
-      child: _isSigningIn
-          ? const SpinKitCubeGrid(size: 50.0, color: Colors.white)
-          : OutlinedButton(
-              style: ButtonStyle(
-                side: MaterialStateProperty.all(const BorderSide(
-                  color: Colors.white,
-                  width: 2.5,
-                )),
-                backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                ),
-              ),
-              onPressed: () async {
-                setState(() {
-                  _isSigningIn = true;
-                });
-                User? user =
-                    await Authentication.signInWithGoogle(context: context);
-
-                setState(() {
-                  _isSigningIn = false;
-                });
-
-                if (user != null) {
-                  model.User? _user = await FireStoreDB().fetchUserInfoDB();
-                  if (_user == null) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => RegistrationPage(),
-                      ),
-                    );
-                  } else {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => DummyPage(),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const ColorFiltered(
-                      colorFilter:
-                          ColorFilter.mode(Colors.white, BlendMode.srcATop),
-                      child: Image(
-                        image: AssetImage("assets/google_logo.png"),
-                        height: 25.0,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Enter'.toUpperCase(),
-                        style: Theme.of(context).textTheme.formLabel.apply(
-                              color: Colors.white,
-                            ),
-                      ),
-                    )
-                  ],
+    return _isSigningIn
+        ? const SpinKitCubeGrid(size: 50.0, color: Colors.white)
+        : OutlinedButton(
+            style: ButtonStyle(
+              side: MaterialStateProperty.all(const BorderSide(
+                color: Colors.white,
+                width: 2.5,
+              )),
+              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
                 ),
               ),
             ),
-    );
+            onPressed: () async {
+              setState(() {
+                _isSigningIn = true;
+              });
+              User? user =
+                  await Authentication.signInWithGoogle(context: context);
+
+              setState(() {
+                _isSigningIn = false;
+              });
+
+              if (user != null) {
+                model.User? _user = await FireStoreDB().fetchUserInfoDB();
+                if (_user == null) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const RegistrationPage(),
+                    ),
+                  );
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const DummyPage(),
+                    ),
+                  );
+                }
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const ColorFiltered(
+                    colorFilter:
+                        ColorFilter.mode(Colors.white, BlendMode.srcATop),
+                    child: Image(
+                      image: AssetImage("assets/google_logo.png"),
+                      height: 25.0,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      'Enter'.toUpperCase(),
+                      style: Theme.of(context).textTheme.formLabel.apply(
+                            color: Colors.white,
+                          ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
   }
 }

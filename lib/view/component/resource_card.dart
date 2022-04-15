@@ -127,7 +127,7 @@ class ResourceCard extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(cardRadius)),
                   child: AspectRatio(
-                    aspectRatio: 16 / 9,
+                    aspectRatio: 1200 / 627,
                     child: FadeInImage(
                       placeholder: MemoryImage(kTransparentImage),
                       image: fetchImage(resource.imageUrl),
@@ -155,10 +155,21 @@ class ResourceCard extends StatelessWidget {
                 ),
               ]),
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.fromLTRB(10.0, 12.0, 20.0, 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(0.0, 4.0, 4.0, 4.0),
+                      margin: const EdgeInsets.all(1.0),
+                      child: IconButton(
+                        onPressed: () {
+                          copyLink(context);
+                        },
+                        icon: const Icon(FeatherIcons.copy),
+                        color: Theme.of(context).textTheme.bodyText1?.color,
+                      ),
+                    ),
                     Expanded(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -183,17 +194,6 @@ class ResourceCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(4.0),
-                      margin: const EdgeInsets.all(1.0),
-                      child: IconButton(
-                        onPressed: () {
-                          copyLink(context);
-                        },
-                        icon: const Icon(FeatherIcons.copy),
-                        color: Theme.of(context).textTheme.bodyText1?.color,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -209,6 +209,9 @@ class ResourceCard extends StatelessWidget {
     showToast(
       'Link copied to the clipboard!',
       context: context,
+      textStyle:
+          Theme.of(context).textTheme.bodyText1?.apply(color: Colors.white),
+      backgroundColor: Theme.of(context).primaryColorDark,
       animation: StyledToastAnimation.slideFromBottom,
       curve: Curves.decelerate,
       reverseAnimation: StyledToastAnimation.fade,

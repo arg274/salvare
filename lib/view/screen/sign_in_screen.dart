@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:salvare/controller/authentication.dart';
-import 'package:salvare/res/custom_colors.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/google_sign_in_button.dart';
 
@@ -63,18 +62,21 @@ class _SignInScreenState extends State<SignInScreen> {
                     ],
                   ),
                 ),
-                FutureBuilder(
-                  future: Authentication.initializeFirebase(context: context),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Text('Error initializing Firebase');
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      return const GoogleSignInButton();
-                    }
-                    return const SpinKitCubeGrid(
-                        size: 100.0, color: Colors.white);
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 100.0),
+                  child: FutureBuilder(
+                    future: Authentication.initializeFirebase(context: context),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Error initializing Firebase');
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.done) {
+                        return const GoogleSignInButton();
+                      }
+                      return const SpinKitCubeGrid(
+                          size: 50.0, color: Colors.white);
+                    },
+                  ),
                 ),
               ],
             ),

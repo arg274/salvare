@@ -169,6 +169,7 @@ class _DashboardState extends State<Dashboard> {
                 var resources2 =
                     snapshot.data!.docs.map((e) => e.data()).toList();
                 return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: resources2.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
