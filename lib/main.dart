@@ -8,16 +8,16 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/screen/sign_in_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await DynamicColorTheme.create();
   runApp(Salvare());
 }
 
 class Salvare extends StatelessWidget {
   static ValueNotifier<ThemeData> notifier =
-      ValueNotifier(DynamicColorTheme().lightTheme());
+      ValueNotifier(DynamicColorTheme.getInstance().dayNightTheme());
   final Future<FirebaseApp> _firebaseApp = Firebase.initializeApp();
   Salvare({Key? key}) : super(key: key);
 
@@ -38,7 +38,7 @@ class Salvare extends StatelessWidget {
           return MaterialApp(
             title: 'Salvare',
             theme: theme,
-            darkTheme: DynamicColorTheme().darkTheme(),
+            darkTheme: DynamicColorTheme.getInstance().darkTheme(),
             // TODO: Change theme in setting?
             themeMode: ThemeMode.light,
             home: FutureBuilder(

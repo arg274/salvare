@@ -17,17 +17,13 @@ const Map<String, MaterialColor> swatchLookupTable = {
   'pink': Colors.pink,
   'orange': Colors.orange,
   'green': Colors.green,
-  'yellow': Colors.yellow,
   'brown': Colors.brown,
   'grey': Colors.grey,
   'indigo': Colors.indigo,
   'cyan': Colors.cyan,
-  'lime': Colors.lime,
-  'lightGreen': Colors.lightGreen,
   'deepOrange': Colors.deepOrange,
   'deepPurple': Colors.deepPurple,
   'blueGrey': Colors.blueGrey,
-  'amber': Colors.amber,
   'lightBlue': Colors.lightBlue,
 };
 
@@ -40,12 +36,13 @@ class DynamicColorTheme {
   late Color primaryColor;
   late Color primaryColorLight;
   late Color primaryColorDark;
+  bool isDark;
 
   factory DynamicColorTheme.getInstance() {
     return _singleton;
   }
 
-  DynamicColorTheme({this.primarySwatch = Colors.teal}) {
+  DynamicColorTheme({this.primarySwatch = Colors.teal, this.isDark = false}) {
     primaryColor = primarySwatch[200]!;
     primaryColorLight = primarySwatch[100]!;
     primaryColorDark = primarySwatch[400]!;
@@ -53,12 +50,17 @@ class DynamicColorTheme {
 
   static Future<DynamicColorTheme> create() async {
     var sp = await SharedPreferences.getInstance();
+    debugPrint(sp.getString('accent'));
+    debugPrint(sp.getBool('darkMode')?.toString());
     var savedAccent = sp.getString('accent') == null
         ? Colors.teal
         : swatchLookupTable[sp.getString('accent')] ?? Colors.teal;
-    _singleton = DynamicColorTheme(primarySwatch: savedAccent);
+    _singleton = DynamicColorTheme(
+        primarySwatch: savedAccent, isDark: sp.getBool('darkMode') ?? false);
     return _singleton;
   }
+
+  ThemeData dayNightTheme() => isDark ? darkTheme() : lightTheme();
 
   ThemeData lightTheme() {
     return ThemeData(

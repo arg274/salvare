@@ -210,8 +210,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       debugPrint(value.toString());
                       snapshot.data!.setString(
                           'accent', swatchReverseLookupTable[value] ?? 'teal');
-                      var dynamicColorTheme = await DynamicColorTheme.create();
-                      Salvare.notifier.value = dynamicColorTheme.lightTheme();
+                      await DynamicColorTheme.create();
+                      Salvare.notifier.value =
+                          DynamicColorTheme.getInstance().dayNightTheme();
                     },
                     selectedColor: swatchLookupTable[
                         snapshot.data!.getString('accent') ?? 'teal'],
@@ -247,15 +248,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 value: snapshot.data!.getBool('darkMode') ?? false,
                 offColor: Theme.of(context).primaryColorLight,
                 onColor: Theme.of(context).primaryColorDark,
-                onChange: (value) {
+                onChange: (value) async {
                   snapshot.data!.setBool('darkMode', value);
-                  if (value) {
-                    Salvare.notifier.value =
-                        DynamicColorTheme.getInstance().darkTheme();
-                  } else {
-                    Salvare.notifier.value =
-                        DynamicColorTheme.getInstance().lightTheme();
-                  }
+                  await DynamicColorTheme.create();
+                  Salvare.notifier.value =
+                      DynamicColorTheme.getInstance().dayNightTheme();
                 },
               ),
             ],
