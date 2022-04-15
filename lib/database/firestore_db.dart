@@ -151,7 +151,7 @@ class FireStoreDB {
     return null;
   }
 
-  Future<List<Resource>> searchResourceUsingTitleDB(String title) async {
+  Future<List<Resource>> fetchUserResourceList() async {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -161,25 +161,9 @@ class FireStoreDB {
             fromFirestore: (snapshot, _) => Resource.fromJson(snapshot.data()!),
             toFirestore: (_resource, _) => _resource.toJson(),
           );
-      var res = await resourceRef
-          .where('title', isGreaterThanOrEqualTo: title)
-          .where('title', isLessThan: title + 'z')
-          .get();
-      var res2 = await resourceRef
-          .where('title', isGreaterThanOrEqualTo: title.toUpperCase())
-          .where('title', isLessThan: title.toUpperCase() + 'Z')
-          .get();
-      var res3 = await resourceRef
-          .where('title', isGreaterThanOrEqualTo: title.toLowerCase())
-          .where('title', isLessThan: title.toLowerCase() + 'z')
-          .get();
-      //debugPrint("Search disi $category.... paisi:${lst.first}");
-      var ret1 = res.docs.map((e) => e.data()).toList();
-      var ret2 = res2.docs.map((e) => e.data()).toList();
-      var ret3 = res3.docs.map((e) => e.data()).toList();
-      ret1.addAll(ret2);
-      ret1.addAll(ret3);
-      return ret1;
+      var res = await resourceRef.get();
+      var ret = res.docs.map((e) => e.data()).toList();
+      return ret;
     } catch (e) {
       debugPrint("Error in searchResourceUsingURLDB {$e}");
     }

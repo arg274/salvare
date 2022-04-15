@@ -14,12 +14,55 @@ class SearchController {
 
   SearchController._internal();
 
-  Future<List<Resource>> updateResults(
-      String? query, String? selectedCategory, List<Tag>? selectedTags) async {
+  static const int flagCaseSensitive = 1 << 0;
+  static const int flagExcludeTitle = 1 << 1;
+  static const int flagExcludeDesc = 1 << 2;
+  static const int flagExcludeDomain = 1 << 3;
+  static const int flagRegex = 1 << 4;
+
+  List<Resource> _filter({
+    required List<Resource> resources,
+    required String query,
+    int flags = 0,
+  }) {
+    List<Resource> filtered = [];
+    bool isCaseSensitive = flags & flagCaseSensitive != 0;
+    bool excTitle = flags & flagExcludeTitle != 0;
+    bool excDesc = flags & flagExcludeDesc != 0;
+    bool excDomain = flags & flagExcludeDomain != 0;
+    bool isRegex = flags & flagRegex != 0;
+
+    if (!isCaseSensitive) {
+      resources = [
+        for (var res in resources)
+          res
+            ..title = res.title.toLowerCase()
+            ..description = res.description.toLowerCase()
+      ];
+      query = query.toLowerCase();
+    }
+
+    for (var res in resources) {
+      if (!excTitle && res.title.contains(!isRegex ? query : RegExp(query))) {
+        filtered.add(res);
+      } else if (!excDesc &&
+          res.description.contains(!isRegex ? query : RegExp(query))) {
+        filtered.add(res);
+      } else if (!excDomain &&
+          res.domain.contains(!isRegex ? query : RegExp(query))) {
+        filtered.add(res);
+      }
+    }
+    return filtered;
+  }
+
+  Future<List<Resource>> updateResults(String? query, String? selectedCategory,
+      List<Tag>? selectedTags, int searchFlags) async {
     bool isTitleEnabled = (query != null && query.isNotEmpty);
     bool isCatEnabled =
         (selectedCategory != null && selectedCategory.isNotEmpty);
     bool isTagEnabled = (selectedTags != null);
+
     List<Resource> searchedResourcesTitle = [];
     List<Resource> searchedResourcesTag = [];
     List<Resource> searchedResourcesCat = [];
@@ -28,8 +71,12 @@ class SearchController {
     List<List<Resource>> listsToIntersect = [];
 
     if (isTitleEnabled) {
-      searchedResourcesTitle =
-          await FireStoreDB().searchResourceUsingTitleDB(query);
+      List<Resource> allResources = await FireStoreDB().fetchUserResourceList();
+      searchedResourcesTitle = _filter(
+        resources: allResources,
+        query: query,
+        flags: searchFlags,
+      );
       listsToIntersect.add(searchedResourcesTitle);
     }
 
@@ -53,5 +100,17 @@ class SearchController {
     }
 
     return _searchedResources.unique((res) => res.id);
+  }
+
+  String? validateRegex(String? regexp) {
+    if (regexp == null || regexp.isEmpty) {
+      return null;
+    }
+    try {
+      RegExp(regexp);
+      return null;
+    } catch (e) {
+      return 'Regex not valid';
+    }
   }
 }

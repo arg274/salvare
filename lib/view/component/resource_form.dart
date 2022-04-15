@@ -307,20 +307,7 @@ Future<Object?> showResourceForm({
                                     popupSelectionWidget:
                                         (context, item, isChecked) {
                                       return Checkbox(
-                                        checkColor: Colors.white,
-                                        fillColor:
-                                            MaterialStateProperty.resolveWith(
-                                                (states) {
-                                          if (states.contains(
-                                              MaterialState.selected)) {
-                                            return Theme.of(context)
-                                                .primaryColor;
-                                          }
-                                          return Theme.of(context)
-                                              .scaffoldBackgroundColor;
-                                        }),
                                         value: isChecked,
-                                        shape: const CircleBorder(),
                                         onChanged: (bool? value) {
                                           isChecked = value!;
                                         },

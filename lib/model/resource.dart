@@ -16,7 +16,7 @@ class Resource {
   String url;
   String? imageUrl;
   String get domain {
-    return Uri.parse(url).host;
+    return Uri.parse(url).host.toLowerCase();
   }
 
   String description;

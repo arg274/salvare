@@ -68,34 +68,39 @@ class DynamicColorTheme {
 
   ThemeData lightTheme() {
     return ThemeData(
-        inputDecorationTheme: InputDecorationTheme(
-          border: UnderlineInputBorder(
-              borderSide: BorderSide(color: primaryColorDark)),
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: primaryColor)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: primaryColorDark)),
-          errorBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red[200]!)),
-          focusedErrorBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red[200]!)),
-        ),
-        primarySwatch: primarySwatch,
-        primaryColor: primaryColor,
-        primaryColorLight: primaryColorLight,
-        scaffoldBackgroundColor: Colors.white,
-        brightness: Brightness.light,
-        disabledColor: Colors.grey[600],
-        shadowColor: Colors.grey[400],
-        cardColor: primarySwatch[50],
-        bottomSheetTheme: const BottomSheetThemeData(
-          backgroundColor: Colors.white,
-          shape: sheetShape,
-        ),
-        textTheme: textTheme.apply(
-          bodyColor: Colors.black,
-          displayColor: Colors.black,
-        ));
+      inputDecorationTheme: InputDecorationTheme(
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: primaryColorDark)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: primaryColor)),
+        focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: primaryColorDark)),
+        errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.red[200]!)),
+        focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.red[200]!)),
+      ),
+      primarySwatch: primarySwatch,
+      primaryColor: primaryColor,
+      primaryColorLight: primaryColorLight,
+      scaffoldBackgroundColor: Colors.white,
+      brightness: Brightness.light,
+      disabledColor: Colors.grey[600],
+      shadowColor: Colors.grey[400],
+      cardColor: primarySwatch[50],
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.white,
+        shape: sheetShape,
+      ),
+      textTheme: textTheme.apply(
+        bodyColor: Colors.black,
+        displayColor: Colors.black,
+      ),
+      checkboxTheme: const CheckboxThemeData(
+        shape: CircleBorder(),
+        side: BorderSide.none,
+      ),
+    );
   }
 
   ThemeData darkTheme() {
