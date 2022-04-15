@@ -22,6 +22,8 @@ class _SearchState extends State<Search> {
   final SearchController searchController = SearchController();
   final TextEditingController _queryController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  final _catKey = GlobalKey<FormState>();
+  final _tagKey = GlobalKey<FormState>();
   bool filtersExpanded = false;
   final PageStorageKey<String> expansionTileKey =
       const PageStorageKey('expansionTile');
@@ -71,7 +73,6 @@ class _SearchState extends State<Search> {
                     ),
                   ),
                   ExpansionTile(
-                    // TODO: Preserve children state
                     key: expansionTileKey,
                     tilePadding: EdgeInsets.zero,
                     trailing: Icon(
@@ -122,6 +123,7 @@ class _SearchState extends State<Search> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return DropdownSearch<String>(
+                                key: _catKey,
                                 popupShape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(20.0))),
@@ -179,6 +181,7 @@ class _SearchState extends State<Search> {
                                 popupBackgroundColor:
                                     Theme.of(context).scaffoldBackgroundColor,
                                 showSelectedItems: true,
+                                selectedItem: selectedCategory,
                                 items: snapshot.data,
                                 onChanged: (_selectedCategory) =>
                                     {selectedCategory = _selectedCategory},
@@ -204,6 +207,7 @@ class _SearchState extends State<Search> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return DropdownSearch<String>.multiSelection(
+                                key: _tagKey,
                                 popupShape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(20.0))),
@@ -251,6 +255,9 @@ class _SearchState extends State<Search> {
                                 popupBackgroundColor:
                                     Theme.of(context).scaffoldBackgroundColor,
                                 showSelectedItems: true,
+                                selectedItems: selectedTags != null
+                                    ? [for (var tag in selectedTags!) tag.name]
+                                    : [],
                                 items: [
                                   for (var tag in snapshot.data!) tag.name
                                 ],
