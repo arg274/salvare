@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:patterns_canvas/patterns_canvas.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-EdgeInsets globalEdgeInsets = const EdgeInsets.symmetric(horizontal: 20.0);
-EdgeInsets cardListEdgeInsets =
-    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
+const EdgeInsets globalEdgeInsets = EdgeInsets.symmetric(horizontal: 20.0);
+const EdgeInsets cardListEdgeInsets =
+    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
+const RoundedRectangleBorder dialogShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(20.0)));
+const double cardRadius = 15.0;
 
 const Map<String, MaterialColor> swatchLookupTable = {
   'red': Colors.red,

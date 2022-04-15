@@ -8,9 +8,11 @@ import 'package:salvare/model/bucket.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:flutter/foundation.dart';
 import 'package:crypto/crypto.dart';
+import 'package:validators/validators.dart';
 
 class BucketController {
   int totalBuckets = 0;
+  bool userExists = false;
 
   void addBucket(String bucketName) async {
     try {
@@ -66,6 +68,14 @@ class BucketController {
 
   void editBucketResource(Bucket bucket, Resource resource) => {};
 
+  void deleteBucketResource(Bucket bucket, Resource resource) {
+    try {
+      FireStoreDB().deleteResourceFromBucket(bucket, resource);
+    } catch (err) {
+      debugPrint("error in add resource to bucket dummy {$err}");
+    }
+  }
+
   void addResourceToBucketDummy() {
     try {
       Resource resource = Resource.unlaunched('dummyResourceID2',
@@ -112,13 +122,22 @@ class BucketController {
       String? _uid = await FireStoreDB().getUserUID(email);
       if (_uid == null) {
         debugPrint("User doesn't have an account in salvare!");
-        // TODO: Show TOAST
       } else {
         debugPrint("User does have an account in salvare! $_uid");
         FireStoreDB().addUserToBucketDB(bucketID, _uid);
       }
     } catch (err) {
       debugPrint("error in add user to bucket dummy {$err}");
+    }
+  }
+
+  Future<void> checkIfUserExists(String email) async {
+    try {
+      userExists =
+          (await FireStoreDB().getUserUID(email)) == null ? false : true;
+    } catch (err) {
+      debugPrint("error in add user to bucket dummy {$err}");
+      userExists = false;
     }
   }
 
@@ -150,6 +169,16 @@ class BucketController {
       return 'Please enter a name';
     } else {
       return null;
+    }
+  }
+
+  String? validateEmail(String? email) {
+    if (email == null || email.isEmpty) {
+      return 'Please enter an email';
+    } else if (!isEmail(email)) {
+      return 'Please enter a valid email';
+    } else {
+      return userExists ? null : 'User does not exist';
     }
   }
 }

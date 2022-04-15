@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:salvare/controller/bucket_controller.dart';
 import 'package:salvare/controller/resource_controller.dart';
 import 'package:salvare/model/bucket.dart';
 import 'package:salvare/model/resource.dart';
@@ -12,6 +13,7 @@ import 'package:salvare/theme/constants.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 final ResourceController resourceController = ResourceController();
+final BucketController bucketController = BucketController();
 
 class ResourceCard extends StatelessWidget {
   final Resource resource;
@@ -46,14 +48,14 @@ class ResourceCard extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.grey.withOpacity(0.2),
             blurRadius: 10,
           ),
         ],
       ),
       child: Card(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(cardRadius)),
         shadowColor: Colors.transparent,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: InkWell(
@@ -69,7 +71,10 @@ class ResourceCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                        onTap: () => copyLink(context),
+                        onTap: () {
+                          copyLink(context);
+                          Navigator.of(context).pop();
+                        },
                         leading: Icon(
                           FeatherIcons.copy,
                           color: Theme.of(context).textTheme.bodyText1?.color,
@@ -94,6 +99,20 @@ class ResourceCard extends StatelessWidget {
                           'Edit Resource',
                           style: Theme.of(context).textTheme.bodyText1,
                         )),
+                    ListTile(
+                        onTap: () async {
+                          showDeleteAlert(context);
+                        },
+                        leading: const Icon(
+                          FeatherIcons.delete,
+                          color: Colors.red,
+                        ),
+                        title: Text(
+                          'Delete Resource',
+                          style: Theme.of(context).textTheme.bodyText1?.apply(
+                                color: Colors.red,
+                              ),
+                        )),
                   ],
                 ),
               );
@@ -105,8 +124,8 @@ class ResourceCard extends StatelessWidget {
             children: <Widget>[
               Stack(children: [
                 ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(15.0)),
+                  borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(cardRadius)),
                   child: FadeInImage(
                     placeholder: MemoryImage(kTransparentImage),
                     image: fetchImage(resource.imageUrl),
@@ -187,5 +206,50 @@ class ResourceCard extends StatelessWidget {
       curve: Curves.decelerate,
       reverseAnimation: StyledToastAnimation.fade,
     );
+  }
+
+  Future<Object?> showDeleteAlert(BuildContext context) async {
+    return await showBlurredDialog(
+        context: context,
+        dialogBody: AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape: dialogShape,
+          actions: <Widget>[
+            TextButton(
+                onPressed: () async {
+                  !isBucketResource
+                      ? resourceController.deleteResource(resource)
+                      : bucketController.deleteBucketResource(
+                          bucket!, resource);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Yes'.toUpperCase(),
+                  style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+                )),
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'No'.toUpperCase(),
+                  style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+                )),
+          ],
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Delete'.toUpperCase(),
+                style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+              ),
+              const SizedBox(height: 16.0),
+              Text(
+                'Are you sure that you want to delete this resource?',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ],
+          ),
+        ));
   }
 }

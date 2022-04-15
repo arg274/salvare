@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/controller/authentication.dart';
+import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/screen/sign_in_screen.dart';
 
 Route _routeToSignInScreen() {
@@ -43,9 +44,7 @@ AppBar buildAppBar(BuildContext context) {
             color: Theme.of(context).primaryColor,
           ),
           onPressed: () async {
-            Navigator.of(context).pop();
-            await Authentication.signOut(context: context);
-            Navigator.of(context).pushReplacement(_routeToSignInScreen());
+            showLogOutAlert(context);
           }),
     ],
   );
@@ -93,4 +92,46 @@ AppBar buildAppBarReg(BuildContext context, Function() onPressedRegButton) {
       )
     ],
   );
+}
+
+Future<Object?> showLogOutAlert(BuildContext context) async {
+  return await showBlurredDialog(
+      context: context,
+      dialogBody: AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: dialogShape,
+        actions: <Widget>[
+          TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await Authentication.signOut(context: context);
+                Navigator.of(context).pushReplacement(_routeToSignInScreen());
+              },
+              child: Text(
+                'Yes'.toUpperCase(),
+                style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+              )),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'No'.toUpperCase(),
+                style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+              )),
+        ],
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Log Out'.toUpperCase(),
+              style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+            ),
+            const SizedBox(height: 16.0),
+            Text(
+              'Are you sure that you want to log out?',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ],
+        ),
+      ));
 }

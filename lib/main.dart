@@ -21,15 +21,6 @@ class Salvare extends StatelessWidget {
   final Future<FirebaseApp> _firebaseApp = Firebase.initializeApp();
   Salvare({Key? key}) : super(key: key);
 
-  static void rebuildAllChildren(BuildContext context) {
-    void rebuild(Element el) {
-      el.markNeedsBuild();
-      el.visitChildren(rebuild);
-    }
-
-    (context as Element).visitChildren(rebuild);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeData>(

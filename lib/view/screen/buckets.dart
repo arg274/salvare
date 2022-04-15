@@ -25,6 +25,7 @@ class _BucketsState extends State<Buckets> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape: dialogShape,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             actions: <Widget>[
               TextButton(
@@ -48,7 +49,7 @@ class _BucketsState extends State<Buckets> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Name',
+                    'Name'.toUpperCase(),
                     style:
                         Theme.of(context).textTheme.formLabel.fixFontFamily(),
                   ),

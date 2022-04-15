@@ -250,18 +250,18 @@ class FireStoreDB {
     }
   }
 
-  void deleteResourceDB(String resourceID) {
+  void deleteResourceDB(Resource resource) {
     try {
       final resourceRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc(DatabasePaths.userResourceList)
           .collection(DatabasePaths.userResourceListResource)
-          .doc(resourceID);
+          .doc(resource.id);
       resourceRef
           .delete()
-          .then((value) => debugPrint("Deleted resource! {$resourceID}"))
+          .then((value) => debugPrint("Deleted resource! ${resource.id}"))
           .catchError((err) =>
-              debugPrint("Error in User delete resource {$resourceID}"));
+              debugPrint("Error in User delete resource ${resource.id}"));
     } catch (e) {
       debugPrint("Error in delete resource {$e}");
     }
@@ -377,7 +377,7 @@ class FireStoreDB {
     }
   }
 
-  void deleteResourceFromBucket(String bucketID, String resourceID) async {
+  void deleteResourceFromBucket(Bucket bucket, Resource resource) async {
     try {
       final bucketRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
@@ -388,7 +388,7 @@ class FireStoreDB {
             toFirestore: (_bucket, _) => _bucket.toJson(),
           );
       // update users list in buckets of all users that have this bucket
-      var res = await bucketRef.where("id", isEqualTo: bucketID).get();
+      var res = await bucketRef.where("id", isEqualTo: bucket.id).get();
       var ret = res.docs.first.data();
 
       ret.users.forEach((element) async {
@@ -396,12 +396,12 @@ class FireStoreDB {
             .collection(element)
             .doc(DatabasePaths.userBucketList)
             .collection(DatabasePaths.userBucketListBucket)
-            .doc(bucketID)
+            .doc(bucket.id)
             .collection(DatabasePaths.userBucketListBucketResource)
-            .doc(resourceID);
+            .doc(resource.id);
         userBucketRef.delete();
         debugPrint(
-            "Deleted resource $resourceID from user: $element's bucket $bucketID");
+            "Deleted resource ${resource.id} from user: $element's bucket ${bucket.id}");
       });
     } catch (e) {
       debugPrint("Error in delete resource from bucket {$e}");

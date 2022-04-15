@@ -85,9 +85,10 @@ class _BucketResourcesState extends State<BucketResources> {
                           child: Row(
                             children: [
                               ElevatedButton(
-                                onPressed: () => {},
+                                onPressed: () async => showUserAddForm(context),
                                 child: const Icon(FeatherIcons.userPlus),
                                 style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.all(20.0)),
                               ),
@@ -100,6 +101,7 @@ class _BucketResourcesState extends State<BucketResources> {
                                 ),
                                 child: const Icon(FeatherIcons.plus),
                                 style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.all(20.0)),
                               ),
@@ -144,4 +146,51 @@ class _BucketResourcesState extends State<BucketResources> {
               },
             )),
       );
+
+  Future<Object?> showUserAddForm(BuildContext context) async {
+    final _formkey = GlobalKey<FormState>();
+    final TextEditingController _userTEC = TextEditingController();
+    return await showBlurredDialog(
+        context: context,
+        dialogBody: AlertDialog(
+          shape: dialogShape,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          actions: <Widget>[
+            TextButton(
+                onPressed: () async {
+                  await bucketController.checkIfUserExists(_userTEC.text);
+                  if (_formkey.currentState!.validate()) {
+                    bucketController.addUserToBucket(
+                        _userTEC.text, widget.bucket.id);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text(
+                  'ADD',
+                  style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+                ))
+          ],
+          content: Form(
+            key: _formkey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'User Email'.toUpperCase(),
+                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+                ),
+                TextFormField(
+                  controller: _userTEC,
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                  ),
+                  validator: (email) => bucketController.validateEmail(email),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
 }

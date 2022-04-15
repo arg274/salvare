@@ -7,14 +7,12 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:salvare/controller/dashboard_controller.dart';
 import 'package:salvare/controller/resource_controller.dart';
 import 'package:salvare/controller/tag_category_controller.dart';
-import 'package:salvare/main.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
 import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/resource_card.dart';
 import 'package:salvare/view/component/resource_form.dart';
 import 'package:salvare/view/screen/profile_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -33,6 +31,7 @@ class _DashboardState extends State<Dashboard> {
     return await showBlurredDialog(
         context: context,
         dialogBody: AlertDialog(
+          shape: dialogShape,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           actions: <Widget>[
             TextButton(
@@ -81,6 +80,7 @@ class _DashboardState extends State<Dashboard> {
     return await showBlurredDialog(
         context: context,
         dialogBody: AlertDialog(
+          shape: dialogShape,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           actions: <Widget>[
             TextButton(
@@ -191,15 +191,6 @@ class _DashboardState extends State<Dashboard> {
                                       FloatingActionButton(
                                         heroTag: "profileBtn",
                                         child: const Icon(FeatherIcons.user),
-                                        backgroundColor:
-                                            Theme.of(context).primaryColor,
-                                        // onPressed: () {
-                                        //   Salvare.notifier.value =
-                                        //       Salvare.notifier.value ==
-                                        //               lightTheme
-                                        //           ? darkTheme
-                                        //           : lightTheme;
-                                        // },
                                         onPressed: () async {
                                           Navigator.push(
                                             context,

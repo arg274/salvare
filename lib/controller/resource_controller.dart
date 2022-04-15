@@ -39,7 +39,11 @@ class ResourceController {
   }
 
   Future<void> editResource(Resource resource) async {
-    firestoreDB.addResourceDB(resource);
+    firestoreDB.editResourceDB(resource);
+  }
+
+  Future<void> deleteResource(Resource resource) async {
+    firestoreDB.deleteResourceDB(resource);
   }
 
   void copyResourceURL(Resource resource) {

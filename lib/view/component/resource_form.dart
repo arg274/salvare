@@ -38,8 +38,7 @@ Future<Object?> showResourceForm({
   return await showBlurredDialog(
       context: context,
       dialogBody: AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          shape: dialogShape,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           actions: <Widget>[
             TextButton(
