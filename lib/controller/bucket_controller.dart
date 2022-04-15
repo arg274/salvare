@@ -37,6 +37,26 @@ class BucketController {
     }
   }
 
+  void deleteBucket(Bucket bucket) async {
+    try {
+      // fetch total number of buckets and update totalBuckets
+      List<Bucket>? userBucketList = await FireStoreDB().fetchUserBucketList();
+      totalBuckets = userBucketList == null ? 0 : userBucketList.length;
+      debugPrint(
+          "${FirebaseAuth.instance.currentUser!.email} has total $totalBuckets buckets");
+      if (totalBuckets < DatabasePaths.userMaxBucket) {
+        // TODO: Decide how Bucket ID will be generated
+        FireStoreDB().deleteBucketDB(bucket);
+        totalBuckets--;
+      } else {
+        debugPrint("Max number of buckets exceeded");
+        // TODO show toast
+      }
+    } catch (err) {
+      debugPrint("error in add bucket dummy {$err}");
+    }
+  }
+
   void addBucketDummy() async {
     try {
       // fetch total number of buckets and update totalBuckets

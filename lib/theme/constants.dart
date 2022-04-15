@@ -10,6 +10,8 @@ const EdgeInsets cardListEdgeInsets =
     EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0);
 const RoundedRectangleBorder dialogShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.circular(20.0)));
+const RoundedRectangleBorder sheetShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)));
 const double cardRadius = 15.0;
 
 const Map<String, MaterialColor> swatchLookupTable = {
@@ -86,6 +88,10 @@ class DynamicColorTheme {
         disabledColor: Colors.grey[600],
         shadowColor: Colors.grey[400],
         cardColor: primarySwatch[50],
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Colors.white,
+          shape: sheetShape,
+        ),
         textTheme: textTheme.apply(
           bodyColor: Colors.black,
           displayColor: Colors.black,
@@ -97,9 +103,12 @@ class DynamicColorTheme {
         scaffoldBackgroundColor: Colors.black,
         brightness: Brightness.dark,
         disabledColor: Colors.grey[200],
-        shadowColor: Colors.transparent,
         canvasColor: Colors.black38,
         cardColor: primarySwatch[900],
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Colors.black,
+          shape: sheetShape,
+        ),
         textTheme: textTheme.apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,

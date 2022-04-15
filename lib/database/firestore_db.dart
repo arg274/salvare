@@ -268,13 +268,13 @@ class FireStoreDB {
   }
 
 // Only deletes current users bucket
-  void deleteBucketDB(String bucketID) async {
+  void deleteBucketDB(Bucket bucket) async {
     try {
       var bucketRef = FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc(DatabasePaths.userBucketList)
           .collection(DatabasePaths.userBucketListBucket)
-          .doc(bucketID)
+          .doc(bucket.id)
           .withConverter<Bucket>(
             fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
             toFirestore: (_bucket, _) => _bucket.toJson(),
@@ -290,7 +290,7 @@ class FireStoreDB {
                 .collection(element)
                 .doc(DatabasePaths.userBucketList)
                 .collection(DatabasePaths.userBucketListBucket)
-                .doc(bucketID)
+                .doc(bucket.id)
                 .withConverter<Bucket>(
                   fromFirestore: (snapshot, _) =>
                       Bucket.fromJson(snapshot.data()!),
@@ -310,12 +310,12 @@ class FireStoreDB {
             .collection(FirebaseAuth.instance.currentUser!.uid)
             .doc(DatabasePaths.userBucketList)
             .collection(DatabasePaths.userBucketListBucket)
-            .doc(bucketID);
+            .doc(bucket.id);
         usersBucketRef.delete();
         debugPrint("Successfully deleted the bucket");
       } else {
         debugPrint(
-            "Bucket with ID: $bucketID doesn't exist for user(${FirebaseAuth.instance.currentUser!.uid})");
+            "Bucket with ID: ${bucket.id} doesn't exist for user(${FirebaseAuth.instance.currentUser!.uid})");
       }
     } catch (e) {
       debugPrint("Error in delete bucket {$e}");

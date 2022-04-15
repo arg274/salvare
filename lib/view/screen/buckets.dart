@@ -89,6 +89,7 @@ class _BucketsState extends State<Buckets> {
                 debugPrint("Firebase resource stream successfull");
                 var buckets = snapshot.data!.docs.map((e) => e.data()).toList();
                 return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: buckets.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
@@ -108,6 +109,55 @@ class _BucketsState extends State<Buckets> {
                       }
                       return InkWell(
                         child: ListTile(
+                          onLongPress: () => showModalBottomSheet<void>(
+                            context: context,
+                            builder: (context) {
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    ListTile(
+                                        onTap: () => {},
+                                        leading: Icon(
+                                          FeatherIcons.edit3,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              ?.color,
+                                        ),
+                                        title: Text(
+                                          'Edit Bucket',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        )),
+                                    ListTile(
+                                        onTap: () async {
+                                          showBucketDeleteAlert(
+                                              context, buckets[index - 1]);
+                                        },
+                                        leading: const Icon(
+                                          FeatherIcons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        title: Text(
+                                          'Delete Bucket',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              ?.apply(
+                                                color: Colors.red,
+                                              ),
+                                        )),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -140,4 +190,47 @@ class _BucketsState extends State<Buckets> {
           },
         ),
       );
+
+  Future<Object?> showBucketDeleteAlert(
+      BuildContext context, Bucket bucket) async {
+    return await showBlurredDialog(
+        context: context,
+        dialogBody: AlertDialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          shape: dialogShape,
+          actions: <Widget>[
+            TextButton(
+                onPressed: () async {
+                  bucketController.deleteBucket(bucket);
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Yes'.toUpperCase(),
+                  style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+                )),
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'No'.toUpperCase(),
+                  style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
+                )),
+          ],
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Delete'.toUpperCase(),
+                style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+              ),
+              const SizedBox(height: 16.0),
+              Text(
+                'Are you sure that you want to delete this bucket?',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ],
+          ),
+        ));
+  }
 }
