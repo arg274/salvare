@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:salvare/database/database_paths.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/bucket.dart';

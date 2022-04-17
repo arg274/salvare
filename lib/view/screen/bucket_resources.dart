@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:salvare/controller/bucket_controller.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/bucket.dart';
@@ -162,6 +163,15 @@ class _BucketResourcesState extends State<BucketResources> {
                   if (_formkey.currentState!.validate()) {
                     bucketController.addUserToBucket(
                         _userTEC.text, widget.bucket.id);
+                    showToast(
+                      'User added to bucket!',
+                      context: context,
+                      position: StyledToastPosition.top,
+                      animation: StyledToastAnimation.slideFromBottom,
+                      curve: Curves.decelerate,
+                      duration: const Duration(seconds: 3),
+                      reverseAnimation: StyledToastAnimation.fade,
+                    );
                     Navigator.of(context).pop();
                   }
                 },

@@ -317,6 +317,9 @@ class FireStoreDB {
         }
         addBucketDB(tempRet, element);
       });
+      if (ret.users.contains(uid) == false) {
+        ret.users.add(uid);
+      }
       addBucketDB(ret, uid);
     } catch (e) {
       debugPrint("Error in add user to bucket {$e}");
