@@ -45,8 +45,8 @@ class FireStoreDB {
                   (err) => debugPrint("Error in User Map addition {$err}"));
           userUIDEmailMapRef
               .set({
-                FirebaseAuth.instance.currentUser!.email!:
-                    FirebaseAuth.instance.currentUser!.uid
+                FirebaseAuth.instance.currentUser!.uid:
+                    FirebaseAuth.instance.currentUser!.email!
               })
               .then((value) => debugPrint("Added User Email UID Map! {$user}"))
               .catchError((err) =>
@@ -328,7 +328,7 @@ class FireStoreDB {
       debugPrint("Dilam ---> $emails");
       return emails;
     } catch (e) {
-      debugPrint("Error in getUserEmail: $e");
+      debugPrint("Error in getUserEmails: $e");
     }
     return emails;
   }
