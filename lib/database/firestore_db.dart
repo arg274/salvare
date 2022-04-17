@@ -308,27 +308,63 @@ class FireStoreDB {
           );
       // update users list in buckets of all users that have this bucket
       var res = await bucketRef.where("id", isEqualTo: bucketID).get();
-      var ret = res.docs.first.data();
-      ret.users.forEach((element) async {
-        final userBucketRef = FirebaseFirestore.instance
-            .collection(element)
+      if (res.docs != null) {
+        var ret = res.docs.first.data();
+        ret.users.forEach((element) async {
+          final userBucketRef = FirebaseFirestore.instance
+              .collection(element)
+              .doc(DatabasePaths.userBucketList)
+              .collection(DatabasePaths.userBucketListBucket)
+              .withConverter<Bucket>(
+                fromFirestore: (snapshot, _) =>
+                    Bucket.fromJson(snapshot.data()!),
+                toFirestore: (_bucket, _) => _bucket.toJson(),
+              );
+          var tempRes = await bucketRef.where("id", isEqualTo: bucketID).get();
+          var tempRet = res.docs.first.data();
+          if (tempRet.users.contains(uid) == false) {
+            tempRet.users.add(uid);
+          }
+          addBucketDB(tempRet, element);
+        });
+        // adding bucket and resources to user
+        var usersBucketResourcesRef = FirebaseFirestore.instance
+            .collection(FirebaseAuth.instance.currentUser!.uid)
             .doc(DatabasePaths.userBucketList)
             .collection(DatabasePaths.userBucketListBucket)
-            .withConverter<Bucket>(
-              fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
-              toFirestore: (_bucket, _) => _bucket.toJson(),
-            );
-        var tempRes = await bucketRef.where("id", isEqualTo: bucketID).get();
-        var tempRet = res.docs.first.data();
-        if (tempRet.users.contains(uid) == false) {
-          tempRet.users.add(uid);
+            .doc(bucketID)
+            .collection("resources");
+        var newUsersBucketResourcesRef = FirebaseFirestore.instance
+            .collection(uid)
+            .doc(DatabasePaths.userBucketList)
+            .collection(DatabasePaths.userBucketListBucket)
+            .doc(bucketID)
+            .collection("resources");
+        var usersBucketResources = await usersBucketResourcesRef
+            .withConverter<Resource>(
+              fromFirestore: (snapshot, _) =>
+                  Resource.fromJson(snapshot.data()!),
+              toFirestore: (_resource, _) => _resource.toJson(),
+            )
+            .get();
+        usersBucketResources.docs.forEach((element) {
+          Resource resource = element.data();
+          newUsersBucketResourcesRef
+              .doc(resource.id)
+              .withConverter<Resource>(
+                fromFirestore: (snapshot, _) =>
+                    Resource.fromJson(snapshot.data()!),
+                toFirestore: (_resource, _) => _resource.toJson(),
+              )
+              .set(resource, SetOptions(merge: true));
+        });
+        if (ret.users.contains(uid) == false) {
+          ret.users.add(uid);
         }
-        addBucketDB(tempRet, element);
-      });
-      if (ret.users.contains(uid) == false) {
-        ret.users.add(uid);
+        addBucketDB(ret, uid);
+      } else {
+        debugPrint("No bucket found with ID: $bucketID");
       }
-      addBucketDB(ret, uid);
     } catch (e) {
       debugPrint("Error in add user to bucket {$e}");
     }
