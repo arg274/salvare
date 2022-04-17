@@ -24,6 +24,22 @@ class BucketResources extends StatefulWidget {
 class _BucketResourcesState extends State<BucketResources> {
   BucketController bucketController = BucketController();
   final bgPattern = RandomPatternGenerator();
+  List<String> userEmails = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadEmailData();
+  }
+
+  void _loadEmailData() async {
+    var ret = await FireStoreDB().getUserEmails(widget.bucket.users);
+
+    setState(() {
+      userEmails = ret.map((e) => e.substring(0, e.length - 10)).toList();
+    });
+    debugPrint("-------$userEmails");
+  }
 
   @override
   Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
@@ -54,62 +70,102 @@ class _BucketResourcesState extends State<BucketResources> {
                                   child: Align(
                                     alignment: Alignment.bottomLeft,
                                     child: Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(
-                                                height: 30,
-                                              ),
-                                              Text(
-                                                widget.bucket.name,
-                                                maxLines: 3,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline4
-                                                    ?.apply(
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  color: Colors.white,
-                                                  shadows: <Shadow>[
-                                                    Shadow(
-                                                      offset: const Offset(
-                                                          0.0, 0.0),
-                                                      blurRadius: 10.0,
-                                                      color: Colors.black
-                                                          .withOpacity(0.75),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Text(
-                                                widget.bucket.description ??
-                                                    "No description",
-                                                maxLines: 3,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline4
-                                                    ?.apply(
-                                                  fontSizeFactor: .6,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  color: Colors.white,
-                                                  shadows: <Shadow>[
-                                                    Shadow(
-                                                      offset: const Offset(
-                                                          0.0, 0.0),
-                                                      blurRadius: 10.0,
-                                                      color: Colors.black
-                                                          .withOpacity(0.75),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ), //),
-                                            ],
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 30,
                                           ),
-                                        )),
+                                          Text(
+                                            widget.bucket.name,
+                                            maxLines: 3,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4
+                                                ?.apply(
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.white,
+                                              shadows: <Shadow>[
+                                                Shadow(
+                                                  offset:
+                                                      const Offset(0.0, 0.0),
+                                                  blurRadius: 10.0,
+                                                  color: Colors.black
+                                                      .withOpacity(0.75),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Text(
+                                            widget.bucket.description ??
+                                                "No description",
+                                            maxLines: 3,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4
+                                                ?.apply(
+                                              fontSizeFactor: .6,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.white,
+                                              shadows: <Shadow>[
+                                                Shadow(
+                                                  offset:
+                                                      const Offset(0.0, 0.0),
+                                                  blurRadius: 10.0,
+                                                  color: Colors.black
+                                                      .withOpacity(0.75),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 40),
+                                          Text(
+                                            "Users:",
+                                            maxLines: 3,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4
+                                                ?.apply(
+                                              fontSizeFactor: .6,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.white,
+                                              shadows: <Shadow>[
+                                                Shadow(
+                                                  offset:
+                                                      const Offset(0.0, 0.0),
+                                                  blurRadius: 10.0,
+                                                  color: Colors.black
+                                                      .withOpacity(0.75),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Text(
+                                            userEmails.join(", "),
+                                            maxLines: 3,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4
+                                                ?.apply(
+                                              fontSizeFactor: .4,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.white,
+                                              shadows: <Shadow>[
+                                                Shadow(
+                                                  offset:
+                                                      const Offset(0.0, 0.0),
+                                                  blurRadius: 10.0,
+                                                  color: Colors.black
+                                                      .withOpacity(0.75),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],

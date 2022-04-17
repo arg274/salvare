@@ -22,6 +22,9 @@ class FireStoreDB {
       final userMapRef = FirebaseFirestore.instance
           .collection("userMap")
           .doc(FirebaseAuth.instance.currentUser!.email);
+      final userUIDEmailMapRef = FirebaseFirestore.instance
+          .collection("userEmailMap")
+          .doc(FirebaseAuth.instance.currentUser!.uid);
       model.User? _user = await fetchUserInfoDB();
       if (_user == null) {
         debugPrint("Adding new user: $user");
@@ -40,6 +43,14 @@ class FireStoreDB {
               .then((value) => debugPrint("Added User Map! {$user}"))
               .catchError(
                   (err) => debugPrint("Error in User Map addition {$err}"));
+          userUIDEmailMapRef
+              .set({
+                FirebaseAuth.instance.currentUser!.email!:
+                    FirebaseAuth.instance.currentUser!.uid
+              })
+              .then((value) => debugPrint("Added User Email UID Map! {$user}"))
+              .catchError((err) =>
+                  debugPrint("Error in User Email UID Map addition {$err}"));
         }
       } else {
         debugPrint("User already exists: $user");
@@ -294,6 +305,32 @@ class FireStoreDB {
       debugPrint("Error in getUserUID: $e");
     }
     return null;
+  }
+
+  Future<List<String>> getUserEmails(List<String> uids) async {
+    debugPrint("Pailam ---> $uids");
+    List<String> emails = [];
+    try {
+      for (var uid in uids) {
+        final userMapRef =
+            FirebaseFirestore.instance.collection("userEmailMap").doc(uid);
+        var res = await userMapRef.get();
+        if (res.data() != null) {
+          if (res.data()!.containsKey(uid)) {
+            emails.add(res.data()![uid]);
+          }
+          if (res.data()!.containsKey(uid) == false) {
+            debugPrint("No user found with uid: $uid");
+            emails.add("");
+          }
+        }
+      }
+      debugPrint("Dilam ---> $emails");
+      return emails;
+    } catch (e) {
+      debugPrint("Error in getUserEmail: $e");
+    }
+    return emails;
   }
 
   void addUserToBucketDB(String bucketID, String uid) async {
