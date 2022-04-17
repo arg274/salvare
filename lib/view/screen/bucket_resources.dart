@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
@@ -52,27 +54,62 @@ class _BucketResourcesState extends State<BucketResources> {
                                   child: Align(
                                     alignment: Alignment.bottomLeft,
                                     child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        widget.bucket.name,
-                                        maxLines: 3,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline4
-                                            ?.apply(
-                                          overflow: TextOverflow.ellipsis,
-                                          color: Colors.white,
-                                          shadows: <Shadow>[
-                                            Shadow(
-                                              offset: const Offset(0.0, 0.0),
-                                              blurRadius: 10.0,
-                                              color: Colors.black
-                                                  .withOpacity(0.75),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: 30,
+                                              ),
+                                              Text(
+                                                widget.bucket.name,
+                                                maxLines: 3,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline4
+                                                    ?.apply(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Colors.white,
+                                                  shadows: <Shadow>[
+                                                    Shadow(
+                                                      offset: const Offset(
+                                                          0.0, 0.0),
+                                                      blurRadius: 10.0,
+                                                      color: Colors.black
+                                                          .withOpacity(0.75),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Text(
+                                                widget.bucket.description ??
+                                                    "No description",
+                                                maxLines: 3,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline4
+                                                    ?.apply(
+                                                  fontSizeFactor: .6,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Colors.white,
+                                                  shadows: <Shadow>[
+                                                    Shadow(
+                                                      offset: const Offset(
+                                                          0.0, 0.0),
+                                                      blurRadius: 10.0,
+                                                      color: Colors.black
+                                                          .withOpacity(0.75),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ), //),
+                                            ],
+                                          ),
+                                        )),
                                   ),
                                 ),
                               ],
