@@ -23,13 +23,11 @@ class BucketResources extends StatefulWidget {
 class _BucketResourcesState extends State<BucketResources> {
   BucketController bucketController = BucketController();
   final bgPattern = RandomPatternGenerator();
-  Future<List<String>> userEmails = Future.value([]);
+  final ValueNotifier<List<String>> _notifier = ValueNotifier([]);
 
-  void _refreshEmailData() async {
+  Future<void> _refreshEmailData() async {
     debugPrint(widget.bucket.users.toString());
-    setState(() {
-      userEmails = FireStoreDB().getUserEmails(widget.bucket.users);
-    });
+    _notifier.value = await FireStoreDB().getUserEmails(widget.bucket.users);
   }
 
   @override
@@ -129,7 +127,7 @@ class _BucketResourcesState extends State<BucketResources> {
                             children: [
                               ElevatedButton(
                                 onPressed: () async {
-                                  _refreshEmailData();
+                                  await _refreshEmailData();
                                   showUserAddForm(context);
                                 },
                                 child: const Icon(FeatherIcons.users),
@@ -218,8 +216,7 @@ class _BucketResourcesState extends State<BucketResources> {
                       duration: const Duration(seconds: 3),
                       reverseAnimation: StyledToastAnimation.fade,
                     );
-                    _refreshEmailData();
-                    Navigator.pop(context);
+                    await _refreshEmailData();
                   }
                 },
                 child: Text(
@@ -263,8 +260,7 @@ class _BucketResourcesState extends State<BucketResources> {
                             duration: const Duration(seconds: 3),
                             reverseAnimation: StyledToastAnimation.fade,
                           );
-                          _refreshEmailData();
-                          Navigator.pop(context);
+                          await _refreshEmailData();
                         }
                       },
                       validator: (email) =>
@@ -283,51 +279,35 @@ class _BucketResourcesState extends State<BucketResources> {
                       constraints: BoxConstraints(
                         maxHeight: MediaQuery.of(context).size.height * 0.4,
                       ),
-                      child: FutureBuilder<List<String>>(
-                          future: userEmails,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                      child: ListTile(
-                                        visualDensity:
-                                            const VisualDensity(vertical: -4.0),
-                                        onTap: () => {},
-                                        leading: SizedBox(
-                                          height: double.infinity,
-                                          child: Icon(
-                                            FeatherIcons.user,
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                          ),
-                                        ),
-                                        title: Text(
-                                          snapshot.data![index]
-                                              .replaceFirst('@gmail.com', ''),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline6,
+                      child: ValueListenableBuilder<List<String>>(
+                          valueListenable: _notifier,
+                          builder: (context, data, _) {
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    child: ListTile(
+                                      visualDensity:
+                                          const VisualDensity(vertical: -4.0),
+                                      onTap: () => {},
+                                      leading: SizedBox(
+                                        height: double.infinity,
+                                        child: Icon(
+                                          FeatherIcons.user,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                       ),
-                                    );
-                                  });
-                            } else if (snapshot.hasError) {
-                              // TODO: Error handling
-                              return Text('${snapshot.error}');
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SpinKitCubeGrid(
-                                    size: 50.0,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        ?.color),
-                              );
-                            }
+                                      title: Text(
+                                        data[index]
+                                            .replaceFirst('@gmail.com', ''),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6,
+                                      ),
+                                    ),
+                                  );
+                                });
                           }),
                     ),
                   ),
