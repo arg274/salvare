@@ -86,7 +86,16 @@ class BucketController {
     }
   }
 
-  void editBucketResource(Bucket bucket, Resource resource) => {};
+  void editBucketResource(Bucket bucket, Resource resource) =>
+      FireStoreDB().editBucketResourceDB(bucket.id, resource);
+
+  void editBucketName(Bucket bucket, String name) {
+    FireStoreDB().editBucketNameDB(bucket.id, name);
+  }
+
+  void editBucketDescription(Bucket bucket, String description) {
+    FireStoreDB().editBucketDescriptionDB(bucket.id, description);
+  }
 
   void deleteBucketResource(Bucket bucket, Resource resource) {
     try {

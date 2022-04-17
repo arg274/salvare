@@ -474,6 +474,115 @@ class FireStoreDB {
     }
   }
 
+  void editBucketResourceDB(String bucketId, Resource resource) async {
+    try {
+      final bucketInstanceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucketId)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      DocumentSnapshot<Bucket> _bucketSnapshot = await bucketInstanceRef.get();
+      Bucket? _bucket = _bucketSnapshot.exists ? _bucketSnapshot.data() : null;
+      if (_bucket != null) {
+        for (var element in _bucket.users) {
+          FirebaseFirestore.instance
+              .collection(element)
+              .doc(DatabasePaths.userBucketList)
+              .collection(DatabasePaths.userBucketListBucket)
+              .doc(bucketId)
+              .collection(DatabasePaths.userBucketListBucketResource)
+              .doc(resource.id)
+              .withConverter<Resource>(
+                fromFirestore: (snapshot, _) =>
+                    Resource.fromJson(snapshot.data()!),
+                toFirestore: (_resource, _) => _resource.toJson(),
+              )
+              .set(resource, SetOptions(merge: true))
+              .then((value) => debugPrint(
+                  "Resource(${resource.id}) has been edited to user($element)"))
+              .catchError((onError) => debugPrint(
+                  "Resource(${resource.id}) CANNOT be edited to user($element)"));
+        }
+      } else {
+        debugPrint("No bucket exists with bucketID: $bucketId");
+      }
+    } catch (e) {
+      debugPrint("Error in edit resource to bucket DB {$e}");
+    }
+  }
+
+  void editBucketNameDB(String bucketId, String name) async {
+    try {
+      final bucketInstanceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucketId)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      DocumentSnapshot<Bucket> _bucketSnapshot = await bucketInstanceRef.get();
+      Bucket? _bucket = _bucketSnapshot.exists ? _bucketSnapshot.data() : null;
+      if (_bucket != null) {
+        for (var element in _bucket.users) {
+          FirebaseFirestore.instance
+              .collection(element)
+              .doc(DatabasePaths.userBucketList)
+              .collection(DatabasePaths.userBucketListBucket)
+              .doc(bucketId)
+              .set({'name': name}, SetOptions(merge: true))
+              .then((value) => debugPrint(
+                  "Bucket name($name) has been edited to user($element)"))
+              .catchError((onError) => debugPrint(
+                  "Bucket name($name) CANNOT be edited to user($element)"));
+        }
+      } else {
+        debugPrint("No bucket exists with bucketID: $bucketId");
+      }
+    } catch (e) {
+      debugPrint("Error in edit bucket name to bucket DB {$e}");
+    }
+  }
+
+  void editBucketDescriptionDB(String bucketId, String description) async {
+    try {
+      final bucketInstanceRef = FirebaseFirestore.instance
+          .collection(FirebaseAuth.instance.currentUser!.uid)
+          .doc(DatabasePaths.userBucketList)
+          .collection(DatabasePaths.userBucketListBucket)
+          .doc(bucketId)
+          .withConverter<Bucket>(
+            fromFirestore: (snapshot, _) => Bucket.fromJson(snapshot.data()!),
+            toFirestore: (_bucket, _) => _bucket.toJson(),
+          );
+      DocumentSnapshot<Bucket> _bucketSnapshot = await bucketInstanceRef.get();
+      Bucket? _bucket = _bucketSnapshot.exists ? _bucketSnapshot.data() : null;
+      if (_bucket != null) {
+        for (var element in _bucket.users) {
+          FirebaseFirestore.instance
+              .collection(element)
+              .doc(DatabasePaths.userBucketList)
+              .collection(DatabasePaths.userBucketListBucket)
+              .doc(bucketId)
+              .set({'description': description}, SetOptions(merge: true))
+              .then((value) => debugPrint(
+                  "Bucket description($description) has been edited to user($element)"))
+              .catchError((onError) => debugPrint(
+                  "Bucket description($description) CANNOT be edited to user($element)"));
+        }
+      } else {
+        debugPrint("No bucket exists with bucketID: $bucketId");
+      }
+    } catch (e) {
+      debugPrint("Error in edit bucket description to bucket DB {$e}");
+    }
+  }
+
   Future<List<Resource>?> fetchBucketResourcesDB(String bucketID) async {
     try {
       final resourcesRef = FirebaseFirestore.instance
