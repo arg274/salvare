@@ -144,7 +144,7 @@ class _BucketResourcesState extends State<BucketResources> {
                                           ),
                                           Text(
                                             userEmails.join(", "),
-                                            maxLines: 3,
+                                            maxLines: 5,
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headline4
