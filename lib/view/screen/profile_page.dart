@@ -51,7 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               mini: true,
                               heroTag: 'profileEditBtn',
                               foregroundColor: Colors.white,
-                              onPressed: () => Navigator.of(context).push(
+                              onPressed: () =>
+                                  Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
                                   builder: (context) => const EditProfilePage(),
                                 ),

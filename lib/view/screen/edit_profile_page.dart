@@ -10,6 +10,7 @@ import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:salvare/view/screen/profile_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:switcher_button/switcher_button.dart';
 
@@ -116,39 +117,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void onPressedSaveButton() async {
+    showToast(
+      'Saving Changes',
+      context: context,
+      position: StyledToastPosition.top,
+      animation: StyledToastAnimation.slideFromBottom,
+      curve: Curves.decelerate,
+      duration: const Duration(seconds: 3),
+      reverseAnimation: StyledToastAnimation.fade,
+    );
+
     model.User? _user = await FireStoreDB().fetchUserInfoDB();
     if (_user == null) {
       if (selectedName != null) {
-        FireStoreDB().updateUserUsername(selectedName!);
+        await FireStoreDB().updateUserUsername(selectedName!);
       }
       if (selectedDescription != null) {
-        FireStoreDB().updateUserUsername(selectedName!);
+        await FireStoreDB().updateUserDescription(selectedDescription!);
       }
     } else {
       if (selectedName != _user.userName) {
         if (selectedName != null) {
-          FireStoreDB().updateUserUsername(selectedName!);
+          await FireStoreDB().updateUserUsername(selectedName!);
         }
       }
       if (selectedDescription != _user.description) {
         if (selectedDescription != null) {
-          FireStoreDB().updateUserDescription(selectedDescription!);
+          await FireStoreDB().updateUserDescription(selectedDescription!);
         }
       }
     }
     if (changedDOB) {
-      FireStoreDB().updateUserDOB(selectedDate);
+      await FireStoreDB().updateUserDOB(selectedDate);
     }
 
-    showToast(
-      'Saving Changes',
-      context: context,
-      animation: StyledToastAnimation.slideFromBottom,
-      curve: Curves.decelerate,
-      reverseAnimation: StyledToastAnimation.fade,
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const ProfilePage(),
+      ),
     );
-
-    Navigator.of(context).pop();
   }
 
   Widget buildNameEdit(model.User modelUser) => Column(

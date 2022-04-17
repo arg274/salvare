@@ -49,78 +49,40 @@ class FireStoreDB {
     }
   }
 
-  void updateUserDescription(String description) async {
+  Future<void> updateUserDescription(String description) async {
     try {
-      final userRef = FirebaseFirestore.instance
+      final userRef = await FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc("user")
-          .withConverter<model.User>(
-            fromFirestore: (snapshot, _) =>
-                model.User.fromJson(snapshot.data()!),
-            toFirestore: (_user, _) => _user.toJson(),
-          );
-      model.User? _user = await fetchUserInfoDB();
-      if (_user == null) {
-        debugPrint("No user found while updating user description");
-      } else {
-        _user.description = description;
-        userRef
-            .set(_user)
-            .then((value) => debugPrint("Updated User description! {$_user}"))
-            .catchError(
-                (err) => debugPrint("Error in User update description {$err}"));
-      }
+          .set({"description": description}, SetOptions(merge: true));
+      debugPrint("Updated User description! {$description}");
+      return;
     } catch (e) {
       debugPrint("Error in update user desc {$e}");
     }
   }
 
-  void updateUserUsername(String username) async {
+  Future<void> updateUserUsername(String username) async {
     try {
-      final userRef = FirebaseFirestore.instance
+      final userRef = await FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc("user")
-          .withConverter<model.User>(
-            fromFirestore: (snapshot, _) =>
-                model.User.fromJson(snapshot.data()!),
-            toFirestore: (_user, _) => _user.toJson(),
-          );
-      model.User? _user = await fetchUserInfoDB();
-      if (_user == null) {
-        debugPrint("No user found while updating user name");
-      } else {
-        _user.userName = username;
-        userRef
-            .set(_user)
-            .then((value) => debugPrint("Updated User name! {$_user}"))
-            .catchError(
-                (err) => debugPrint("Error in User update name {$err}"));
-      }
+          .set({"userName": username}, SetOptions(merge: true));
+      debugPrint("Updated User name! {$username}");
+      return;
     } catch (e) {
       debugPrint("Error in update username {$e}");
     }
   }
 
-  void updateUserDOB(DateTime dob) async {
+  Future<void> updateUserDOB(DateTime dob) async {
     try {
-      final userRef = FirebaseFirestore.instance
+      final userRef = await FirebaseFirestore.instance
           .collection(FirebaseAuth.instance.currentUser!.uid)
           .doc("user")
-          .withConverter<model.User>(
-            fromFirestore: (snapshot, _) =>
-                model.User.fromJson(snapshot.data()!),
-            toFirestore: (_user, _) => _user.toJson(),
-          );
-      model.User? _user = await fetchUserInfoDB();
-      if (_user == null) {
-        debugPrint("No user found while updating user DOB");
-      } else {
-        _user.dob = dob;
-        userRef
-            .set(_user)
-            .then((value) => debugPrint("Updated User DOB! {$_user}"))
-            .catchError((err) => debugPrint("Error in User update DOB {$err}"));
-      }
+          .set({"dob": dob}, SetOptions(merge: true));
+      debugPrint("Updated User dob! {$dob}");
+      return;
     } catch (e) {
       debugPrint("Error in update user dob {$e}");
     }
