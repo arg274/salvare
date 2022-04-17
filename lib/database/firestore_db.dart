@@ -257,7 +257,15 @@ class FireStoreDB {
             .doc(DatabasePaths.userBucketList)
             .collection(DatabasePaths.userBucketListBucket)
             .doc(bucket.id);
+        var usersBucketResourcesRef = FirebaseFirestore.instance
+            .collection(FirebaseAuth.instance.currentUser!.uid)
+            .doc(DatabasePaths.userBucketList)
+            .collection(DatabasePaths.userBucketListBucket)
+            .doc(bucket.id)
+            .collection("resources");
         usersBucketRef.delete();
+        var ret = await usersBucketResourcesRef.get();
+        ret.docs.forEach((element) => element.reference.delete());
         debugPrint("Successfully deleted the bucket");
       } else {
         debugPrint(
