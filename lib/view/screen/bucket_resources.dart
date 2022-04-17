@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:salvare/controller/bucket_controller.dart';
 import 'package:salvare/database/firestore_db.dart';
@@ -24,21 +23,12 @@ class BucketResources extends StatefulWidget {
 class _BucketResourcesState extends State<BucketResources> {
   BucketController bucketController = BucketController();
   final bgPattern = RandomPatternGenerator();
-  List<String> userEmails = [];
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _loadEmailData();
-  }
+  Future<List<String>> userEmails = Future.value([]);
 
-  void _loadEmailData() async {
-    var ret = await FireStoreDB().getUserEmails(widget.bucket.users);
-
+  Future<void> _refreshEmailData() async {
     setState(() {
-      userEmails = ret.map((e) => e.substring(0, e.length - 10)).toList();
+      userEmails = FireStoreDB().getUserEmails(widget.bucket.users);
     });
-    debugPrint("-------$userEmails");
   }
 
   @override
@@ -98,6 +88,7 @@ class _BucketResourcesState extends State<BucketResources> {
                                               ],
                                             ),
                                           ),
+                                          const SizedBox(height: 12.0),
                                           Text(
                                             widget.bucket.description ??
                                                 "No description",
@@ -107,49 +98,6 @@ class _BucketResourcesState extends State<BucketResources> {
                                                 .headline4
                                                 ?.apply(
                                               fontSizeFactor: .6,
-                                              overflow: TextOverflow.ellipsis,
-                                              color: Colors.white,
-                                              shadows: <Shadow>[
-                                                Shadow(
-                                                  offset:
-                                                      const Offset(0.0, 0.0),
-                                                  blurRadius: 10.0,
-                                                  color: Colors.black
-                                                      .withOpacity(0.75),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 40),
-                                          Text(
-                                            "Users:",
-                                            maxLines: 3,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline4
-                                                ?.apply(
-                                              fontSizeFactor: .6,
-                                              overflow: TextOverflow.ellipsis,
-                                              color: Colors.white,
-                                              shadows: <Shadow>[
-                                                Shadow(
-                                                  offset:
-                                                      const Offset(0.0, 0.0),
-                                                  blurRadius: 10.0,
-                                                  color: Colors.black
-                                                      .withOpacity(0.75),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Text(
-                                            userEmails.join(", "),
-                                            maxLines: 5,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline4
-                                                ?.apply(
-                                              fontSizeFactor: .4,
                                               overflow: TextOverflow.ellipsis,
                                               color: Colors.white,
                                               shadows: <Shadow>[
@@ -179,8 +127,11 @@ class _BucketResourcesState extends State<BucketResources> {
                           child: Row(
                             children: [
                               ElevatedButton(
-                                onPressed: () async => showUserAddForm(context),
-                                child: const Icon(FeatherIcons.userPlus),
+                                onPressed: () async {
+                                  await _refreshEmailData();
+                                  showUserAddForm(context);
+                                },
+                                child: const Icon(FeatherIcons.users),
                                 style: ElevatedButton.styleFrom(
                                     primary: Theme.of(context).primaryColor,
                                     shape: const CircleBorder(),
@@ -259,13 +210,12 @@ class _BucketResourcesState extends State<BucketResources> {
                     showToast(
                       'User added to bucket!',
                       context: context,
-                      position: StyledToastPosition.top,
                       animation: StyledToastAnimation.slideFromBottom,
                       curve: Curves.decelerate,
                       duration: const Duration(seconds: 3),
                       reverseAnimation: StyledToastAnimation.fade,
                     );
-                    Navigator.of(context).pop();
+                    await _refreshEmailData();
                   }
                 },
                 child: Text(
@@ -273,25 +223,93 @@ class _BucketResourcesState extends State<BucketResources> {
                   style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
                 ))
           ],
-          content: Form(
-            key: _formkey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'User Email'.toUpperCase(),
-                  style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                ),
-                TextFormField(
-                  controller: _userTEC,
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+          content: SingleChildScrollView(
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Form(
+                    key: _formkey,
+                    child: TextFormField(
+                      controller: _userTEC,
+                      decoration: InputDecoration(
+                        labelText: 'User Email'.toUpperCase(),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .formLabel
+                            .fixFontFamily(),
+                        isDense: true,
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 5.0),
+                      ),
+                      validator: (email) =>
+                          bucketController.validateEmail(email),
+                    ),
                   ),
-                  validator: (email) => bucketController.validateEmail(email),
-                ),
-              ],
+                  const SizedBox(height: 20.0),
+                  Text(
+                    'Users'.toUpperCase(),
+                    style:
+                        Theme.of(context).textTheme.formLabel.fixFontFamily(),
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.4,
+                      ),
+                      child: FutureBuilder<List<String>>(
+                          future: userEmails,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder: (context, index) {
+                                    return InkWell(
+                                      child: ListTile(
+                                        visualDensity:
+                                            const VisualDensity(vertical: -4.0),
+                                        onTap: () => {},
+                                        leading: SizedBox(
+                                          height: double.infinity,
+                                          child: Icon(
+                                            FeatherIcons.user,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                        title: Text(
+                                          snapshot.data![index]
+                                              .replaceFirst('@gmail.com', ''),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6,
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            } else if (snapshot.hasError) {
+                              // TODO: Error handling
+                              return Text('${snapshot.error}');
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SpinKitCubeGrid(
+                                    size: 50.0,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        ?.color),
+                              );
+                            }
+                          }),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ));
