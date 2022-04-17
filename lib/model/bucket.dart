@@ -23,12 +23,13 @@ class Bucket {
       required this.dateUpdated});
 
   // Named constructor that forwards to the default one.
-  Bucket.unlaunched(String name, String user)
+  Bucket.unlaunched(String name, String desc, String user)
       : this(
             id: md5
                 .convert(utf8.encode(name + DateTime.now().toString()))
                 .toString(),
             name: name,
+            description: desc,
             users: [user],
             dateCreated: DateTime.now(),
             dateUpdated: DateTime.now());

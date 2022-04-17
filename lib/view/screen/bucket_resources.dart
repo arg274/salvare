@@ -25,7 +25,8 @@ class _BucketResourcesState extends State<BucketResources> {
   final bgPattern = RandomPatternGenerator();
   Future<List<String>> userEmails = Future.value([]);
 
-  Future<void> _refreshEmailData() async {
+  void _refreshEmailData() async {
+    debugPrint(widget.bucket.users.toString());
     setState(() {
       userEmails = FireStoreDB().getUserEmails(widget.bucket.users);
     });
@@ -128,7 +129,7 @@ class _BucketResourcesState extends State<BucketResources> {
                             children: [
                               ElevatedButton(
                                 onPressed: () async {
-                                  await _refreshEmailData();
+                                  _refreshEmailData();
                                   showUserAddForm(context);
                                 },
                                 child: const Icon(FeatherIcons.users),
@@ -203,10 +204,12 @@ class _BucketResourcesState extends State<BucketResources> {
           actions: <Widget>[
             TextButton(
                 onPressed: () async {
+                  String? addedUid;
                   await bucketController.checkIfUserExists(_userTEC.text);
                   if (_formkey.currentState!.validate()) {
-                    bucketController.addUserToBucket(
+                    addedUid = await bucketController.addUserToBucket(
                         _userTEC.text, widget.bucket.id);
+                    widget.bucket.users.add(addedUid!);
                     showToast(
                       'User added to bucket!',
                       context: context,
@@ -215,7 +218,8 @@ class _BucketResourcesState extends State<BucketResources> {
                       duration: const Duration(seconds: 3),
                       reverseAnimation: StyledToastAnimation.fade,
                     );
-                    await _refreshEmailData();
+                    _refreshEmailData();
+                    Navigator.pop(context);
                   }
                 },
                 child: Text(
@@ -244,6 +248,25 @@ class _BucketResourcesState extends State<BucketResources> {
                         contentPadding:
                             const EdgeInsets.symmetric(vertical: 5.0),
                       ),
+                      onFieldSubmitted: (value) async {
+                        String? addedUid;
+                        await bucketController.checkIfUserExists(_userTEC.text);
+                        if (_formkey.currentState!.validate()) {
+                          addedUid = await bucketController.addUserToBucket(
+                              _userTEC.text, widget.bucket.id);
+                          widget.bucket.users.add(addedUid!);
+                          showToast(
+                            'User added to bucket!',
+                            context: context,
+                            animation: StyledToastAnimation.slideFromBottom,
+                            curve: Curves.decelerate,
+                            duration: const Duration(seconds: 3),
+                            reverseAnimation: StyledToastAnimation.fade,
+                          );
+                          _refreshEmailData();
+                          Navigator.pop(context);
+                        }
+                      },
                       validator: (email) =>
                           bucketController.validateEmail(email),
                     ),

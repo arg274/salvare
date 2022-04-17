@@ -21,6 +21,7 @@ class _BucketsState extends State<Buckets> {
   Future<void> showAddBucketDialogue(BuildContext context) async {
     final _formkey = GlobalKey<FormState>();
     final TextEditingController _bucketTEC = TextEditingController();
+    final TextEditingController _descTEC = TextEditingController();
     return await showDialog(
         context: context,
         builder: (context) {
@@ -32,7 +33,8 @@ class _BucketsState extends State<Buckets> {
                   onPressed: () => {
                         if (_formkey.currentState!.validate())
                           {
-                            bucketController.addBucket(_bucketTEC.text),
+                            bucketController.addBucket(
+                                _bucketTEC.text, _descTEC.text),
                             Navigator.of(context).pop()
                           }
                       },
@@ -48,20 +50,31 @@ class _BucketsState extends State<Buckets> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Name'.toUpperCase(),
-                    style:
-                        Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                  ),
                   TextFormField(
                     controller: _bucketTEC,
-                    onChanged: (category) => {},
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
+                      labelText: 'Name'.toUpperCase(),
+                      labelStyle:
+                          Theme.of(context).textTheme.formLabel.fixFontFamily(),
                       isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
                     ),
                     validator: (bucketName) {
                       return bucketController.validateBucket(bucketName);
+                    },
+                  ),
+                  const SizedBox(height: 15.0),
+                  TextFormField(
+                    controller: _descTEC,
+                    decoration: InputDecoration(
+                      labelText: 'Description'.toUpperCase(),
+                      labelStyle:
+                          Theme.of(context).textTheme.formLabel.fixFontFamily(),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
+                    ),
+                    validator: (bucketDesc) {
+                      return bucketController.validateBucketDesc(bucketDesc);
                     },
                   ),
                 ],

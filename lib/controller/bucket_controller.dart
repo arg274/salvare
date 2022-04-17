@@ -17,7 +17,7 @@ class BucketController {
   int totalBuckets = 0;
   bool userExists = false;
 
-  void addBucket(String bucketName) async {
+  void addBucket(String bucketName, String bucketDesc) async {
     try {
       // fetch total number of buckets and update totalBuckets
       List<Bucket>? userBucketList = await FireStoreDB().fetchUserBucketList();
@@ -28,7 +28,7 @@ class BucketController {
         // TODO: Decide how Bucket ID will be generated
         FireStoreDB().addBucketDB(
             Bucket.unlaunched(
-                bucketName, FirebaseAuth.instance.currentUser!.uid),
+                bucketName, bucketDesc, FirebaseAuth.instance.currentUser!.uid),
             FirebaseAuth.instance.currentUser!.uid.toString());
         totalBuckets++;
       } else {
@@ -69,7 +69,7 @@ class BucketController {
           "${FirebaseAuth.instance.currentUser!.email} has total $totalBuckets buckets");
       if (totalBuckets < DatabasePaths.userMaxBucket) {
         Bucket _bucket = Bucket.unlaunched(
-            'bucket1', FirebaseAuth.instance.currentUser!.uid);
+            'bucket1', 'bucketdesc1', FirebaseAuth.instance.currentUser!.uid);
         FireStoreDB().addBucketDB(
             _bucket, FirebaseAuth.instance.currentUser!.uid.toString());
         totalBuckets++;
@@ -149,7 +149,7 @@ class BucketController {
     }
   }
 
-  void addUserToBucket(String email, String bucketID) async {
+  Future<String?> addUserToBucket(String email, String bucketID) async {
     try {
       String? _uid = await FireStoreDB().getUserUID(email);
       if (_uid == null) {
@@ -157,6 +157,7 @@ class BucketController {
       } else {
         debugPrint("User does have an account in salvare! $_uid");
         FireStoreDB().addUserToBucketDB(bucketID, _uid);
+        return _uid;
       }
     } catch (err) {
       debugPrint("error in add user to bucket dummy {$err}");
@@ -199,6 +200,14 @@ class BucketController {
   String? validateBucket(String? bucketName) {
     if (bucketName == null || bucketName.isEmpty) {
       return 'Please enter a name';
+    } else {
+      return null;
+    }
+  }
+
+  String? validateBucketDesc(String? bucketDesc) {
+    if (bucketDesc == null || bucketDesc.isEmpty) {
+      return 'Please enter a description';
     } else {
       return null;
     }
