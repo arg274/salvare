@@ -40,6 +40,7 @@ class _DashboardState extends State<Dashboard> {
                   await tagCategoryController.checkIfCatExists(_catTEC.text);
                   if (_formkey.currentState!.validate()) {
                     tagCategoryController.addCategory(_catTEC.text);
+                    showSalvareToast(context, 'Category successfully added!');
                     Navigator.of(context).pop();
                   }
                 },
@@ -90,6 +91,7 @@ class _DashboardState extends State<Dashboard> {
                   if (_formkey.currentState!.validate()) {
                     tagCategoryController
                         .addTag(Tag.unlaunched(_tagTEC.text, 0xFFFFC107));
+                    showSalvareToast(context, 'Tag successfully added!');
                     Navigator.of(context).pop();
                   }
                 },

@@ -21,6 +21,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  final GlobalKey<FormState> _formState = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
   String? selectedName;
   String? selectedDescription;
@@ -52,31 +53,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onClicked: () async {},
                 ),
                 const SizedBox(height: 24),
-                snapshot.data == null
-                    ? buildNameEdit(model.User.unlaunched("unknown", "unknown"))
-                    : buildNameEdit(snapshot.data as model.User),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Text(
-                      "Date Of Birth".toUpperCase(),
-                      style:
-                          Theme.of(context).textTheme.formLabel.fixFontFamily(),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        _selectDate(context);
-                      },
-                      icon: Icon(FeatherIcons.calendar,
-                          color: Theme.of(context).primaryColor),
-                    ),
-                  ],
+                Form(
+                  key: _formState,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      snapshot.data == null
+                          ? buildNameEdit(
+                              model.User.unlaunched("unknown", "unknown"))
+                          : buildNameEdit(snapshot.data as model.User),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Text(
+                            "Date Of Birth".toUpperCase(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .formLabel
+                                .fixFontFamily(),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _selectDate(context);
+                            },
+                            icon: Icon(FeatherIcons.calendar,
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      snapshot.data == null
+                          ? buildAboutEdit(
+                              model.User.unlaunched("unknown", "unknown"))
+                          : buildAboutEdit(snapshot.data as model.User),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 24),
-                snapshot.data == null
-                    ? buildAboutEdit(
-                        model.User.unlaunched("unknown", "unknown"))
-                    : buildAboutEdit(snapshot.data as model.User),
                 const SizedBox(height: 24),
                 buildDarkModeSwitch(),
                 const SizedBox(height: 24),
@@ -116,37 +128,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void onPressedSaveButton() async {
-    showSalvareToast(context, 'Saving changes');
+    if (_formState.currentState!.validate()) {
+      showSalvareToast(context, 'Saving changes');
 
-    model.User? _user = await FireStoreDB().fetchUserInfoDB();
-    if (_user == null) {
-      if (selectedName != null) {
-        await FireStoreDB().updateUserUsername(selectedName!);
-      }
-      if (selectedDescription != null) {
-        await FireStoreDB().updateUserDescription(selectedDescription!);
-      }
-    } else {
-      if (selectedName != _user.userName) {
+      model.User? _user = await FireStoreDB().fetchUserInfoDB();
+      if (_user == null) {
         if (selectedName != null) {
           await FireStoreDB().updateUserUsername(selectedName!);
         }
-      }
-      if (selectedDescription != _user.description) {
         if (selectedDescription != null) {
           await FireStoreDB().updateUserDescription(selectedDescription!);
         }
+      } else {
+        if (selectedName != _user.userName) {
+          if (selectedName != null) {
+            await FireStoreDB().updateUserUsername(selectedName!);
+          }
+        }
+        if (selectedDescription != _user.description) {
+          if (selectedDescription != null) {
+            await FireStoreDB().updateUserDescription(selectedDescription!);
+          }
+        }
       }
-    }
-    if (changedDOB) {
-      await FireStoreDB().updateUserDOB(selectedDate);
-    }
+      if (changedDOB) {
+        await FireStoreDB().updateUserDOB(selectedDate);
+      }
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const ProfilePage(),
-      ),
-    );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ProfilePage(),
+        ),
+      );
+    }
   }
 
   Widget buildNameEdit(model.User modelUser) => Column(
@@ -164,6 +178,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             onChanged: (name) {
               selectedName = name;
             },
+            validator: (name) => (name?.length ?? 0) < 4
+                ? 'Name must be at least 4 characters'
+                : null,
           ),
         ],
       );
@@ -179,10 +196,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           TextFormField(
             style: Theme.of(context).textTheme.formText.fixFontFamily(),
             controller: TextEditingController(text: selectedDescription),
-            maxLines: 10,
+            maxLines: 5,
             onChanged: (description) {
               selectedDescription = description;
             },
+            maxLength: 256,
+            validator: (desc) =>
+                (desc?.length ?? 0) > 256 ? 'Description too long' : null,
           ),
         ],
       );

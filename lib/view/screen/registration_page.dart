@@ -16,6 +16,7 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  final GlobalKey<FormState> _formState = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
   String? selectedName;
   String? selectedDescription;
@@ -35,29 +36,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
             onClicked: () async {},
           ),
           const SizedBox(height: 24),
-          buildNameEdit(model.User.unlaunched(
-              FirebaseAuth.instance.currentUser!.uid,
-              FirebaseAuth.instance.currentUser!.displayName ?? "unknown")),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Text(
-                "Date Of Birth".toUpperCase(),
-                style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
-              ),
-              IconButton(
-                onPressed: () {
-                  _selectDate(context);
-                },
-                icon: Icon(FeatherIcons.calendar,
-                    color: Theme.of(context).primaryColor),
-              ),
-            ],
+          Form(
+            key: _formState,
+            child: Column(
+              children: [
+                buildNameEdit(model.User.unlaunched(
+                    FirebaseAuth.instance.currentUser!.uid,
+                    FirebaseAuth.instance.currentUser!.displayName ??
+                        "unknown")),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Text(
+                      "Date Of Birth".toUpperCase(),
+                      style:
+                          Theme.of(context).textTheme.formLabel.fixFontFamily(),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _selectDate(context);
+                      },
+                      icon: Icon(FeatherIcons.calendar,
+                          color: Theme.of(context).primaryColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                buildAboutEdit(model.User.unlaunched(
+                    FirebaseAuth.instance.currentUser!.uid,
+                    FirebaseAuth.instance.currentUser!.displayName ??
+                        "unknown")),
+              ],
+            ),
           ),
-          const SizedBox(height: 24),
-          buildAboutEdit(model.User.unlaunched(
-              FirebaseAuth.instance.currentUser!.uid,
-              FirebaseAuth.instance.currentUser!.displayName ?? "unknown")),
         ],
       ),
     );
@@ -78,34 +89,36 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   void onPressedRegButton() async {
-    model.User _user;
-    if (FirebaseAuth.instance.currentUser!.displayName != null) {
-      _user = model.User.unlaunched(FirebaseAuth.instance.currentUser!.uid,
-          FirebaseAuth.instance.currentUser!.displayName!);
-    } else {
-      _user = model.User.unlaunched(
-          FirebaseAuth.instance.currentUser!.uid, "unknown");
-    }
+    if (_formState.currentState!.validate()) {
+      model.User _user;
+      if (FirebaseAuth.instance.currentUser!.displayName != null) {
+        _user = model.User.unlaunched(FirebaseAuth.instance.currentUser!.uid,
+            FirebaseAuth.instance.currentUser!.displayName!);
+      } else {
+        _user = model.User.unlaunched(
+            FirebaseAuth.instance.currentUser!.uid, "unknown");
+      }
 
-    if (selectedName != null) {
-      _user.userName = selectedName!;
-    }
-    if (changedDOB) {
-      _user.dob = selectedDate;
-    }
-    if (selectedDescription != null) {
-      _user.description = selectedDescription!;
-    }
+      if (selectedName != null) {
+        _user.userName = selectedName!;
+      }
+      if (changedDOB) {
+        _user.dob = selectedDate;
+      }
+      if (selectedDescription != null) {
+        _user.description = selectedDescription!;
+      }
 
-    FireStoreDB().addUserDB(_user);
+      FireStoreDB().addUserDB(_user);
 
-    showSalvareToast(context, 'Registering');
+      showSalvareToast(context, 'Registering');
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const DummyPage(),
-      ),
-    );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const DummyPage(),
+        ),
+      );
+    }
   }
 
   Widget buildNameEdit(model.User modelUser) => Column(
@@ -123,6 +136,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
             onChanged: (name) {
               selectedName = name;
             },
+            validator: (name) => (name?.length ?? 0) < 4
+                ? 'Name must be at least 4 characters'
+                : null,
           ),
         ],
       );
@@ -138,10 +154,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
           TextFormField(
             style: Theme.of(context).textTheme.formText.fixFontFamily(),
             controller: TextEditingController(text: selectedDescription),
-            maxLines: 10,
+            maxLines: 5,
             onChanged: (description) {
               selectedDescription = description;
             },
+            maxLength: 256,
+            validator: (desc) =>
+                (desc?.length ?? 0) > 256 ? 'Description too long' : null,
           ),
         ],
       );

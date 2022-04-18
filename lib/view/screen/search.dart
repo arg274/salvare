@@ -59,10 +59,8 @@ class _SearchState extends State<Search> {
                         Theme.of(context).textTheme.bodyText1?.fixFontFamily(),
                     textAlignVertical: TextAlignVertical.center,
                     controller: _queryController,
-                    validator: (value) =>
-                        (searchFlags & SearchController.flagRegex != 0)
-                            ? searchController.validateRegex(value)
-                            : null,
+                    validator: (query) => searchController.validateSearch(
+                        query, searchFlags & SearchController.flagRegex != 0),
                     onFieldSubmitted: (_) => refreshSearch(),
                     decoration: InputDecoration(
                       prefixIcon: Icon(

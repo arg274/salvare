@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:salvare/model/tag.dart';
@@ -111,6 +112,19 @@ class SearchController {
       return null;
     } catch (e) {
       return 'Regex not valid';
+    }
+  }
+
+  String? validateSearch(String? _query, bool _isRegex) {
+    debugPrint('query: $_query, isRegex: $_isRegex');
+    if (_query == null || _query.isEmpty) {
+      return 'Query is empty';
+    } else if (_isRegex) {
+      return validateRegex(_query);
+    } else if (_query.length < 3) {
+      return 'Query too short';
+    } else {
+      return null;
     }
   }
 }
