@@ -208,14 +208,7 @@ class _BucketResourcesState extends State<BucketResources> {
                     addedUid = await bucketController.addUserToBucket(
                         _userTEC.text, widget.bucket.id);
                     widget.bucket.users.add(addedUid!);
-                    showToast(
-                      'User added to bucket!',
-                      context: context,
-                      animation: StyledToastAnimation.slideFromBottom,
-                      curve: Curves.decelerate,
-                      duration: const Duration(seconds: 3),
-                      reverseAnimation: StyledToastAnimation.fade,
-                    );
+                    showSalvareToast(context, 'User added to bucket!');
                     await _refreshEmailData();
                   }
                 },
@@ -252,14 +245,7 @@ class _BucketResourcesState extends State<BucketResources> {
                           addedUid = await bucketController.addUserToBucket(
                               _userTEC.text, widget.bucket.id);
                           widget.bucket.users.add(addedUid!);
-                          showToast(
-                            'User added to bucket!',
-                            context: context,
-                            animation: StyledToastAnimation.slideFromBottom,
-                            curve: Curves.decelerate,
-                            duration: const Duration(seconds: 3),
-                            reverseAnimation: StyledToastAnimation.fade,
-                          );
+                          showSalvareToast(context, 'User added to bucket!');
                           await _refreshEmailData();
                         }
                       },

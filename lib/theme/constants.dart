@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:patterns_canvas/patterns_canvas.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -275,3 +276,14 @@ extension FontFix on TextStyle {
     return apply(fontFamily: 'Inter');
   }
 }
+
+void showSalvareToast(context, text) => showToast(
+      text,
+      context: context,
+      textStyle:
+          Theme.of(context).textTheme.bodyText1?.apply(color: Colors.white),
+      backgroundColor: Theme.of(context).primaryColorDark,
+      animation: StyledToastAnimation.slideFromBottom,
+      curve: Curves.decelerate,
+      reverseAnimation: StyledToastAnimation.fade,
+    );

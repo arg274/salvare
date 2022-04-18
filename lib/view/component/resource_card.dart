@@ -206,16 +206,7 @@ class ResourceCard extends StatelessWidget {
 
   void copyLink(BuildContext context) {
     resourceController.copyResourceURL(resource);
-    showToast(
-      'Link copied to the clipboard!',
-      context: context,
-      textStyle:
-          Theme.of(context).textTheme.bodyText1?.apply(color: Colors.white),
-      backgroundColor: Theme.of(context).primaryColorDark,
-      animation: StyledToastAnimation.slideFromBottom,
-      curve: Curves.decelerate,
-      reverseAnimation: StyledToastAnimation.fade,
-    );
+    showSalvareToast(context, 'Link copied to the clipboard!');
   }
 
   Future<Object?> showDeleteAlert(BuildContext context) async {

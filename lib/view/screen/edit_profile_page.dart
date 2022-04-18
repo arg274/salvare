@@ -9,7 +9,6 @@ import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:salvare/view/screen/profile_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:switcher_button/switcher_button.dart';
@@ -117,15 +116,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void onPressedSaveButton() async {
-    showToast(
-      'Saving Changes',
-      context: context,
-      position: StyledToastPosition.top,
-      animation: StyledToastAnimation.slideFromBottom,
-      curve: Curves.decelerate,
-      duration: const Duration(seconds: 3),
-      reverseAnimation: StyledToastAnimation.fade,
-    );
+    showSalvareToast(context, 'Saving changes');
 
     model.User? _user = await FireStoreDB().fetchUserInfoDB();
     if (_user == null) {

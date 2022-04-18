@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/main.dart';
+import 'package:salvare/theme/constants.dart';
 import 'package:salvare/view/component/appbar_widget.dart';
 import 'package:salvare/view/component/profile_widget.dart';
 import 'package:salvare/model/user.dart' as model;
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -26,6 +27,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       appBar: buildAppBarReg(context, onPressedRegButton),
       body: ListView(
+        padding: globalEdgeInsets,
         physics: const BouncingScrollPhysics(),
         children: [
           ProfileWidget(
@@ -37,23 +39,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
               FirebaseAuth.instance.currentUser!.uid,
               FirebaseAuth.instance.currentUser!.displayName ?? "unknown")),
           const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Row(
-              children: [
-                const Text(
-                  "Date Of Birth",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _selectDate(context);
-                  },
-                  icon: Icon(Icons.date_range,
-                      color: Theme.of(context).primaryColor),
-                ),
-              ],
-            ),
+          Row(
+            children: [
+              Text(
+                "Date Of Birth".toUpperCase(),
+                style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+              ),
+              IconButton(
+                onPressed: () {
+                  _selectDate(context);
+                },
+                icon: Icon(FeatherIcons.calendar,
+                    color: Theme.of(context).primaryColor),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
           buildAboutEdit(model.User.unlaunched(
@@ -100,79 +99,49 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     FireStoreDB().addUserDB(_user);
 
-    showToast(
-      'Registering..',
-      context: context,
-      animation: StyledToastAnimation.slideFromBottom,
-      curve: Curves.decelerate,
-      reverseAnimation: StyledToastAnimation.fade,
-    );
+    showSalvareToast(context, 'Registering');
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => DummyPage(),
+        builder: (context) => const DummyPage(),
       ),
     );
   }
 
   Widget buildNameEdit(model.User modelUser) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Display Name",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: TextEditingController(text: selectedName),
-                  showCursor: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  maxLines: 1,
-                  onChanged: (name) {
-                    selectedName = name;
-                  },
-                ),
-              ],
-            ),
+          Text(
+            "Display Name".toUpperCase(),
+            style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            style: Theme.of(context).textTheme.formText.fixFontFamily(),
+            controller: TextEditingController(text: selectedName),
+            maxLines: 1,
+            onChanged: (name) {
+              selectedName = name;
+            },
           ),
         ],
       );
 
   Widget buildAboutEdit(model.User modelUser) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "About",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: TextEditingController(text: selectedDescription),
-                  showCursor: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  maxLines: 10,
-                  onChanged: (description) {
-                    selectedDescription = description;
-                  },
-                ),
-              ],
-            ),
+          Text(
+            "About".toUpperCase(),
+            style: Theme.of(context).textTheme.formLabel.fixFontFamily(),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            style: Theme.of(context).textTheme.formText.fixFontFamily(),
+            controller: TextEditingController(text: selectedDescription),
+            maxLines: 10,
+            onChanged: (description) {
+              selectedDescription = description;
+            },
           ),
         ],
       );
