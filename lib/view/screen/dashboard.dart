@@ -36,13 +36,13 @@ class _DashboardState extends State<Dashboard> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           actions: <Widget>[
             TextButton(
-                onPressed: () => {
-                      if (_formkey.currentState!.validate())
-                        {
-                          tagCategoryController.addCategory(_catTEC.text),
-                          Navigator.of(context).pop()
-                        }
-                    },
+                onPressed: () async {
+                  await tagCategoryController.checkIfCatExists(_catTEC.text);
+                  if (_formkey.currentState!.validate()) {
+                    tagCategoryController.addCategory(_catTEC.text);
+                    Navigator.of(context).pop();
+                  }
+                },
                 child: Text(
                   'ADD',
                   style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
@@ -66,7 +66,7 @@ class _DashboardState extends State<Dashboard> {
                     contentPadding: EdgeInsets.symmetric(vertical: 5.0),
                   ),
                   validator: (category) {
-                    return resourceController.validateCategory(category);
+                    return tagCategoryController.validateCategory(category);
                   },
                 ),
               ],
@@ -85,14 +85,14 @@ class _DashboardState extends State<Dashboard> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           actions: <Widget>[
             TextButton(
-                onPressed: () => {
-                      if (_formkey.currentState!.validate())
-                        {
-                          tagCategoryController
-                              .addTag(Tag.unlaunched(_tagTEC.text, 0xFFFFC107)),
-                          Navigator.of(context).pop()
-                        }
-                    },
+                onPressed: () async {
+                  await tagCategoryController.checkIfTagExists(_tagTEC.text);
+                  if (_formkey.currentState!.validate()) {
+                    tagCategoryController
+                        .addTag(Tag.unlaunched(_tagTEC.text, 0xFFFFC107));
+                    Navigator.of(context).pop();
+                  }
+                },
                 child: Text(
                   'ADD',
                   style: Theme.of(context).textTheme.buttonText.fixFontFamily(),
@@ -116,7 +116,7 @@ class _DashboardState extends State<Dashboard> {
                     contentPadding: EdgeInsets.symmetric(vertical: 5.0),
                   ),
                   validator: (tag) {
-                    return resourceController.validateTag(tag);
+                    return tagCategoryController.validateTag(tag);
                   },
                 ),
               ],

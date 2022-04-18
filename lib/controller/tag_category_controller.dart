@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/tag.dart';
+import 'package:collection/collection.dart';
 
 class TagCategoryController {
   static final TagCategoryController _singleton =
@@ -12,18 +13,20 @@ class TagCategoryController {
 
   TagCategoryController._internal();
 
+  bool tagExists = false;
+  bool catExists = false;
+
   void addTag(Tag tag) async {
     try {
       List<Tag>? currentTags = await FireStoreDB().fetchTagsDB();
-      bool doesExist = false;
+      bool _tagExists = false;
       currentTags?.forEach((element) {
         if (element.name == tag.name) {
-          doesExist = true;
+          _tagExists = true;
         }
       });
-      if (doesExist == true) {
+      if (_tagExists == true) {
         debugPrint("Tag already exists in the database");
-        // TODO: ADD tag already exists TOAST
       } else {
         FireStoreDB().addTagDB(tag);
       }
@@ -66,5 +69,45 @@ class TagCategoryController {
       debugPrint("Error occured in getting tags. tag_category_controller");
     }
     return null;
+  }
+
+  Future<void> checkIfCatExists(String category) async {
+    try {
+      catExists =
+          (await FireStoreDB().fetchCategoriesDB())?.contains(category) ??
+              false;
+    } catch (err) {
+      debugPrint("error in checkIfCatExists {$err}");
+      catExists = false;
+    }
+  }
+
+  Future<void> checkIfTagExists(String tag) async {
+    try {
+      tagExists = (await FireStoreDB().fetchTagsDB())
+                  ?.firstWhereOrNull((_tag) => _tag.name == tag) !=
+              null
+          ? true
+          : false;
+    } catch (err) {
+      debugPrint("error in checkIfCatExists {$err}");
+      catExists = false;
+    }
+  }
+
+  String? validateCategory(String? category) {
+    if (category == null || category.isEmpty) {
+      return 'Please enter a name';
+    } else {
+      return catExists ? 'Category already exists' : null;
+    }
+  }
+
+  String? validateTag(String? tag) {
+    if (tag == null || tag.isEmpty) {
+      return 'Please enter a name';
+    } else {
+      return tagExists ? 'Tag already exists' : null;
+    }
   }
 }
