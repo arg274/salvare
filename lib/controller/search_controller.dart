@@ -74,7 +74,7 @@ class SearchController {
     if (isTitleEnabled) {
       List<Resource> allResources = await FireStoreDB().fetchUserResourceList();
       searchedResourcesTitle = _filter(
-        resources: allResources,
+        resources: [...allResources],
         query: query,
         flags: searchFlags,
       );

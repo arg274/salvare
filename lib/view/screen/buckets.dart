@@ -18,10 +18,16 @@ class Buckets extends StatefulWidget {
 class _BucketsState extends State<Buckets> {
   BucketController bucketController = BucketController();
 
-  Future<void> showAddBucketDialogue(BuildContext context) async {
+  Future<void> showBucketDialogue(
+      {required BuildContext context,
+      bool isEdit = false,
+      Bucket? bucket}) async {
+    assert(!isEdit || (isEdit && bucket != null));
     final _formkey = GlobalKey<FormState>();
-    final TextEditingController _bucketTEC = TextEditingController();
-    final TextEditingController _descTEC = TextEditingController();
+    final TextEditingController _bucketTEC =
+        TextEditingController(text: bucket?.name);
+    final TextEditingController _descTEC =
+        TextEditingController(text: bucket?.description);
     return await showDialog(
         context: context,
         builder: (context) {
@@ -33,13 +39,17 @@ class _BucketsState extends State<Buckets> {
                   onPressed: () => {
                         if (_formkey.currentState!.validate())
                           {
-                            bucketController.addBucket(
-                                _bucketTEC.text, _descTEC.text),
+                            !isEdit
+                                ? bucketController.addBucket(
+                                    _bucketTEC.text, _descTEC.text)
+                                : bucketController.editBucket(
+                                    bucket!.id, _bucketTEC.text, _descTEC.text),
+                            if (isEdit) Navigator.pop(context),
                             Navigator.of(context).pop()
                           }
                       },
                   child: Text(
-                    'ADD',
+                    isEdit ? "EDIT" : "ADD",
                     style:
                         Theme.of(context).textTheme.buttonText.fixFontFamily(),
                   ))
@@ -90,7 +100,7 @@ class _BucketsState extends State<Buckets> {
           foregroundColor: Colors.white,
           heroTag: 'bucketBtn',
           child: const Icon(FeatherIcons.plus),
-          onPressed: () => showAddBucketDialogue(context),
+          onPressed: () => showBucketDialogue(context: context),
         ),
         body: StreamBuilder<QuerySnapshot<Bucket>>(
           stream: FireStoreDB().getUserBucketStream(),
@@ -135,7 +145,10 @@ class _BucketsState extends State<Buckets> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     ListTile(
-                                        onTap: () => {},
+                                        onTap: () => showBucketDialogue(
+                                            context: context,
+                                            isEdit: true,
+                                            bucket: buckets[index - 1]),
                                         leading: Icon(
                                           FeatherIcons.edit3,
                                           color: Theme.of(context)

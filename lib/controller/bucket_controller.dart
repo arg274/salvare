@@ -1,16 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:salvare/database/database_paths.dart';
 import 'package:salvare/database/firestore_db.dart';
 import 'package:salvare/model/bucket.dart';
 import 'package:salvare/model/resource.dart';
 import 'package:flutter/foundation.dart';
-import 'package:crypto/crypto.dart';
 import 'package:validators/validators.dart';
 
 class BucketController {
@@ -37,6 +33,11 @@ class BucketController {
     } catch (err) {
       debugPrint("error in add bucket dummy {$err}");
     }
+  }
+
+  void editBucket(String bucketID, String bucketName, String bucketDesc) async {
+    FireStoreDB().editBucketNameDB(bucketID, bucketName);
+    FireStoreDB().editBucketDescriptionDB(bucketID, bucketDesc);
   }
 
   void deleteBucket(Bucket bucket) async {
@@ -89,14 +90,6 @@ class BucketController {
 
   void editBucketResource(Bucket bucket, Resource resource) =>
       FireStoreDB().editBucketResourceDB(bucket.id, resource);
-
-  void editBucketName(Bucket bucket, String name) {
-    FireStoreDB().editBucketNameDB(bucket.id, name);
-  }
-
-  void editBucketDescription(Bucket bucket, String description) {
-    FireStoreDB().editBucketDescriptionDB(bucket.id, description);
-  }
 
   void deleteBucketResource(Bucket bucket, Resource resource) {
     try {
