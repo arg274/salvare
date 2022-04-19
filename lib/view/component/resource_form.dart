@@ -173,68 +173,85 @@ Future<Object?> showResourceForm({
                           FutureBuilder<List<String>?>(
                               future: tagCategoryController.getCategories(),
                               builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return DropdownSearch<String>(
-                                    popupShape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0))),
-                                    dropdownSearchDecoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        FeatherIcons.folder,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      isDense: true,
-                                    ),
-                                    searchFieldProps: TextFieldProps(
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          ?.fixFontFamily(),
-                                      textAlignVertical:
-                                          TextAlignVertical.center,
-                                      decoration: InputDecoration(
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData) {
+                                    return DropdownSearch<String>(
+                                      popupShape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0))),
+                                      dropdownSearchDecoration: InputDecoration(
                                         prefixIcon: Icon(
-                                          FeatherIcons.search,
+                                          FeatherIcons.folder,
                                           color: Theme.of(context).primaryColor,
                                         ),
+                                        isDense: true,
                                       ),
-                                    ),
-                                    dropDownButton: Icon(
-                                      FeatherIcons.chevronDown,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    dropdownBuilder: (_, _text) => Container(
-                                      child: _text != null
-                                          ? Text(
-                                              _text,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1
-                                                  ?.fixFontFamily(),
-                                            )
-                                          : null,
-                                    ),
-                                    popupItemBuilder: (context, _text, _) =>
-                                        Container(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        _text,
+                                      searchFieldProps: TextFieldProps(
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
                                             ?.fixFontFamily(),
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            FeatherIcons.search,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    mode: Mode.DIALOG,
-                                    showSearchBox: true,
-                                    popupBackgroundColor: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    showSelectedItems: true,
-                                    items: snapshot.data,
-                                    onChanged: (_selectedCategory) =>
-                                        {selectedCategory = _selectedCategory!},
-                                    selectedItem: selectedCategory,
-                                  );
+                                      dropDownButton: Icon(
+                                        FeatherIcons.chevronDown,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      dropdownBuilder: (_, _text) => Container(
+                                        child: _text != null
+                                            ? Text(
+                                                _text,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    ?.fixFontFamily(),
+                                              )
+                                            : null,
+                                      ),
+                                      popupItemBuilder: (context, _text, _) =>
+                                          Container(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Text(
+                                          _text,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              ?.fixFontFamily(),
+                                        ),
+                                      ),
+                                      mode: Mode.DIALOG,
+                                      showSearchBox: true,
+                                      popupBackgroundColor: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      showSelectedItems: true,
+                                      items: snapshot.data,
+                                      onChanged: (_selectedCategory) => {
+                                        selectedCategory = _selectedCategory!
+                                      },
+                                      selectedItem: selectedCategory,
+                                    );
+                                  } else {
+                                    return Column(
+                                      children: [
+                                        const SizedBox(height: 15.0),
+                                        Text(
+                                          'No categories found.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        ),
+                                      ],
+                                    );
+                                  }
                                 } else if (snapshot.hasError) {
                                   // TODO: Error handling
                                   return Text('${snapshot.error}');
@@ -284,71 +301,89 @@ Future<Object?> showResourceForm({
                           FutureBuilder<List<Tag>?>(
                               future: tagCategoryController.getTags(),
                               builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  tagMap = {
-                                    for (var tag in snapshot.data!)
-                                      tag.name: tag
-                                  };
-                                  return DropdownSearch<String>.multiSelection(
-                                    popupShape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0))),
-                                    dropdownSearchDecoration:
-                                        const InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    multiselectItemTextStyle: Theme.of(context)
-                                        .textTheme
-                                        .chipText
-                                        .fixFontFamily(),
-                                    multiselectItemMargin:
-                                        const EdgeInsets.all(2.0),
-                                    popupSelectionWidget:
-                                        (context, item, isChecked) {
-                                      return Checkbox(
-                                        value: isChecked,
-                                        onChanged: (bool? value) {
-                                          isChecked = value!;
-                                        },
-                                      );
-                                    },
-                                    popupItemBuilder: (context, _text, _) =>
-                                        Container(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        _text,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1
-                                            ?.fixFontFamily(),
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData) {
+                                    tagMap = {
+                                      for (var tag in snapshot.data!)
+                                        tag.name: tag
+                                    };
+                                    return DropdownSearch<
+                                        String>.multiSelection(
+                                      popupShape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0))),
+                                      dropdownSearchDecoration:
+                                          const InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
                                       ),
-                                    ),
-                                    dropDownButton: Icon(
-                                      FeatherIcons.chevronDown,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    mode: Mode.DIALOG,
-                                    showSearchBox: true,
-                                    showClearButton: true,
-                                    clearButton: Icon(FeatherIcons.xCircle,
-                                        color: Theme.of(context).primaryColor),
-                                    popupBackgroundColor: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    showSelectedItems: true,
-                                    selectedItems: [
-                                      for (var tag in selectedTags) tag.name
-                                    ],
-                                    items: [
-                                      for (var tag in snapshot.data!) tag.name
-                                    ],
-                                    onChanged: (_selectedTags) => {
-                                      selectedTags = [
-                                        for (var tag in _selectedTags)
-                                          tagMap[tag]!
-                                      ]
-                                    },
-                                  );
+                                      multiselectItemTextStyle:
+                                          Theme.of(context)
+                                              .textTheme
+                                              .chipText
+                                              .fixFontFamily(),
+                                      multiselectItemMargin:
+                                          const EdgeInsets.all(2.0),
+                                      popupSelectionWidget:
+                                          (context, item, isChecked) {
+                                        return Checkbox(
+                                          value: isChecked,
+                                          onChanged: (bool? value) {
+                                            isChecked = value!;
+                                          },
+                                        );
+                                      },
+                                      popupItemBuilder: (context, _text, _) =>
+                                          Container(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Text(
+                                          _text,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1
+                                              ?.fixFontFamily(),
+                                        ),
+                                      ),
+                                      dropDownButton: Icon(
+                                        FeatherIcons.chevronDown,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      mode: Mode.DIALOG,
+                                      showSearchBox: true,
+                                      showClearButton: true,
+                                      clearButton: Icon(FeatherIcons.xCircle,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      popupBackgroundColor: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      showSelectedItems: true,
+                                      selectedItems: [
+                                        for (var tag in selectedTags) tag.name
+                                      ],
+                                      items: [
+                                        for (var tag in snapshot.data!) tag.name
+                                      ],
+                                      onChanged: (_selectedTags) => {
+                                        selectedTags = [
+                                          for (var tag in _selectedTags)
+                                            tagMap[tag]!
+                                        ]
+                                      },
+                                    );
+                                  } else {
+                                    return Column(
+                                      children: [
+                                        const SizedBox(height: 15.0),
+                                        Text(
+                                          'No tags found.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        ),
+                                      ],
+                                    );
+                                  }
                                 } else if (snapshot.hasError) {
                                   // TODO: Error handling
                                   return Text('${snapshot.error}');
