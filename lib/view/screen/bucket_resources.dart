@@ -207,8 +207,10 @@ class _BucketResourcesState extends State<BucketResources> {
                   if (_formkey.currentState!.validate()) {
                     addedUid = await bucketController.addUserToBucket(
                         _userTEC.text, widget.bucket.id);
-                    widget.bucket.users.add(addedUid!);
-                    showSalvareToast(context, 'User added to bucket!');
+                    if (!widget.bucket.users.contains(addedUid)) {
+                      widget.bucket.users.add(addedUid!);
+                      showSalvareToast(context, 'User added to bucket!');
+                    }
                     await _refreshEmailData();
                   }
                 },

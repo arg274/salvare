@@ -25,7 +25,6 @@ class BucketController {
       debugPrint(
           "${FirebaseAuth.instance.currentUser!.email} has total $totalBuckets buckets");
       if (totalBuckets < DatabasePaths.userMaxBucket) {
-        // TODO: Decide how Bucket ID will be generated
         FireStoreDB().addBucketDB(
             Bucket.unlaunched(
                 bucketName, bucketDesc, FirebaseAuth.instance.currentUser!.uid),
@@ -48,7 +47,6 @@ class BucketController {
       debugPrint(
           "${FirebaseAuth.instance.currentUser!.email} has total $totalBuckets buckets");
       if (totalBuckets < DatabasePaths.userMaxBucket) {
-        // TODO: Decide how Bucket ID will be generated
         FireStoreDB().deleteBucketDB(bucket);
         totalBuckets--;
       } else {
