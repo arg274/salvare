@@ -33,25 +33,35 @@ class SearchController {
     bool excDomain = flags & flagExcludeDomain != 0;
     bool isRegex = flags & flagRegex != 0;
 
-    if (!isCaseSensitive) {
-      resources = [
-        for (var res in resources)
-          res
-            ..title = res.title.toLowerCase()
-            ..description = res.description.toLowerCase()
-      ];
-      query = query.toLowerCase();
-    }
-
     for (var res in resources) {
-      if (!excTitle && res.title.contains(!isRegex ? query : RegExp(query))) {
-        filtered.add(res);
-      } else if (!excDesc &&
-          res.description.contains(!isRegex ? query : RegExp(query))) {
-        filtered.add(res);
-      } else if (!excDomain &&
-          res.domain.contains(!isRegex ? query : RegExp(query))) {
-        filtered.add(res);
+      if (isCaseSensitive) {
+        if (!excTitle && res.title.contains(!isRegex ? query : RegExp(query))) {
+          filtered.add(res);
+        } else if (!excDesc &&
+            res.description.contains(!isRegex ? query : RegExp(query))) {
+          filtered.add(res);
+        } else if (!excDomain &&
+            res.domain.contains(!isRegex ? query : RegExp(query))) {
+          filtered.add(res);
+        }
+      } else {
+        query = query.toLowerCase();
+        if (!excTitle &&
+            res.title
+                .toLowerCase()
+                .contains(!isRegex ? query : RegExp(query))) {
+          filtered.add(res);
+        } else if (!excDesc &&
+            res.description
+                .toLowerCase()
+                .contains(!isRegex ? query : RegExp(query))) {
+          filtered.add(res);
+        } else if (!excDomain &&
+            res.domain
+                .toLowerCase()
+                .contains(!isRegex ? query : RegExp(query))) {
+          filtered.add(res);
+        }
       }
     }
     return filtered;
