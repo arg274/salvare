@@ -127,11 +127,11 @@ class SearchController {
 
   String? validateSearch(String? _query, bool _isRegex) {
     debugPrint('query: $_query, isRegex: $_isRegex');
-    if (_query == null || _query.isEmpty) {
+    if ((_query == null || _query.isEmpty) && !_isRegex) {
       return 'Query is empty';
     } else if (_isRegex) {
       return validateRegex(_query);
-    } else if (_query.length < 3) {
+    } else if (_query!.length < 3) {
       return 'Query too short';
     } else {
       return null;

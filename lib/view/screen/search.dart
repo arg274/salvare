@@ -314,9 +314,7 @@ class _SearchState extends State<Search> {
         selectedCategory!.isNotEmpty &&
         selectedCategory != 'Default');
     bool tagSelected = (selectedTags != null && selectedTags!.isNotEmpty);
-    bool isRegex = searchFlags & SearchController.flagRegex != 0;
-    if (((catSelected || tagSelected) && !isRegex) ||
-        _formkey.currentState!.validate()) {
+    if ((catSelected || tagSelected) || _formkey.currentState!.validate()) {
       setState(() {
         searchedResources = searchController.updateResults(
             _queryController.text, selectedCategory, selectedTags, searchFlags);
