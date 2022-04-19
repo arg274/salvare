@@ -310,7 +310,13 @@ class _SearchState extends State<Search> {
       ));
 
   void refreshSearch() {
-    if (_formkey.currentState!.validate()) {
+    bool catSelected = (selectedCategory != null &&
+        selectedCategory!.isNotEmpty &&
+        selectedCategory != 'Default');
+    bool tagSelected = (selectedTags != null && selectedTags!.isNotEmpty);
+    bool isRegex = searchFlags & SearchController.flagRegex != 0;
+    if (((catSelected || tagSelected) && !isRegex) ||
+        _formkey.currentState!.validate()) {
       setState(() {
         searchedResources = searchController.updateResults(
             _queryController.text, selectedCategory, selectedTags, searchFlags);
